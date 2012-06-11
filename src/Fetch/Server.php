@@ -18,7 +18,7 @@ namespace Fetch;
  * @package Fetch
  * @author  Robert Hafner <tedivm@tedivm.com>
  */
-class Imap
+class Server
 {
         /**
          * When SSL isn't compiled into PHP we need to make some adjustments to prevent soul crushing annoyances.
