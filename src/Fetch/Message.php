@@ -156,7 +156,7 @@ class ImapMessage
          * @param int $messageUniqueId
          * @param Imap $mailbox
          */
-        public function __construct($messageUniqueId, Imap $mailbox)
+        public function __construct($messageUniqueId, Server $mailbox)
         {
                 $this->imapConnection = $mailbox;
                 $this->uid = $messageUniqueId;
@@ -402,7 +402,7 @@ class ImapMessage
 
                 if(isset($parameters['name']) || isset($parameters['filename']))
                 {
-                        $attachment = new ImapAttachment($this, $structure, $partIdentifier);
+                        $attachment = new Attachment($this, $structure, $partIdentifier);
                         $this->attachments[] = $attachment;
                 }elseif($structure->type == 0 || $structure->type == 1){
 
@@ -624,7 +624,7 @@ class ImapMessage
         public function setFlag($flag, $enable = true)
         {
                 if(!in_array($flag, self::$flagTypes) || $flag == 'recent')
-                        throw new ImapException('Unable to set invalid flag "' . $flag . '"');
+                        throw new \InvalidArgumentException('Unable to set invalid flag "' . $flag . '"');
 
                 $flag = '\\' . ucfirst($flag);
 

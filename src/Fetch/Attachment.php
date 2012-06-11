@@ -81,7 +81,7 @@ class Attachment
          * @param stdClass $structure
          * @param string $partIdentifier
          */
-        public function __construct(ImapMessage $message, $structure, $partIdentifier = null)
+        public function __construct(Message $message, $structure, $partIdentifier = null)
         {
                 $this->messageId = $message->getUid();
                 $this->imapStream = $message->getImapBox()->getImapStream();
@@ -90,7 +90,7 @@ class Attachment
                 if(isset($partIdentifier))
                         $this->partId = $partIdentifier;
 
-                $parameters = ImapMessage::getParametersFromStructure($structure);
+                $parameters = Message::getParametersFromStructure($structure);
 
                 if(isset($parameters['filename']))
                 {
@@ -101,7 +101,7 @@ class Attachment
 
                 $this->size = $structure->bytes;
 
-                $this->mimeType = ImapMessage::typeIdToString($structure->type);
+                $this->mimeType = Message::typeIdToString($structure->type);
 
                 if(isset($structure->subtype))
                         $this->mimeType .= '/' . strtolower($structure->subtype);
@@ -123,7 +123,7 @@ class Attachment
                                                           imap_fetchbody($this->imapStream, $this->messageId, $this->partId, FT_UID)
                                                         : imap_body($this->imapStream, $this->messageId, FT_UID);
 
-                        $messageBody = ImapMessage::decode($messageBody, $this->encoding);
+                        $messageBody = Message::decode($messageBody, $this->encoding);
                         $this->data = $messageBody;
                 }
                 return $this->data;

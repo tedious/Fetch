@@ -261,12 +261,12 @@ class Imap
                 if(isset($this->imapStream))
                 {
                         if(!imap_reopen($this->imapStream, $this->mailbox, $this->options, 1))
-                                throw new ImapException(imap_last_error());
+                                throw new \RuntimeException(imap_last_error());
                 }else{
                         $imapStream = imap_open($this->getServerString(), $this->username, $this->password, $this->options, 1);
 
                         if($imapStream === false)
-                                throw new ImapException(imap_last_error());
+                                throw new \RuntimeException(imap_last_error());
 
                         $this->imapStream = $imapStream;
                 }
@@ -304,7 +304,7 @@ class Imap
                         $messages = array();
 
                         foreach($results as $messageId)
-                                $messages[] = new ImapMessage($messageId, $this);
+                                $messages[] = new Message($messageId, $this);
 
                         return $messages;
                 }else{
@@ -344,7 +344,7 @@ class Imap
                 for($i = 1; $i <= $numMessages; $i++)
                 {
                         $uid = imap_uid($stream, $i);
-                        $messages[] = new ImapMessage($uid, $this);
+                        $messages[] = new Message($uid, $this);
                 }
 
                 return $messages;
