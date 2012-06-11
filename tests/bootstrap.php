@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Stash package.
+ * This file is part of the Fetch library.
  *
  * (c) Robert Hafner <tedivm@tedivm.com>
  *
