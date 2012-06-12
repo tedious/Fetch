@@ -1,8 +1,8 @@
 Fetch
 =====
 
-Fetch is a library for reading email an attachments, primarily using the POP and
-IMAP protocols.
+Fetch is a library for reading email and attachments, primarily using the POP 
+and IMAP protocols.
 
 Fetch was part of a large project, Mortar, which is hosted on Google Code. It is
 currently being migrated over to Github, as well as being updated to support
