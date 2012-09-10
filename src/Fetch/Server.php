@@ -308,7 +308,7 @@ class Server
 
                         return $messages;
                 }else{
-                        false;
+                        return array();
                 }
         }
 
