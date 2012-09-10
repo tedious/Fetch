@@ -18,7 +18,7 @@ namespace Fetch;
  * @package Fetch
  * @author  Robert Hafner <tedivm@tedivm.com>
  */
-class ImapMessage
+class Message
 {
         /**
          * This is the connection/mailbox class that the email came from.
@@ -527,11 +527,11 @@ class ImapMessage
                 $parameters = array();
                 if(isset($structure->parameters))
                         foreach($structure->parameters as $parameter)
-                                $parameters[$parameter->attribute] = $parameter->value;
+                                $parameters[strtolower($parameter->attribute)] = $parameter->value;
 
                 if(isset($structure->dparameters))
                         foreach($structure->dparameters as $parameter)
-                                $parameters[$parameter->attribute] = $parameter->value;
+                                $parameters[strtolower($parameter->attribute)] = $parameter->value;
 
                 return $parameters;
         }
