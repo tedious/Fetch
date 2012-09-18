@@ -636,4 +636,15 @@ class Message
                 }
         }
 
+        /**
+         * This function is used to move a mail to the given mailbox.
+         *
+         * @param $mailbox
+         *
+         * @return bool
+         */
+        public function moveToMailBox($mailbox)
+        {
+                return imap_mail_copy($this->imapStream, $this->uid, $mailbox, CP_UID | CP_MOVE);
+        }
 }

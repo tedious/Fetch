@@ -136,6 +136,26 @@ class Server
         }
 
         /**
+         * Returns the set server path.
+         *
+         * @return string
+         */
+        public function getServerPath()
+        {
+                return $this->serverPath;
+        }
+
+        /**
+         * Returns the current username.
+         *
+         * @return string
+         */
+        public function getUsername()
+        {
+                return $this->username;
+        }
+
+        /**
          * This function sets the username and password used to connect to the server.
          *
          * @param string $username
@@ -159,6 +179,11 @@ class Server
                 {
                         $this->setImapStream();
                 }
+        }
+
+        public function getMailBox()
+        {
+                return $this->mailbox;
         }
 
         /**
@@ -229,25 +254,36 @@ class Server
          *
          * @return string
          */
-        protected function getServerString()
+        public function getServerString()
+        {
+                $mailboxPath = $this->getServerSpecification();
+
+                if(isset($this->mailbox))
+                        $mailboxPath .= $this->mailbox;
+
+                return $mailboxPath;
+        }
+
+        /**
+         * Returns the server specification, without adding any mailbox.
+         *
+         * @return string
+         */
+        protected function getServerSpecification()
         {
                 $mailboxPath = '{' . $this->serverPath;
 
-                if(isset($this->port))
+                if (isset($this->port))
                         $mailboxPath .= ':' . $this->port;
 
-                if($this->service != 'imap')
+                if ($this->service != 'imap')
                         $mailboxPath .= '/' . $this->service;
 
-                foreach($this->flags as $flag)
-                {
+                foreach ($this->flags as $flag) {
                         $mailboxPath .= '/' . $flag;
                 }
 
                 $mailboxPath .= '}';
-
-                if(isset($this->mailbox))
-                        $mailboxPath .= $this->mailbox;
 
                 return $mailboxPath;
         }
@@ -336,9 +372,6 @@ class Server
                 if(isset($limit) && is_numeric($limit) && $limit < $numMessages)
                         $numMessages = $limit;
 
-                if($numMessages < 1)
-                        return false;
-
                 $stream = $this->getImapStream();
                 $messages = array();
                 for($i = 1; $i <= $numMessages; $i++)
@@ -358,5 +391,33 @@ class Server
         public function expunge()
         {
                 return imap_expunge($this->getImapStream());
+        }
+
+        /**
+         * Checks if the given mailbox exists.
+         *
+         * @param $mailbox
+         *
+         * @return bool
+         */
+        public function hasMailBox($mailbox)
+        {
+                return (boolean) imap_getmailboxes(
+                        $this->getImapStream(),
+                        $this->getServerString(),
+                        $this->getServerSpecification() . $mailbox
+                );
+        }
+
+        /**
+         * Creates the given mailbox.
+         *
+         * @param $mailbox
+         *
+         * @return bool
+         */
+        public function createMailBox($mailbox)
+        {
+                return imap_createmailbox($this->getImapStream(), $this->getServerSpecification() . $mailbox);
         }
 }
