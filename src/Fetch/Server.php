@@ -136,6 +136,26 @@ class Server
         }
 
         /**
+         * Returns the set server path.
+         *
+         * @return string
+         */
+        public function getServerPath()
+        {
+                return $this->serverPath;
+        }
+
+        /**
+         * Returns the current username.
+         *
+         * @return string
+         */
+        public function getUsername()
+        {
+                return $this->username;
+        }
+
+        /**
          * This function sets the username and password used to connect to the server.
          *
          * @param string $username
