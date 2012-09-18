@@ -161,6 +161,11 @@ class Server
                 }
         }
 
+        public function getMailBox()
+        {
+                return $this->mailbox;
+        }
+
         /**
          * This function sets or removes flag specifying connection behavior. In many cases the flag is just a one word
          * deal, so the value attribute is not required. However, if the value parameter is passed false it will clear that
@@ -229,7 +234,7 @@ class Server
          *
          * @return string
          */
-        protected function getServerString()
+        public function getServerString()
         {
                 $mailboxPath = $this->getServerSpecification();
 
