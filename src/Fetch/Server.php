@@ -260,7 +260,7 @@ class Server
         {
                 if(isset($this->imapStream))
                 {
-                        if(!imap_reopen($this->imapStream, $this->mailbox, $this->options, 1))
+                        if(!imap_reopen($this->imapStream, $this->getServerString(), $this->options, 1))
                                 throw new \RuntimeException(imap_last_error());
                 }else{
                         $imapStream = imap_open($this->getServerString(), $this->username, $this->password, $this->options, 1);
