@@ -236,23 +236,34 @@ class Server
          */
         public function getServerString()
         {
+                $mailboxPath = $this->getServerSpecification();
+
+                if(isset($this->mailbox))
+                        $mailboxPath .= $this->mailbox;
+
+                return $mailboxPath;
+        }
+
+        /**
+         * Returns the server specification, without adding any mailbox.
+         *
+         * @return string
+         */
+        protected function getServerSpecification()
+        {
                 $mailboxPath = '{' . $this->serverPath;
 
-                if(isset($this->port))
+                if (isset($this->port))
                         $mailboxPath .= ':' . $this->port;
 
-                if($this->service != 'imap')
+                if ($this->service != 'imap')
                         $mailboxPath .= '/' . $this->service;
 
-                foreach($this->flags as $flag)
-                {
+                foreach ($this->flags as $flag) {
                         $mailboxPath .= '/' . $flag;
                 }
 
                 $mailboxPath .= '}';
-
-                if(isset($this->mailbox))
-                        $mailboxPath .= $this->mailbox;
 
                 return $mailboxPath;
         }
@@ -363,5 +374,33 @@ class Server
         public function expunge()
         {
                 return imap_expunge($this->getImapStream());
+        }
+
+        /**
+         * Checks if the given mailbox exists.
+         *
+         * @param $mailbox
+         *
+         * @return bool
+         */
+        public function hasMailBox($mailbox)
+        {
+                return (boolean) imap_getmailboxes(
+                        $this->getImapStream(),
+                        $this->getServerString(),
+                        $this->getServerSpecification() . $mailbox
+                );
+        }
+
+        /**
+         * Creates the given mailbox.
+         *
+         * @param $mailbox
+         *
+         * @return bool
+         */
+        public function createMailBox($mailbox)
+        {
+                return imap_createmailbox($this->getImapStream(), $this->getServerSpecification() . $mailbox);
         }
 }
