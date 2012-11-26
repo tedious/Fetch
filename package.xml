@@ -17,8 +17,8 @@
   <api>0.4.1</api>
  </version>
  <stability>
-  <release>beta</release>
-  <api>beta</api>
+  <release>alpha</release>
+  <api>alpha</api>
  </stability>
  <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD Style</license>
  <notes>
@@ -57,8 +57,8 @@
     <api>0.4.1</api>
    </version>
    <stability>
-    <release>beta</release>
-    <api>beta</api>
+    <release>alpha</release>
+    <api>alpha</api>
    </stability>
    <date>2012-11-25</date>
    <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD Style</license>
