@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.9.4" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0     http://pear.php.net/dtd/tasks-1.0.xsd     http://pear.php.net/dtd/package-2.0     http://pear.php.net/dtd/package-2.0.xsd">
+ <name>Fetch</name>
+ <channel>pear.tedivm.com</channel>
+ <summary>A PHP IMAP Library</summary>
+ <description>Fetch is a OOP Library that utilized the IMAP Extension for manipulating email and inboxes.</description>
+ <lead>
+  <name>Robert Hafner</name>
+  <user>tedivm</user>
+  <email>tedivm@tedivm.com</email>
+  <active>yes</active>
+ </lead>
+ <date>2012-11-25</date>
+ <time>23:19:16</time>
+ <version>
+  <release>0.4.1</release>
+  <api>0.4.1</api>
+ </version>
+ <stability>
+  <release>alpha</release>
+  <api>alpha</api>
+ </stability>
+ <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD Style</license>
+ <notes>
+-
+ </notes>
+ <contents>
+  <dir baseinstalldir="/" name="/">
+   <file baseinstalldir="/" md5sum="aa29e2803ede52f7a7fc72c3f81d0d24" name="src/Fetch/Attachment.php" role="php" />
+   <file baseinstalldir="/" md5sum="c76addeca63ab68b96139fbeb5360595" name="src/Fetch/Message.php" role="php" />
+   <file baseinstalldir="/" md5sum="fb619248da9039016029c565ade38ef2" name="src/Fetch/Server.php" role="php" />
+   <file baseinstalldir="/" md5sum="29ca91f2fab5be26e82e068d352d35e4" name="tests/bootstrap.php" role="test" />
+   <file baseinstalldir="/" md5sum="4a2ac5dab1f6ac50bb8d23a89b3d7fa1" name="tests/Fetch/Test/AttachmentTest.php" role="test" />
+   <file baseinstalldir="/" md5sum="93aa1dfc13bf71b65ebe8ab984fe13cb" name="tests/Fetch/Test/MessageTest.php" role="test" />
+   <file baseinstalldir="/" md5sum="b80a4c7d372abcab271c5b211579bcc8" name="tests/Fetch/Test/ServerTest.php" role="test" />
+   <file baseinstalldir="/" md5sum="b6f9cec64c464148284c7e87d46b0d86" name="autoload.php" role="php" />
+   <file baseinstalldir="/" md5sum="28ef12b4e82e5fb81125eef74096adb5" name="composer.json" role="data" />
+   <file baseinstalldir="/" md5sum="0a8fd596034db85a8ae22c1d2330edfb" name="LICENSE" role="doc" />
+   <file baseinstalldir="/" md5sum="65a7e6bd0be62f07792b832160168dea" name="README.md" role="data" />
+  </dir>
+ </contents>
+ <dependencies>
+  <required>
+   <php>
+    <min>5.3.0</min>
+   </php>
+   <pearinstaller>
+    <min>1.4.0</min>
+   </pearinstaller>
+  </required>
+ </dependencies>
+ <phprelease />
+ <changelog>
+  <release>
+   <version>
+    <release>0.4.1</release>
+    <api>0.4.1</api>
+   </version>
+   <stability>
+    <release>alpha</release>
+    <api>alpha</api>
+   </stability>
+   <date>2012-11-25</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD Style</license>
+   <notes>
+-
+   </notes>
+  </release>
+ </changelog>
+</package>
