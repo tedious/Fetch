@@ -367,7 +367,7 @@ class Message
      */
     public function getSubject()
     {
-        return $this->subject;
+        return isset($this->subject) ? $this->subject : null;
     }
 
     /**
