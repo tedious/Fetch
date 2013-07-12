@@ -179,21 +179,27 @@ class Server
             return;
 
         if (isset(self::$exclusiveFlags[$flag])) {
-            $kill = $flag;
+            $kill = self::$exclusiveFlags[$flag];
         } elseif ($index = array_search($flag, self::$exclusiveFlags)) {
             $kill = $index;
         }
 
-        if (isset($kill) && isset($this->flags[$kill]))
-            unset($this->flags[$kill]);
+        if (isset($kill) && false !== $index = array_search($kill, $this->flags))
+            unset($this->flags[$index]);
 
+        $index = array_search($flag, $this->flags);
         if (isset($value) && $value !== true) {
-            if ($value == false) {
-                unset($this->flags[$flag]);
-            } else {
-                $this->flags[] = $flag . '=' . $value;
+            if ($value == false && $index !== false) {
+                unset($this->flags[$index]);
+            } elseif ($value != false) {
+                $match = preg_grep('/' . $flag . '/', $this->flags);
+                if (reset($match)) {
+                    $this->flags[key($match)] = $flag . '=' . $value;
+                } else {
+                    $this->flags[] = $flag . '=' . $value;
+                }
             }
-        } else {
+        } elseif ($index === false) {
             $this->flags[] = $flag;
         }
     }
