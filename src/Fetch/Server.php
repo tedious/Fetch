@@ -336,6 +336,9 @@ class Server
                 if(isset($limit) && is_numeric($limit) && $limit < $numMessages)
                         $numMessages = $limit;
 
+                if ($numMessages < 1)
+                        return array();
+
                 $stream = $this->getImapStream();
                 $messages = array();
                 for($i = 1; $i <= $numMessages; $i++)
