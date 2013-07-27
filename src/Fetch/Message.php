@@ -121,18 +121,25 @@ class Message
     protected $from;
 
     /**
-     * This is an array of arrays that contain information about the addresses the email was cc'd to.
+     * This is an array of arrays that contains information about the addresses the email was sent to.
      *
      * @var array
      */
     protected $to;
 
     /**
-     * This is an array of arrays that contain information about the addresses the email was cc'd to.
+     * This is an array of arrays that contains information about the addresses the email was cc'd to.
      *
      * @var array
      */
     protected $cc;
+
+    /**
+     * This is an array of arrays that contains information about the addresses the email was bcc'd to.
+     *
+     * @var array
+     */
+    protected $bcc;
 
     /**
      * This is an array of arrays that contain information about the addresses that should receive replies to the email.
@@ -199,6 +206,9 @@ class Message
 
         if (isset($headers->cc))
             $this->cc = $this->processAddressObject($headers->cc);
+
+        if (isset($headers->bcc))
+            $this->bcc = $this->processAddressObject($headers->bcc);
 
         $this->from    = $this->processAddressObject($headers->from);
         $this->replyTo = isset($headers->reply_to) ? $this->processAddressObject($headers->reply_to) : $this->from;
@@ -316,13 +326,13 @@ class Message
      * This function returns either an array of email addresses and names or, optionally, a string that can be used in
      * mail headers.
      *
-     * @param  string            $type     Should be 'to', 'cc', 'from', or 'reply-to'.
+     * @param  string            $type     Should be 'to', 'cc', 'bcc', 'from', or 'reply-to'.
      * @param  bool              $asString
      * @return array|string|bool
      */
     public function getAddresses($type, $asString = false)
     {
-        $addressTypes = array('to', 'cc', 'from', 'reply-to');
+        $addressTypes = array('to', 'cc', 'bcc', 'from', 'reply-to');
 
         if (!in_array($type, $addressTypes) || !isset($this->$type) || count($this->$type) < 1)
             return false;
