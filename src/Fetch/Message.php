@@ -17,6 +17,7 @@ namespace Fetch;
  *
  * @package Fetch
  * @author  Robert Hafner <tedivm@tedivm.com>
+ * @author  Patrik Karisch <patrik.karisch@abimus.com>
  */
 class Message
 {
@@ -185,20 +186,32 @@ class Message
      */
     protected function loadMessage()
     {
+        $this->loadOverview();
+        $this->loadHeaders();
+        $this->loadStructure();
+    }
 
-        /* First load the message overview information */
-
+    /**
+     * Load the message overview information.
+     */
+    protected function loadOverview()
+    {
         $messageOverview = $this->getOverview();
 
         $this->subject = isset($messageOverview->subject) ? $messageOverview->subject : null;
         $this->date    = isset($messageOverview->date) ? strtotime($messageOverview->date) : null;
         $this->size    = isset($messageOverview->size) ? $messageOverview->size : null;
 
-        foreach (self::$flagTypes as $flag)
+        foreach (self::$flagTypes as $flag) {
             $this->status[$flag] = !empty($messageOverview->$flag);
+        }
+    }
 
-        /* Next load in all of the header information */
-
+    /**
+     * Load in all of the header information.
+     */
+    protected function loadHeaders()
+    {
         $headers = $this->getHeaders();
 
         if (isset($headers->to))
@@ -212,9 +225,13 @@ class Message
 
         $this->from    = $this->processAddressObject($headers->from);
         $this->replyTo = isset($headers->reply_to) ? $this->processAddressObject($headers->reply_to) : $this->from;
+    }
 
-        /* Finally load the structure itself */
-
+    /**
+     * Load the message structure itself.
+     */
+    protected function loadStructure()
+    {
         $structure = $this->getStructure();
 
         if (!isset($structure->parts)) {

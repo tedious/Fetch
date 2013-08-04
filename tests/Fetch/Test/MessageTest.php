@@ -18,22 +18,18 @@ namespace Fetch\Test;
  */
 class MessageTest extends \PHPUnit_Framework_TestCase
 {
-    public function testLoadMessage()
+    public function testLoadOverview()
     {
         $message = $this->getMockBuilder('Fetch\Message')
                         ->disableOriginalConstructor()
-                        ->setMethods(array('getOverview', 'getHeaders', 'processAddressObject', 'getStructure', 'processStructure'))
+                        ->setMethods(array('getOverview'))
                         ->getMock();
 
         $message->expects($this->once())
                 ->method('getOverview')
                 ->will($this->returnValue($this->getOverview()));
 
-        $message->expects($this->once())
-                ->method('getHeaders')
-                ->will($this->returnValue($this->getHeaders()));
-
-        $method = new \ReflectionMethod($message, 'loadMessage');
+        $method = new \ReflectionMethod($message, 'loadOverview');
         $method->setAccessible(true);
         $method->invoke($message);
 
@@ -46,22 +42,18 @@ class MessageTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider invalidOverviews
      */
-    public function testLoadMessageWithInvalidOverviews($overview)
+    public function testLoadOverviewWithInvalidData($overview)
     {
         $message = $this->getMockBuilder('Fetch\Message')
                         ->disableOriginalConstructor()
-                        ->setMethods(array('getOverview', 'getHeaders', 'processAddressObject', 'getStructure', 'processStructure'))
+                        ->setMethods(array('getOverview'))
                         ->getMock();
 
         $message->expects($this->once())
                 ->method('getOverview')
                 ->will($this->returnValue($overview));
 
-        $message->expects($this->once())
-                ->method('getHeaders')
-                ->will($this->returnValue($this->getHeaders()));
-
-        $method = new \ReflectionMethod($message, 'loadMessage');
+        $method = new \ReflectionMethod($message, 'loadOverview');
         $method->setAccessible(true);
         $method->invoke($message);
     }
@@ -96,13 +88,5 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         }
 
         return $data;
-    }
-
-    protected function getHeaders()
-    {
-        $headers = new \stdClass();
-        $headers->from = array((object) array('mailbox' => 'foo', 'host' => 'example.com'));
-
-        return $headers;
     }
 }
