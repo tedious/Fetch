@@ -190,12 +190,12 @@ class Message
 
         $messageOverview = $this->getOverview();
 
-        $this->subject = $messageOverview->subject;
-        $this->date    = strtotime($messageOverview->date);
-        $this->size    = $messageOverview->size;
+        $this->subject = isset($messageOverview->subject) ? $messageOverview->subject : null;
+        $this->date    = isset($messageOverview->date) ? strtotime($messageOverview->date) : null;
+        $this->size    = isset($messageOverview->size) ? $messageOverview->size : null;
 
         foreach (self::$flagTypes as $flag)
-            $this->status[$flag] = ($messageOverview->$flag == 1);
+            $this->status[$flag] = !empty($messageOverview->$flag);
 
         /* Next load in all of the header information */
 
