@@ -650,6 +650,9 @@ class Message
      */
     public function moveToMailBox($mailbox)
     {
-        return imap_mail_copy($this->imapStream, $this->uid, $mailbox, CP_UID | CP_MOVE);
+        $returnValue = imap_mail_copy($this->imapStream, $this->uid, $mailbox, CP_UID | CP_MOVE);
+		imap_expunge($this->imapStream);
+
+		return $returnValue;
     }
 }
