@@ -159,6 +159,16 @@ class Attachment
     }
 
     /**
+     * This function returns the object that contains the structure of this attachment.
+     * 
+     * @return \stdClass
+     */
+    public function getStructure()
+    {
+        return $this->structure;
+    }
+
+    /**
      * This function saves the attachment to the passed directory, keeping the original name of the file.
      *
      * @param  string $path
