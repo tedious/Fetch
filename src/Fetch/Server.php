@@ -94,6 +94,20 @@ class Server
     protected $options = 0;
 
     /**
+     * This are the optional connection parameters
+     *
+     * @var array
+     */
+    protected $params = array();
+
+    /**
+     * This are the accepted connection parameters and its possible values
+     *
+     * @var array
+     */
+    protected $paramsAccepted = array('DISABLE_AUTHENTICATOR' => array('GSSAPI', 'NTLM'));
+
+    /**
      * This is the resource connection to the server. It is required by a number of imap based functions to specify how
      * to connect.
      *
@@ -205,7 +219,7 @@ class Server
     }
 
     /**
-     * This funtion is used to set various options for connecting to the server.
+     * This function is used to set various options for connecting to the server.
      *
      * @param  int        $bitmask
      * @throws \Exception
@@ -216,6 +230,32 @@ class Server
             throw new \Exception();
 
         $this->options = $bitmask;
+    }
+
+    /**
+     * This function is used to add an optional connection parameter
+     *
+     * @param string    $name
+     * @param string    $value
+     * @throws \InvalidArgumentException
+     */
+    public function addParam($name, $value)
+    {
+        if (!in_array($name, array_keys($this->paramsAccepted)) || !in_array($value, $this->paramsAccepted[$name]))
+            throw new \InvalidArgumentException();
+
+        $this->params[$name] = $value;
+    }
+
+
+    /**
+     * This function gets the optional connection parameters
+     *
+     * @return array|null
+     */
+    public function getParams()
+    {
+        return (count($this->params) > 0) ? $this->params : null;
     }
 
     /**
@@ -281,7 +321,7 @@ class Server
             if (!imap_reopen($this->imapStream, $this->getServerString(), $this->options, 1))
                 throw new \RuntimeException(imap_last_error());
         } else {
-            $imapStream = imap_open($this->getServerString(), $this->username, $this->password, $this->options, 1);
+            $imapStream = imap_open($this->getServerString(), $this->username, $this->password, $this->options, 1, $this->getParams());
 
             if ($imapStream === false)
                 throw new \RuntimeException(imap_last_error());
