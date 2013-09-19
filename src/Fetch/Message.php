@@ -332,7 +332,8 @@ class Message
      */
     public function getAddresses($type, $asString = false)
     {
-        $addressTypes = array('to', 'cc', 'bcc', 'from', 'reply-to');
+        $type = ( $type == 'reply-to' ) ? 'replyTo' : $type;
+        $addressTypes = array('to', 'cc', 'bcc', 'from', 'replyTo');
 
         if (!in_array($type, $addressTypes) || !isset($this->$type) || count($this->$type) < 1)
             return false;
