@@ -311,7 +311,8 @@ class Message
             }
         } else {
             if (!isset($this->plaintextMessage) && isset($this->htmlMessage)) {
-                $output = strip_tags($this->htmlMessage);
+                $output = preg_replace('/\<br(\s*)?\/?\>/i', PHP_EOL, trim($this->htmlMessage) );
+                $output = strip_tags($output);
 
                 return $output;
             } elseif (isset($this->plaintextMessage)) {
