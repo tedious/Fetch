@@ -94,14 +94,14 @@ class Server
     protected $options = 0;
 
     /**
-     * This are the optional connection parameters
+     * These are the optional connection parameters
      *
      * @var array
      */
     protected $params = array();
 
     /**
-     * This are the accepted connection parameters and its possible values
+     * These are the accepted connection parameters and its possible values
      *
      * @var array
      */
