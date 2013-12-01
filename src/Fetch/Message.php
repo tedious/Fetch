@@ -311,7 +311,8 @@ class Message
             }
         } else {
             if (!isset($this->plaintextMessage) && isset($this->htmlMessage)) {
-                $output = strip_tags($this->htmlMessage);
+                $output = preg_replace('/\<br(\s*)?\/?\>/i', PHP_EOL, trim($this->htmlMessage) );
+                $output = strip_tags($output);
 
                 return $output;
             } elseif (isset($this->plaintextMessage)) {
@@ -332,7 +333,8 @@ class Message
      */
     public function getAddresses($type, $asString = false)
     {
-        $addressTypes = array('to', 'cc', 'bcc', 'from', 'reply-to');
+        $type = ( $type == 'reply-to' ) ? 'replyTo' : $type;
+        $addressTypes = array('to', 'cc', 'bcc', 'from', 'replyTo');
 
         if (!in_array($type, $addressTypes) || !isset($this->$type) || count($this->$type) < 1)
             return false;
