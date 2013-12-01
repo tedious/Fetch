@@ -54,4 +54,55 @@ class ServerTest extends \PHPUnit_Framework_TestCase
                 array('{%host%:100}', 100, array('user' => 'foo', 'user' => false)),
         );
     }
+
+    public function testDefaultAddParameter()
+    {
+        $server = new Server('example.com', '143');
+
+        $this->assertNull($server->getParams());
+    }
+
+    /**
+     * @dataProvider addValidParamDataProvider
+     * @param array $expected connection parameter value to pass to imap_open function
+     * @param string $name connection parameter name
+     * @param string $value connection parameter value
+     */
+    public function testAddValidParam($expected, $name, $value)
+    {
+        $server = new Server('example.com', '143');
+
+        $server->addParam($name, $value);
+
+        $this->assertEquals($server->getParams(), $expected);
+    }
+
+    public function addValidParamDataProvider()
+    {
+        return array(
+            array(array('DISABLE_AUTHENTICATOR' => 'GSSAPI'), 'DISABLE_AUTHENTICATOR', 'GSSAPI'),
+            array(array('DISABLE_AUTHENTICATOR' => 'NTLM'), 'DISABLE_AUTHENTICATOR', 'NTLM'),
+        );
+    }
+
+    /**
+     * @dataProvider addNonValidParamDataProvider
+     * @param string $name connection parameter name
+     * @param string $value connection parameter value
+     * @expectedException \InvalidArgumentException
+     */
+    public function testAddNonValidParam($name, $value)
+    {
+        $server = new Server('example.com', '143');
+
+        $server->addParam($name, $value);
+    }
+
+    public function addNonValidParamDataProvider()
+    {
+        return array(
+            array('DISABLE_AUTHENTICATOR', 'NON_VALID_AUTHENTICATOR'),
+            array('NON_VALID_PARAMETER', 'NON_VALID_AUTHENTICATOR'),
+        );
+    }
 }
