@@ -1,0 +1,70 @@
+Return-Path: <tedivm@tedivm.com>
+Delivered-To: testuser@tedivm.com
+Received: from localhost (localhost [127.0.0.1])
+	by figment.tedivm.com (Postfix) with ESMTP id EAD6545C3D
+	for <testuser@tedivm.com>; Sun,  1 Dec 2013 21:55:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tedivm.com; h=
+	x-mailer:mime-version:to:date:date:message-id:subject:subject
+	:content-transfer-encoding:content-type:content-type:from:from;
+	 s=dkim; t=1385963735; x=1386827735; bh=2hiFUAHC6IMn3e7agFgCBRM9
+	WPLvY80bacjYTQ3Wq9Y=; b=W7iw53nmvSZq+U+TxhhfGrKBVPhrdJUyofVhG3Kv
+	2/Ov9P4l+UYSOExEDZ8++cWpJHoGjAl2F52YNPcY6cXFIyC5t1avcRw/9TGrudUb
+	msiCYzki4RLhOFcjK9cwnH6uL+vaugg7frZFm8+3Bo8PZUdXjUImc02HsHVT5MHq
+	MPI=
+X-Virus-Scanned: Debian amavisd-new at debian
+Received: from figment.tedivm.com ([127.0.0.1])
+	by localhost (figment.tedivm.com [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id kTTY7zjUfRXI for <testuser@tedivm.com>;
+	Sun,  1 Dec 2013 21:55:35 -0800 (PST)
+Received: from [10.0.42.10] (c-67-180-166-128.hsd1.ca.comcast.net [67.180.166.128])
+	by figment.tedivm.com (Postfix) with ESMTPSA id 667BF45C3C
+	for <testuser@tedivm.com>; Sun,  1 Dec 2013 21:55:34 -0800 (PST)
+From: Robert Hafner <tedivm@tedivm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+Subject: Plaintext
+Message-Id: <5F2616C4-3E58-4DF1-B9D0-662069674A39@tedivm.com>
+Date: Sun, 1 Dec 2013 21:55:34 -0800
+To: "testuser@tedivm.com" <testuser@tedivm.com>
+Mime-Version: 1.0 (Mac OS X Mail 6.6 \(1510\))
+X-Mailer: Apple Mail (2.1510)
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque =
+sollicitudin auctor tellus. Etiam ornare fringilla est, eget iaculis =
+tellus pellentesque id. Integer vestibulum, dui at luctus porta, magna =
+arcu faucibus turpis, eu vestibulum mauris quam vitae metus. In aliquam =
+ornare neque ut aliquam. Vivamus eu tortor feugiat, ultricies nulla at, =
+luctus enim. Nunc ultrices nulla et eleifend volutpat. Quisque aliquet =
+aliquet elit, eget convallis sapien.
+
+Nullam fringilla turpis ac tortor venenatis, sit amet rutrum odio =
+faucibus. Aenean vel mollis diam, id tincidunt libero. Aenean imperdiet =
+vestibulum blandit. Curabitur nec metus magna. Phasellus imperdiet, orci =
+ut egestas fermentum, diam lacus vehicula felis, eget feugiat velit =
+tortor quis tellus. Aliquam at massa ut purus ultrices molestie et a =
+ligula. Maecenas tempus at tellus quis malesuada.
+
+Nam sagittis rutrum tellus nec volutpat. Fusce ac leo quis dui eleifend =
+scelerisque. In adipiscing pretium sapien at ullamcorper. Sed nec porta =
+leo. Curabitur dapibus commodo rutrum. Nulla in odio elit. Sed id =
+sodales sapien, at fringilla purus. Quisque ut volutpat odio. Curabitur =
+et hendrerit dui, blandit auctor erat.
+
+Nunc laoreet quis lacus vitae lobortis. In tincidunt rhoncus velit, ac =
+egestas odio sollicitudin sed. Nam fermentum sapien vel tortor aliquam, =
+vel lobortis ante dictum. Nulla commodo velit at velit tincidunt =
+condimentum. Etiam tellus enim, fringilla sed leo sit amet, dignissim =
+auctor ligula. Proin mattis, nisi quis varius convallis, nulla lectus =
+elementum sem, vel aliquam quam nibh quis tellus. Phasellus tempor eget =
+sem vitae rutrum. Donec bibendum condimentum pellentesque. Pellentesque =
+suscipit felis nec sagittis ullamcorper. Duis sit amet est in risus =
+vehicula mollis. Nunc venenatis lacus ipsum, ut consectetur risus =
+egestas sed.
+
+Morbi dapibus et metus vel elementum. Aliquam sit amet enim at tortor =
+mattis consectetur. Nunc sit amet fringilla ante, nec posuere magna. =
+Praesent elementum feugiat nisl, vitae faucibus leo consequat nec. Ut =
+lacus eros, vulputate a erat adipiscing, consequat tempor sem. Ut et =
+malesuada tortor. Quisque tempus arcu ut malesuada dignissim. Maecenas =
+massa tellus, pharetra sed faucibus ut, commodo id arcu.
+
