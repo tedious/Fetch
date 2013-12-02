@@ -1,5 +1,6 @@
 #!/bin/sh
 
+echo 'Provisioning Environment with Dovecot and Test Messages'
 
 # Install and Configure Dovecot
 
@@ -20,7 +21,15 @@ fi
 if getent passwd testuser > /dev/null; then
     echo 'testuser already exists'
 else
-    echo 'Creating testuser'
+    echo 'Creating User "testuser"'
     sudo useradd testuser -m -s /bin/bash
     echo "testuser:applesauce"|sudo chpasswd
 fi
+
+
+# Setup Email
+
+/bin/bash /vagrant/ResetMail.sh
+
+
+echo 'Environment has been provisioned'
