@@ -1,16 +1,16 @@
 #!/bin/sh
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
 if [ -n "$TRAVIS" ]; then
 
     echo 'Travis config not yet written'
-    cp -Rp $DIR/resources /resources
+    cp -Rp $TRAVIS_BUILD_DIR/tests/resources /resources
     /bin/bash /resources/Scripts/Provision.sh
 
 else
 
     # Since not in travis, lets load up a system with vagrant
+
+    DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
     cd $DIR/vagrant
 
