@@ -18,11 +18,13 @@ define('TEST_PASSWORD', 'applesauce');
 if(getenv('TRAVIS'))
 {
     define('TESTING_ENVIRONMENT', 'TRAVIS');
-    define('TESTING_SERVER_IP', '127.0.0.1');
+    define('TESTING_SERVER_HOST', '127.0.0.1');
 }else{
     define('TESTING_ENVIRONMENT', 'VAGRANT');
-    define('TESTING_SERVER_IP', '172.31.1.2');
-    exec('/bin/bash ' . __DIR__ . '/SetupEnvironment.sh');
+    define('TESTING_SERVER_HOST', '172.31.1.2');
+    echo 'Initializing Environment using Vagrant' . PHP_EOL;
+    passthru('/bin/bash ' . __DIR__ . '/SetupEnvironment.sh');
+    echo 'Environment Initialized' . PHP_EOL . PHP_EOL . PHP_EOL;
 }
 
 $filename = __DIR__ .'/../vendor/autoload.php';
