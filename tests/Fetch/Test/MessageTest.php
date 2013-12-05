@@ -19,4 +19,9 @@ namespace Fetch\Test;
 class MessageTest extends \PHPUnit_Framework_TestCase
 {
 
+    public function testGetMessageBody()
+    {
+
+    }
+
 }

@@ -18,5 +18,8 @@ namespace Fetch\Test;
  */
 class AttachmentTest extends \PHPUnit_Framework_TestCase
 {
+    public function testGetData()
+    {
 
+    }
 }

@@ -27,14 +27,13 @@ class ServerTest extends \PHPUnit_Framework_TestCase
      */
     public function testFlags($expected, $port, $flags)
     {
-        $host = 'example.com';
-        $server = new Server($host, $port);
+        $server = new Server(TESTING_SERVER_HOST, $port);
     
         foreach ($flags as $flag => $value) {
             $server->setFlag($flag, $value);
         }
     
-        $this->assertEquals(str_replace('%host%', $host, $expected), $server->getServerString());
+        $this->assertEquals(str_replace('%host%', TESTING_SERVER_HOST, $expected), $server->getServerString());
     }
     
     public function flagsDataProvider() {
@@ -54,4 +53,17 @@ class ServerTest extends \PHPUnit_Framework_TestCase
                 array('{%host%:100}', 100, array('user' => 'foo', 'user' => false)),
         );
     }
+
+    public function testConnection()
+    {
+        $server = new Server(TESTING_SERVER_HOST);
+        $server->setAuthentication(TEST_USER, TEST_PASSWORD);
+        $imapSteam = $server->getImapStream();
+
+        #$this->assertInstanceOf('resource', $imapSteam);
+        $this->assertInternalType('resource', $imapSteam);
+    }
+
+
+
 }
