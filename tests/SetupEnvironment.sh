@@ -3,8 +3,8 @@
 if [ -n "$TRAVIS" ]; then
 
     echo 'Travis config not yet written'
-    cp -Rp $TRAVIS_BUILD_DIR/tests/resources /resources
-    /bin/bash /resources/Scripts/Provision.sh
+    sudo cp -Rp $TRAVIS_BUILD_DIR/tests/resources /resources
+    sudo /bin/bash /resources/Scripts/Provision.sh
 
 else
 
