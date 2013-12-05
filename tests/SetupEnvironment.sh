@@ -3,6 +3,7 @@
 if [ -n "$TRAVIS" ]; then
 
     echo 'Travis config not yet written'
+    sudo apt-get update
     sudo cp -Rp $TRAVIS_BUILD_DIR/tests/resources /resources
     sudo /bin/bash /resources/Scripts/Provision.sh
 
