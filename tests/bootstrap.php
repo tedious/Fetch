@@ -13,18 +13,17 @@ define('TESTING', true);
 
 error_reporting(-1);
 
-spl_autoload_register(function($class) {
-    if (0 === strpos($class, 'Fetch\\Test\\')) {
-        $file = __DIR__ . '/../tests/' . str_replace('\\', '/', $class) . '.php';
-        if (file_exists($file)) {
-            require_once $file;
-            return true;
-        }
-    } elseif (0 === strpos($class, 'Fetch\\')) {
-        $file = __DIR__ . '/../src/' . str_replace('\\', '/', $class) . '.php';
-        if (file_exists($file)) {
-            require_once $file;
-            return true;
-        }
-    }
-});
+$filename = __DIR__ .'/../vendor/autoload.php';
+
+if (!file_exists($filename)) {
+    echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" . PHP_EOL;
+    echo " You need to execute `composer install` before running the tests. " . PHP_EOL;
+    echo "         Vendors are required for complete test execution.        " . PHP_EOL;
+    echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" . PHP_EOL . PHP_EOL;
+    $filename = __DIR__ .'/../autoload.php';
+    require_once $filename;
+}else{
+    $loader = require_once $filename;
+    $loader->add('Fetch\\Test', __DIR__);
+}
+

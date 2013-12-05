@@ -9,11 +9,17 @@
  * file that was distributed with this source code.
  */
 
-spl_autoload_register(function($class)
-{
-    $file = __DIR__.'/src/'.strtr($class, '\\', '/').'.php';
+spl_autoload_register(function($class) {
+    $base = '/src/';
+
+    if (strpos($class, 'Fetch\Test') === 0) {
+        $base = '/tests/';
+    }
+
+    $file = __DIR__.$base.strtr($class, '\\', '/').'.php';
     if (file_exists($file)) {
         require $file;
+
         return true;
     }
 });
