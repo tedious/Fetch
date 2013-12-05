@@ -29,7 +29,7 @@ fi
 
 # Setup Email
 
-/bin/bash /vagrant/ResetMail.sh
+/bin/bash /resources/Scripts/ResetMail.sh
 
 
 echo 'Environment has been provisioned'
