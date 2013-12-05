@@ -9,9 +9,21 @@
  * file that was distributed with this source code.
  */
 
-define('TESTING', true);
-
 error_reporting(-1);
+
+define('TESTING', true);
+define('TEST_USER', 'testuser');
+define('TEST_PASSWORD', 'applesauce');
+
+if(getenv('TRAVIS'))
+{
+    define('TESTING_ENVIRONMENT', 'TRAVIS');
+    define('TESTING_SERVER_IP', '127.0.0.1');
+}else{
+    define('TESTING_ENVIRONMENT', 'VAGRANT');
+    define('TESTING_SERVER_IP', '172.31.1.2');
+    exec('/bin/bash ' . __DIR__ . '/SetupEnvironment.sh');
+}
 
 $filename = __DIR__ .'/../vendor/autoload.php';
 
@@ -26,4 +38,3 @@ if (!file_exists($filename)) {
     $loader = require_once $filename;
     $loader->add('Fetch\\Test', __DIR__);
 }
-
