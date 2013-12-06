@@ -82,14 +82,14 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
     public function testNumMessages()
     {
-        $server = $this->getServer();
+        $server = Static::getServer();
         $numMessages = $server->numMessages();
         $this->assertEquals(21, $numMessages);
     }
 
     public function testGetMessages()
     {
-        $server = $this->getServer();
+        $server = Static::getServer();
         $messages = $server->getMessages(5);
 
         $this->assertCount(5, $messages, 'Five messages returned');
@@ -100,7 +100,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
     public function testHasMailBox()
     {
-        $server = $this->getServer();
+        $server = Static::getServer();
 
         $this->assertTrue($server->hasMailBox('Sent'), 'Has mailbox "Sent"');
         $this->assertTrue($server->hasMailBox('Flagged Emails'), 'Has mailbox "Flagged Email"');
@@ -109,16 +109,16 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateMailbox()
     {
-        $server = $this->getServer();
+        $server = Static::getServer();
 
         $this->assertFalse($server->hasMailBox('Cheese'), 'Does not have mailbox "Cheese"');
         $this->assertTrue($server->createMailBox('Cheese'), 'createMailbox returns true.');
         $this->assertTrue($server->hasMailBox('Cheese'), 'Mailbox "Cheese" was created');
     }
-    
 
 
-    public function getServer()
+
+    static public function getServer()
     {
         $server = new Server(TESTING_SERVER_HOST, 143);
         $server->setAuthentication(TEST_USER, TEST_PASSWORD);
