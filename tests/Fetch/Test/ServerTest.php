@@ -54,16 +54,30 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testConnection()
+    /**
+     * @dataProvider connectionDataProvider
+     * @param integer $port to use (needed to test behavior on port 143 and 993 from constructor)
+     * @param array $flags to set/unset ($flag => $value)
+     * @param string $message Assertion message
+     */
+    public function testConnection($port, $flags, $message)
     {
-        $server = new Server(TESTING_SERVER_HOST);
+        $server = new Server(TESTING_SERVER_HOST, $port);
         $server->setAuthentication(TEST_USER, TEST_PASSWORD);
-        $imapSteam = $server->getImapStream();
 
-        #$this->assertInstanceOf('resource', $imapSteam);
-        $this->assertInternalType('resource', $imapSteam);
+        foreach ($flags as $flag => $value) {
+            $server->setFlag($flag, $value);
+        }
+
+        $imapSteam = $server->getImapStream();
+        $this->assertInternalType('resource', $imapSteam, $message);
     }
 
-
+    public function connectionDataProvider() {
+        return array(
+            array(143, array(), 'Connects with default settings.'),
+            array(993, array('novalidate-cert' => true), 'Connects over SSL (self signed).'),
+        );
+    }
 
 }
