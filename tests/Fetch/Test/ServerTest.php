@@ -80,14 +80,6 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testGetRecentMessages()
-    {
-        $server = $this->getServer();
-
-        var_dump($server->getRecentMessages());
-
-    }
-
     public function testNumMessages()
     {
         $server = $this->getServer();
@@ -123,9 +115,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($server->createMailBox('Cheese'), 'createMailbox returns true.');
         $this->assertTrue($server->hasMailBox('Cheese'), 'Mailbox "Cheese" was created');
     }
-
-
-
+    
 
 
     public function getServer()
