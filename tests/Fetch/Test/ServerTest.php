@@ -80,4 +80,58 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testGetRecentMessages()
+    {
+        $server = $this->getServer();
+
+        var_dump($server->getRecentMessages());
+
+    }
+
+    public function testNumMessages()
+    {
+        $server = $this->getServer();
+        $numMessages = $server->numMessages();
+        $this->assertEquals(21, $numMessages);
+    }
+
+    public function testGetMessages()
+    {
+        $server = $this->getServer();
+        $messages = $server->getMessages(5);
+
+        $this->assertCount(5, $messages, 'Five messages returned');
+        foreach($messages as $message) {
+            $this->assertInstanceOf('\Fetch\Message', $message, 'Returned values are Messages');
+        }
+    }
+
+    public function testHasMailBox()
+    {
+        $server = $this->getServer();
+
+        $this->assertTrue($server->hasMailBox('Sent'), 'Has mailbox "Sent"');
+        $this->assertTrue($server->hasMailBox('Flagged Emails'), 'Has mailbox "Flagged Email"');
+        $this->assertFalse($server->hasMailBox('Cheese'), 'Does not have mailbox "Cheese"');
+    }
+
+    public function testCreateMailbox()
+    {
+        $server = $this->getServer();
+
+        $this->assertFalse($server->hasMailBox('Cheese'), 'Does not have mailbox "Cheese"');
+        $this->assertTrue($server->createMailBox('Cheese'), 'createMailbox returns true.');
+        $this->assertTrue($server->hasMailBox('Cheese'), 'Mailbox "Cheese" was created');
+    }
+
+
+
+
+
+    public function getServer()
+    {
+        $server = new Server(TESTING_SERVER_HOST, 143);
+        $server->setAuthentication(TEST_USER, TEST_PASSWORD);
+        return $server;
+    }
 }
