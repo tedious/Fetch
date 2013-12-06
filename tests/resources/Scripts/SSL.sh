@@ -10,8 +10,13 @@ SSL_KEY=/etc/ssl/private/dovecot.pem
 echo "Creating generic self-signed certificate: $SSL_CERT"
 cd /etc/ssl/certs
 PATH=$PATH:/usr/bin/ssl
-FQDN=`hostname -f`
-MAILNAME=`cat /etc/mailname 2> /dev/null || hostname -f`
+
+#FQDN=`hostname -f`
+#MAILNAME=`cat /etc/mailname 2> /dev/null || hostname -f`
+
+FQDN=tedivm.com
+MAILNAME=tedivm.com
+
 (openssl req -new -x509 -days 365 -nodes -out $SSL_CERT -keyout $SSL_KEY > /dev/null 2>&1 <<+
 .
 .
