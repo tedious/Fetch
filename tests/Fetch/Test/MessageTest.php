@@ -120,6 +120,10 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(2, $attachments);
         foreach($attachments as $attachment)
             $this->assertInstanceOf('\Fetch\Attachment', $attachment, 'getAttachments returns Fetch\Attachment objects.');
+
+
+        $attachment = $messageWithAttachments->getAttachments('Test_card.png.zip');
+        $this->assertInstanceOf('\Fetch\Attachment', $attachment, 'getAttachment returns specified Fetch\Attachment object.');
     }
 
     public function testCheckFlag()
