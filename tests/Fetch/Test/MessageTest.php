@@ -64,17 +64,31 @@ class MessageTest extends \PHPUnit_Framework_TestCase
 
     public function testGetAddresses()
     {
+        $message = static::getMessage(3);
 
+        $addresses = $message->getAddresses('to');
+        $this->assertEquals('testuser@tedivm.com', $addresses[0]['address'], 'Retrieving to user from address array.');
+
+        $addressString = $message->getAddresses('to', true);
+        $this->assertEquals('testuser@tedivm.com', $addressString, 'Returning To address as string.');
+
+        $addresses = $message->getAddresses('from');
+        $this->assertEquals('tedivm@tedivm.com', $addresses['address'], 'Returning From address as an address array.');
+
+        $addressString = $message->getAddresses('from', true);
+        $this->assertEquals('tedivm@tedivm.com', $addressString, 'Returning From address as string.');
     }
 
     public function testGetDate()
     {
-
+        $message = static::getMessage(3);
+        $this->assertEquals(1385961243, $message->getDate(), 'Returns date as timestamp.');
     }
 
     public function testGetSubject()
     {
-
+        $message = static::getMessage(3);
+        $this->assertEquals('Welcome', $message->getSubject(), 'Returns Subject.');
     }
 
     public function testDelete()
@@ -84,7 +98,9 @@ class MessageTest extends \PHPUnit_Framework_TestCase
 
     public function testGetImapBox()
     {
-
+        $server = ServerTest::getServer();
+        $message = new \Fetch\Message('3', $server);
+        $this->assertEquals($server, $message->getImapBox(), 'getImapBox returns Server used to create Message.');
     }
 
     public function testGetUid()
@@ -108,12 +124,32 @@ class MessageTest extends \PHPUnit_Framework_TestCase
 
     public function testCheckFlag()
     {
-
+        $message = static::getMessage('3');
+        $this->assertFalse($message->checkFlag('flagged'));
+        $this->assertTrue($message->checkFlag('seen'));
     }
 
     public function testSetFlag()
     {
+        $message = static::getMessage('3');
+        $this->assertFalse($message->checkFlag('answered'), 'Message is not answered.');
 
+        $this->assertTrue($message->setFlag('answered'), 'setFlag returned true.');
+        $this->assertTrue($message->checkFlag('answered'), 'Message was successfully answered.');
+
+        $this->assertTrue($message->setFlag('answered', false), 'setFlag returned true.');
+        $this->assertFalse($message->checkFlag('answered'), 'Message was successfully unanswered.');
+
+
+        $message = static::getMessage('2');
+        $this->assertFalse($message->checkFlag('flagged'), 'Message is not flagged.');
+
+        $this->assertTrue($message->setFlag('flagged'), 'setFlag returned true.');
+        $this->assertTrue($message->checkFlag('flagged'), 'Message was successfully flagged.');
+
+        $message = static::getMessage('2');
+        $this->assertTrue($message->setFlag('flagged', false), 'setFlag returned true.');
+        $this->assertFalse($message->checkFlag('flagged'), 'Message was successfully unflagged.');
     }
 
     public function testMoveToMailbox()
