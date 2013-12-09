@@ -4,7 +4,7 @@ Content-Type: multipart/alternative;
 X-Smtp-Server: mail.tedivm.com:testuser@tedivm.com
 Subject: Inline Attachments
 Message-Id: <23DAADF3-95C6-4E72-BA4B-2DB17DA9EFE5@tedivm.com>
-X-Universally-Unique-Identifier: abfe9e85-d4f3-4bd6-bcbc-37aab5d060f5
+X-Universally-Unique-Identifier: dc5033c7-dc6e-4375-b535-06e6089da11e
 Date: Sun, 1 Dec 2013 21:49:21 -0800
 To: Robert Hafner <tedivm@tedivm.com>
 Mime-Version: 1.0 (Mac OS X Mail 6.6 \(1510\))
@@ -91,8 +91,8 @@ Content-Transfer-Encoding: base64
 Content-Disposition: inline;
 	filename=Test_card.png
 Content-Type: image/png;
-	x-unix-mode=0600;
-	name="Test_card.png"
+	name=Test_card.png;
+	x-unix-mode=0600
 Content-Id: <8530BDFF-B536-4B7A-B358-6E2E69A4336B@hsd1.ca.comcast.net.>
 
 iVBORw0KGgoAAAANSUhEUgAAAoAAAAFoCAYAAADHMkpRAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
@@ -562,8 +562,8 @@ Content-Transfer-Encoding: base64
 Content-Disposition: inline;
 	filename=RCA_Indian_Head_test_pattern.JPG
 Content-Type: image/jpg;
-	x-unix-mode=0600;
-	name="RCA_Indian_Head_test_pattern.JPG"
+	name=RCA_Indian_Head_test_pattern.JPG;
+	x-unix-mode=0600
 Content-Id: <A7958F5E-44AA-4A15-9737-4962C3E80526@hsd1.ca.comcast.net.>
 
 /9j/4AAQSkZJRgABAgEASABIAAD/4SgqRXhpZgAATU0AKgAAAAgABwESAAMAAAABAAEAAAEaAAUA

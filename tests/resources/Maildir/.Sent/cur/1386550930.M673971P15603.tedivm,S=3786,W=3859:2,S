@@ -1,17 +1,17 @@
 From: Test User <testuser@tedivm.com>
 Content-Type: multipart/alternative;
-	boundary="Apple-Mail=_F96B20A9-8CEA-4149-A3F7-33620343B9AD"
+	boundary="Apple-Mail=_2AACDAB7-026D-4FC9-B113-F8490EFB9DA2"
 X-Smtp-Server: mail.tedivm.com:testuser@tedivm.com
-Date: Sun, 1 Dec 2013 21:45:50 -0800
-Subject: With BCC
-X-Universally-Unique-Identifier: e3e7d790-19b3-4c2c-9eb0-75044be8dde6
-Bcc: Robert Hafner <tedium@gmail.com>
+Subject: With CC
+X-Universally-Unique-Identifier: b4585806-ac35-4451-afa7-5b3001c5cb47
+Date: Sun, 1 Dec 2013 21:46:22 -0800
+Message-Id: <A37F82E5-AB34-480C-A2CC-FF6846D1C964@tedivm.com>
+Cc: Robert Hafner <tedium@gmail.com>
 To: Robert Hafner <tedivm@tedivm.com>
-Message-Id: <CFB01138-A038-4009-BD97-D9D0C5D24969@tedivm.com>
 Mime-Version: 1.0 (Mac OS X Mail 6.6 \(1510\))
 
 
---Apple-Mail=_F96B20A9-8CEA-4149-A3F7-33620343B9AD
+--Apple-Mail=_2AACDAB7-026D-4FC9-B113-F8490EFB9DA2
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain;
 	charset=us-ascii
@@ -31,16 +31,21 @@ ut egestas fermentum, diam lacus vehicula felis, eget feugiat velit =
 tortor quis tellus. Aliquam at massa ut purus ultrices molestie et a =
 ligula. Maecenas tempus at tellus quis malesuada.
 
+Nam sagittis rutrum tellus nec volutpat. Fusce ac leo quis dui eleifend =
+scelerisque. In adipiscing pretium sapien at ullamcorper. Sed nec porta =
+leo. Curabitur dapibus commodo rutrum. Nulla in odio elit. Sed id =
+sodales sapien, at fringilla purus. Quisque ut volutpat odio. Curabitur =
+et hendrerit dui, blandit auctor erat.
 
 
---Apple-Mail=_F96B20A9-8CEA-4149-A3F7-33620343B9AD
+
+--Apple-Mail=_2AACDAB7-026D-4FC9-B113-F8490EFB9DA2
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/html;
 	charset=us-ascii
 
 <html><head><meta http-equiv=3D"Content-Type" content=3D"text/html =
-charset=3Dus-ascii"><meta http-equiv=3D"Content-Type" content=3D"text/html=
- charset=3Dus-ascii"></head><body style=3D"word-wrap: break-word; =
+charset=3Dus-ascii"></head><body style=3D"word-wrap: break-word; =
 -webkit-nbsp-mode: space; -webkit-line-break: after-white-space; "><p =
 style=3D"margin: 0px 0px 14px; text-align: justify; font-size: 11px; =
 font-family: Arial; ">Lorem ipsum dolor sit amet, consectetur adipiscing =
@@ -57,6 +62,12 @@ Aenean imperdiet vestibulum blandit. Curabitur nec metus magna. =
 Phasellus imperdiet, orci ut egestas fermentum, diam lacus vehicula =
 felis, eget feugiat velit tortor quis tellus. Aliquam at massa ut purus =
 ultrices molestie et a ligula. Maecenas tempus at tellus quis =
-malesuada.</p><div><br></div></body></html>=
+malesuada.</p><p style=3D"margin: 0px 0px 14px; text-align: justify; =
+font-size: 11px; font-family: Arial; ">Nam sagittis rutrum tellus nec =
+volutpat. Fusce ac leo quis dui eleifend scelerisque. In adipiscing =
+pretium sapien at ullamcorper. Sed nec porta leo. Curabitur dapibus =
+commodo rutrum. Nulla in odio elit. Sed id sodales sapien, at fringilla =
+purus. Quisque ut volutpat odio. Curabitur et hendrerit dui, blandit =
+auctor erat.</p><div><br></div></body></html>=
 
---Apple-Mail=_F96B20A9-8CEA-4149-A3F7-33620343B9AD--
+--Apple-Mail=_2AACDAB7-026D-4FC9-B113-F8490EFB9DA2--

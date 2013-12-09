@@ -4,7 +4,7 @@ Content-Type: multipart/mixed;
 X-Smtp-Server: mail.tedivm.com:testuser@tedivm.com
 Subject: With Attachment
 Message-Id: <53BAE44F-A805-4EC3-B248-CE2B475C9117@tedivm.com>
-X-Universally-Unique-Identifier: 679b296c-7bc9-4c4a-a564-2a931359200c
+X-Universally-Unique-Identifier: f0448cb5-1fcc-4fec-aa13-94138c1a27e7
 Date: Sun, 1 Dec 2013 21:44:47 -0800
 To: Robert Hafner <tedivm@tedivm.com>
 Mime-Version: 1.0 (Mac OS X Mail 6.6 \(1510\))
@@ -21,7 +21,7 @@ See Attached
 Content-Disposition: attachment;
 	filename=Test_card.png.zip
 Content-Type: application/zip;
-	name="Test_card.png.zip"
+	name=Test_card.png.zip
 Content-Transfer-Encoding: base64
 
 UEsDBBQACAAIAB2sgUMAAAAAAAAAAAAAAAANABAAVGVzdF9jYXJkLnBuZ1VYDAAkHpxSihucUvUB
