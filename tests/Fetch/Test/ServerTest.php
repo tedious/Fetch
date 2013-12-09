@@ -84,7 +84,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     {
         $server = Static::getServer();
         $numMessages = $server->numMessages();
-        $this->assertEquals(21, $numMessages);
+        $this->assertEquals(11, $numMessages);
     }
 
     public function testGetMessages()
@@ -103,7 +103,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $server = Static::getServer();
 
         $this->assertTrue($server->hasMailBox('Sent'), 'Has mailbox "Sent"');
-        $this->assertTrue($server->hasMailBox('Flagged Emails'), 'Has mailbox "Flagged Email"');
+        $this->assertTrue($server->hasMailBox('Flagged Email'), 'Has mailbox "Flagged Email"');
         $this->assertFalse($server->hasMailBox('Cheese'), 'Does not have mailbox "Cheese"');
     }
 
