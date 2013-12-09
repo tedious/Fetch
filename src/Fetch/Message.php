@@ -618,7 +618,7 @@ class Message
      */
     public function checkFlag($flag = 'flagged')
     {
-        return (isset($this->status[$flag]) && $this->status[$flag] == true);
+        return (isset($this->status[$flag]) && $this->status[$flag] === true);
     }
 
     /**
@@ -634,12 +634,14 @@ class Message
         if (!in_array($flag, self::$flagTypes) || $flag == 'recent')
             throw new \InvalidArgumentException('Unable to set invalid flag "' . $flag . '"');
 
-        $flag = '\\' . ucfirst($flag);
+        $imapifiedFlag = '\\' . ucfirst($flag);
 
-        if ($enable) {
-            return imap_setflag_full($this->imapStream, $this->uid, $flag, ST_UID);
+        if ($enable === true) {
+            $this->status[$flag] = true;
+            return imap_setflag_full($this->imapStream, $this->uid, $imapifiedFlag, ST_UID);
         } else {
-            return imap_clearflag_full($this->imapStream, $this->uid, $flag, ST_UID);
+            unset($this->status[$flag]);
+            return imap_clearflag_full($this->imapStream, $this->uid, $imapifiedFlag, ST_UID);
         }
     }
 
