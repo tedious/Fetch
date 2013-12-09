@@ -33,12 +33,23 @@ class MessageTest extends \PHPUnit_Framework_TestCase
 
     public function testGetOverview()
     {
-
+        $message = static::getMessage(3);
+        $overview = $message->getOverview();
+        $this->assertEquals('Welcome', $overview->subject, 'Subject');
+        $this->assertEquals('tedivm@tedivm.com', $overview->from, 'From');
+        $this->assertEquals('testuser@tedivm.com', $overview->to, 'To');
+        $this->assertEquals(1465, $overview->size, 'Size');
+        $this->assertEquals(0, $overview->flagged, 'Flagged');
+        $this->assertEquals(1, $overview->seen, 'Seen');
     }
 
     public function testGetHeaders()
     {
-
+        $message = static::getMessage(3);
+        $headers = $message->getHeaders();
+        $this->assertEquals('Sun,  1 Dec 2013 21:14:03 -0800 (PST)', $headers->date, 'Headers contain the right date.');
+        $this->assertEquals('testuser@tedivm.com', $headers->toaddress, 'Headers contain toaddress.');
+        $this->assertEquals('tedivm@tedivm.com', $headers->fromaddress, 'Headers contain fromaddress');
     }
 
     public function testGetStructure()
@@ -113,7 +124,13 @@ class MessageTest extends \PHPUnit_Framework_TestCase
 
     public function testDecode()
     {
+        $testString = 'This is a test string';
 
+        $quotedPrintable = quoted_printable_encode($testString);
+        $this->assertEquals($testString, Message::decode($quotedPrintable, 'quoted-printable'), 'Decodes quoted printable');
+
+        $base64 = base64_encode($testString);
+        $this->assertEquals($testString, Message::decode($base64, 'base64'), 'Decodes quoted base64');
     }
 
     public function testTypeIdToString()
