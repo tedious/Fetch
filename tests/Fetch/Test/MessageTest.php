@@ -35,12 +35,12 @@ class MessageTest extends \PHPUnit_Framework_TestCase
     {
         $message = static::getMessage(3);
         $overview = $message->getOverview();
-        $this->assertEquals('Welcome', $overview->subject, 'Subject');
-        $this->assertEquals('tedivm@tedivm.com', $overview->from, 'From');
-        $this->assertEquals('testuser@tedivm.com', $overview->to, 'To');
-        $this->assertEquals(1465, $overview->size, 'Size');
-        $this->assertEquals(0, $overview->flagged, 'Flagged');
-        $this->assertEquals(1, $overview->seen, 'Seen');
+        $this->assertEquals('Welcome', $overview->subject, 'Subject available from overview');
+        $this->assertEquals('tedivm@tedivm.com', $overview->from, 'From available from overview');
+        $this->assertEquals('testuser@tedivm.com', $overview->to, 'To available from overview');
+        $this->assertEquals(1465, $overview->size, 'Size available from overview');
+        $this->assertEquals(0, $overview->flagged, 'Flagged available from overview');
+        $this->assertEquals(1, $overview->seen, 'Seen available from overview');
     }
 
     public function testGetHeaders()
@@ -59,6 +59,22 @@ class MessageTest extends \PHPUnit_Framework_TestCase
 
     public function testGetMessageBody()
     {
+        // easiest way to deal with php encoding issues is simply not to.
+        $plaintextTest = 'f9377a89c9c935463a2b35c92dd61042';
+        $convertedHtmlTest = '11498bcf191900d634ff8772a64ca523';
+        $pureHtmlTest = '6a366ddecf080199284146d991d52169';
+
+        $message = static::getMessage(3);
+        $messageNonHTML = $message->getMessageBody();
+        $this->assertEquals($plaintextTest, md5($messageNonHTML), 'Message returns as plaintext.');
+
+
+        $messageHTML = $message->getMessageBody(true);
+        $this->assertEquals($convertedHtmlTest, md5($messageHTML), 'Message converts from plaintext to HTML when requested.');
+
+        $message = static::getMessage(4);
+        $messageHTML = $message->getMessageBody(true);
+        $this->assertEquals($pureHtmlTest, md5($messageHTML), 'Message returns as HTML.');
 
     }
 
