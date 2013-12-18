@@ -12,6 +12,7 @@ else
     sudo touch /etc/dovecot/local.conf
     sudo echo 'mail_location = maildir:/home/%u/Maildir' >> /etc/dovecot/local.conf
     sudo echo 'disable_plaintext_auth = no' >> /etc/dovecot/local.conf
+    sudo echo 'mail_max_userip_connections = 10000' >> /etc/dovecot/local.conf
     sudo restart dovecot
 fi
 
