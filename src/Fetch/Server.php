@@ -54,7 +54,7 @@ class Server
      *
      * @var string
      */
-    protected $mailbox;
+    protected $mailbox = '';
 
     /**
      * This is the username used to connect to the server.
@@ -151,13 +151,19 @@ class Server
      * This function sets the mailbox to connect to.
      *
      * @param string $mailbox
+     * @return bool
      */
     public function setMailBox($mailbox = '')
     {
+        if(!$this->hasMailBox($mailbox))
+            return false;
+
         $this->mailbox = $mailbox;
         if (isset($this->imapStream)) {
             $this->setImapStream();
         }
+
+        return true;
     }
 
     public function getMailBox()
@@ -364,6 +370,17 @@ class Server
 
         return $messages;
     }
+
+    public function getMessageByUid($uid)
+    {
+        try {
+            $message = new \Fetch\Message($uid, $this);
+            return $message;
+        }catch(\Exception $e){
+            return false;
+        }
+    }
+
 
     /**
      * This function removes all of the messages flagged for deletion from the mailbox.
