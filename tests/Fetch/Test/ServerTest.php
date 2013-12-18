@@ -98,6 +98,30 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    public function testGetMailBox()
+    {
+        $server = Static::getServer();
+        $this->assertEquals('', $server->getMailBox());
+        $this->assertTrue($server->setMailBox('Sent'));
+        $this->assertEquals('Sent', $server->getMailBox());
+    }
+
+    public function testSetMailBox()
+    {
+        $server = Static::getServer();
+
+        $this->assertTrue($server->setMailBox('Sent'));
+        $this->assertEquals('Sent', $server->getMailBox());
+
+        $this->assertTrue($server->setMailBox('Flagged Email'));
+        $this->assertEquals('Flagged Email', $server->getMailBox());
+
+        $this->assertFalse($server->setMailBox('Cheese'));
+
+        $this->assertTrue($server->setMailBox(''));
+        $this->assertEquals('', $server->getMailBox());
+    }
+
     public function testHasMailBox()
     {
         $server = Static::getServer();
@@ -117,6 +141,21 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     }
 
 
+    public function testExpunge()
+    {
+        $server = Static::getServer();
+        $message = $server->getMessageByUid(12);
+
+        $this->assertInstanceOf('\Fetch\Message', $message, 'Message exists');
+
+        $message->delete();
+
+        $this->assertInstanceOf('\Fetch\Message', $server->getMessageByUid(12), 'Message still present after being deleted but before being expunged.');
+
+        $server->expunge();
+
+        $this->assertFalse($server->getMessageByUid(12), 'Message successfully expunged');
+    }
 
     static public function getServer()
     {
