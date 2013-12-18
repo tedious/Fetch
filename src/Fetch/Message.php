@@ -175,7 +175,8 @@ class Message
         $this->imapConnection = $mailbox;
         $this->uid            = $messageUniqueId;
         $this->imapStream     = $this->imapConnection->getImapStream();
-        $this->loadMessage();
+        if($this->loadMessage() !== true)
+            throw new \RuntimeException('Message with ID ' . $messageUniqueId . ' not found.');
     }
 
     /**
@@ -188,7 +189,8 @@ class Message
 
         /* First load the message overview information */
 
-        $messageOverview = $this->getOverview();
+        if(!is_object($messageOverview = $this->getOverview()))
+            return false;
 
         $this->subject = $messageOverview->subject;
         $this->date    = strtotime($messageOverview->date);
@@ -225,6 +227,8 @@ class Message
             foreach ($structure->parts as $id => $part)
                 $this->processStructure($part, $id + 1);
         }
+
+        return true;
     }
 
     /**
