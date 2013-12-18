@@ -371,6 +371,12 @@ class Server
         return $messages;
     }
 
+    /**
+     * Returns the requested email or false if it is not found.
+     *
+     * @param  int  $uid
+     * @return Message|bool
+     */
     public function getMessageByUid($uid)
     {
         try {
