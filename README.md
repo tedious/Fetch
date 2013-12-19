@@ -44,7 +44,6 @@ This is just a simple code to show how to access messages by using Fetch. It use
 own autoload, but it can (and should be, if applicable) replaced with the one generated
 by composer.
 
-    require 'autoload.php';
 
     $server = new \Fetch\Server('imap.example.com', 993);
     $server->setAuthentication('dummy', 'dummy');
