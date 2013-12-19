@@ -17,4 +17,10 @@
             <directory>./tests</directory>
         </testsuite>
     </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory suffix=".php">./src/Fetch/</directory>
+        </whitelist>
+    </filter>
 </phpunit>

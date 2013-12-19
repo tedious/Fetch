@@ -1,0 +1,53 @@
+Return-Path: <tedium@gmail.com>
+Delivered-To: testuser@tedivm.com
+Received: from localhost (localhost [127.0.0.1])
+	by figment.tedivm.com (Postfix) with ESMTP id 3234B45C3D
+	for <testuser@tedivm.com>; Sun,  1 Dec 2013 21:52:09 -0800 (PST)
+X-Virus-Scanned: Debian amavisd-new at debian
+Authentication-Results: figment.tedivm.com (amavisd-new); dkim=pass
+	header.i=@gmail.com
+Received: from figment.tedivm.com ([127.0.0.1])
+	by localhost (figment.tedivm.com [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id qdrzzT5oWuT4 for <testuser@tedivm.com>;
+	Sun,  1 Dec 2013 21:52:04 -0800 (PST)
+X-Original-Helo: mail-ob0-f178.google.com (iRedMail: http://www.iredmail.org/)
+Received: from mail-ob0-f178.google.com (mail-ob0-f178.google.com [209.85.214.178])
+	by figment.tedivm.com (Postfix) with ESMTPS id 4760745C3C
+	for <testuser@tedivm.com>; Sun,  1 Dec 2013 21:52:04 -0800 (PST)
+Received: by mail-ob0-f178.google.com with SMTP id uz6so12097880obc.23
+        for <testuser@tedivm.com>; Sun, 01 Dec 2013 21:52:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=date:from:to:message-id:subject:mime-version:content-type
+         :content-transfer-encoding:content-disposition:precedence
+         :auto-submitted;
+        bh=V9LLk5uXxik153Geg97TS97IUCCXsC6gYlIT1EMicpM=;
+        b=Byn/bkvKts1oQ2uGkDJwVypVNQPCqzlkKvNF4pkgPxH2j8s7VEU1q/0DOB9oMp4Yo6
+         dgtbYJDQ/q9tTTASYDNsenVE7pVVWhoDuJL0QxrJMD6sbQnaIOTWVE3neriibCnMm29U
+         22Js6DsVyHcy2cHHBR6HfDRDk2sAGGw+Wy2IlGpteAtVUt9PJkZIqUH4+7yzhDzZt19j
+         59B7fRkO68nb+Hcd+cR3/ueAa+WLt6FTbLez257L1WC137r6Dx2htPxixTe+IC4C78uY
+         C9otr3n+dARRReFZoagnwVfvYGw01rFLgWXPslITk1LkBsWvmHFh4Wn5nnVEBS57C3/l
+         QoZw==
+X-Received: by 10.182.48.130 with SMTP id l2mr475966obn.44.1385963187161;
+        Sun, 01 Dec 2013 21:46:27 -0800 (PST)
+Date: Sun, 1 Dec 2013 21:46:27 -0800
+From: "Robert Hafner" <tedium@gmail.com>
+To: testuser@tedivm.com
+Message-ID: <CAPDyTe3ZfE8jAuVTWHmf-sJQ6NYBrAUWrq-Fb6MKMtN4fYX-nw@mail.gmail.com>
+Subject: Are you looking for tedivm? Re: With CC
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Precedence: bulk
+X-Autoreply: yes
+Auto-Submitted: auto-replied
+
+Sorry guys, this address is not my official or used address- it's
+purely a spam box that I never log into. This is just an autoresponder
+to let you know this, and I have no idea what you sent me.
+
+If you're looking to get ahold of me please email tedivm at tedivm dot
+com, and I will get back to you shortly.
+
+Robert

@@ -1,0 +1,32 @@
+Return-Path: <tedivm@tedivm.com>
+Delivered-To: testuser@tedivm.com
+Received: from localhost (localhost [127.0.0.1])
+	by figment.tedivm.com (Postfix) with ESMTP id 8417145C3D
+	for <testuser@tedivm.com>; Sun,  1 Dec 2013 21:14:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tedivm.com; h=
+	date:date:message-id:content-transfer-encoding:content-type
+	:content-type:mime-version:subject:subject:from:from:to; s=dkim;
+	 t=1385961243; x=1386825243; bh=QgJIMkj7bcmiv3bFFw8uU+eTOPQz1gHS
+	N7Nj+L6bx8g=; b=GuTY5kb9H94vznAlWR9nWAim2OpRggs0FFrd2/yN1yAdplvJ
+	QJonQcfFy6uRxpMsLvGv90Wo6i4sa5Ip9eJQvQH/d1MHq7v8w6C8l5d+lKibZjvS
+	DVWYlf33p6uFZKalSzaDDZ1br68p+lwq5HBf+AM46u19YV7dZkGh88Ybhk8=
+X-Virus-Scanned: Debian amavisd-new at debian
+Received: from figment.tedivm.com ([127.0.0.1])
+	by localhost (figment.tedivm.com [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id nXUvF67V6TIK for <testuser@tedivm.com>;
+	Sun,  1 Dec 2013 21:14:03 -0800 (PST)
+Received: from figment.tedivm.com (localhost [127.0.0.1])
+	by figment.tedivm.com (Postfix) with ESMTP id 4108C45C3C
+	for <testuser@tedivm.com>; Sun,  1 Dec 2013 21:14:03 -0800 (PST)
+To: testuser@tedivm.com
+From: tedivm@tedivm.com
+Subject: Welcome
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Message-Id: <20131202051403.4108C45C3C@figment.tedivm.com>
+Date: Sun,  1 Dec 2013 21:14:03 -0800 (PST)
+
+Hi,
+
+Welcome to your new account.

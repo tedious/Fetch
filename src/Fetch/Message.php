@@ -156,11 +156,19 @@ class Message
     protected $attachments = array();
 
     /**
+     * Contains the mailbox that the message resides in.
+     *
+     * @var string
+     */
+    protected $mailbox;
+
+    /**
      * This value defines the encoding we want the email message to use.
      *
      * @var string
      */
     public static $charset = 'UTF-8//TRANSLIT';
+
 
     /**
      * This constructor takes in the uid for the message and the Imap class representing the mailbox the
@@ -170,12 +178,14 @@ class Message
      * @param int    $messageUniqueId
      * @param Server $mailbox
      */
-    public function __construct($messageUniqueId, Server $mailbox)
+    public function __construct($messageUniqueId, Server $connection)
     {
-        $this->imapConnection = $mailbox;
+        $this->imapConnection = $connection;
+        $this->mailbox        = $connection->getMailBox();
         $this->uid            = $messageUniqueId;
         $this->imapStream     = $this->imapConnection->getImapStream();
-        $this->loadMessage();
+        if($this->loadMessage() !== true)
+            throw new \RuntimeException('Message with ID ' . $messageUniqueId . ' not found.');
     }
 
     /**
@@ -188,7 +198,8 @@ class Message
 
         /* First load the message overview information */
 
-        $messageOverview = $this->getOverview();
+        if(!is_object($messageOverview = $this->getOverview()))
+            return false;
 
         $this->subject = $messageOverview->subject;
         $this->date    = strtotime($messageOverview->date);
@@ -225,6 +236,8 @@ class Message
             foreach ($structure->parts as $id => $part)
                 $this->processStructure($part, $id + 1);
         }
+
+        return true;
     }
 
     /**
@@ -618,7 +631,7 @@ class Message
      */
     public function checkFlag($flag = 'flagged')
     {
-        return (isset($this->status[$flag]) && $this->status[$flag] == true);
+        return (isset($this->status[$flag]) && $this->status[$flag] === true);
     }
 
     /**
@@ -634,12 +647,14 @@ class Message
         if (!in_array($flag, self::$flagTypes) || $flag == 'recent')
             throw new \InvalidArgumentException('Unable to set invalid flag "' . $flag . '"');
 
-        $flag = '\\' . ucfirst($flag);
+        $imapifiedFlag = '\\' . ucfirst($flag);
 
-        if ($enable) {
-            return imap_setflag_full($this->imapStream, $this->uid, $flag, ST_UID);
+        if ($enable === true) {
+            $this->status[$flag] = true;
+            return imap_setflag_full($this->imapStream, $this->uid, $imapifiedFlag, ST_UID);
         } else {
-            return imap_clearflag_full($this->imapStream, $this->uid, $flag, ST_UID);
+            unset($this->status[$flag]);
+            return imap_clearflag_full($this->imapStream, $this->uid, $imapifiedFlag, ST_UID);
         }
     }
 
@@ -652,8 +667,15 @@ class Message
      */
     public function moveToMailBox($mailbox)
     {
+        $currentBox = $this->imapConnection->getMailBox();
+        $this->imapConnection->setMailBox($this->mailbox);
+
         $returnValue = imap_mail_copy($this->imapStream, $this->uid, $mailbox, CP_UID | CP_MOVE);
         imap_expunge($this->imapStream);
+
+        $this->mailbox = $mailbox;
+
+        $this->imapConnection->setMailBox($currentBox);
 
         return $returnValue;
     }

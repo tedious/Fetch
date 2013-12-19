@@ -27,14 +27,24 @@ class ServerTest extends \PHPUnit_Framework_TestCase
      */
     public function testFlags($expected, $port, $flags)
     {
-        $host = 'example.com';
-        $server = new Server($host, $port);
+        $server = new Server(TESTING_SERVER_HOST, $port);
     
         foreach ($flags as $flag => $value) {
             $server->setFlag($flag, $value);
         }
     
-        $this->assertEquals(str_replace('%host%', $host, $expected), $server->getServerString());
+        $this->assertEquals(str_replace('%host%', TESTING_SERVER_HOST, $expected), $server->getServerString());
+    }
+
+    public function testFlagOverwrite()
+    {
+        $server = Static::getServer();
+
+        $server->setFlag('TestFlag', 'true');
+        $this->assertAttributeContains('TestFlag=true', 'flags', $server);
+
+        $server->setFlag('TestFlag', 'false');
+        $this->assertAttributeContains('TestFlag=false', 'flags', $server);
     }
     
     public function flagsDataProvider() {
@@ -53,5 +63,132 @@ class ServerTest extends \PHPUnit_Framework_TestCase
                 array('{%host%:100/user=bar}', 100, array('user' => 'foo', 'user' => 'bar')),
                 array('{%host%:100}', 100, array('user' => 'foo', 'user' => false)),
         );
+    }
+
+    /**
+     * @dataProvider connectionDataProvider
+     * @param integer $port to use (needed to test behavior on port 143 and 993 from constructor)
+     * @param array $flags to set/unset ($flag => $value)
+     * @param string $message Assertion message
+     */
+    public function testConnection($port, $flags, $message)
+    {
+        $server = new Server(TESTING_SERVER_HOST, $port);
+        $server->setAuthentication(TEST_USER, TEST_PASSWORD);
+
+        foreach ($flags as $flag => $value) {
+            $server->setFlag($flag, $value);
+        }
+
+        $imapSteam = $server->getImapStream();
+        $this->assertInternalType('resource', $imapSteam, $message);
+    }
+
+    public function connectionDataProvider() {
+        return array(
+            array(143, array(), 'Connects with default settings.'),
+            array(993, array('novalidate-cert' => true), 'Connects over SSL (self signed).'),
+        );
+    }
+
+    public function testNumMessages()
+    {
+        $server = Static::getServer();
+        $numMessages = $server->numMessages();
+        $this->assertEquals(11, $numMessages);
+    }
+
+    public function testGetMessages()
+    {
+        $server = Static::getServer();
+        $messages = $server->getMessages(5);
+
+        $this->assertCount(5, $messages, 'Five messages returned');
+        foreach($messages as $message) {
+            $this->assertInstanceOf('\Fetch\Message', $message, 'Returned values are Messages');
+        }
+    }
+
+    public function testGetMailBox()
+    {
+        $server = Static::getServer();
+        $this->assertEquals('', $server->getMailBox());
+        $this->assertTrue($server->setMailBox('Sent'));
+        $this->assertEquals('Sent', $server->getMailBox());
+    }
+
+    public function testSetMailBox()
+    {
+        $server = Static::getServer();
+
+        $this->assertTrue($server->setMailBox('Sent'));
+        $this->assertEquals('Sent', $server->getMailBox());
+
+        $this->assertTrue($server->setMailBox('Flagged Email'));
+        $this->assertEquals('Flagged Email', $server->getMailBox());
+
+        $this->assertFalse($server->setMailBox('Cheese'));
+
+        $this->assertTrue($server->setMailBox(''));
+        $this->assertEquals('', $server->getMailBox());
+    }
+
+    public function testHasMailBox()
+    {
+        $server = Static::getServer();
+
+        $this->assertTrue($server->hasMailBox('Sent'), 'Has mailbox "Sent"');
+        $this->assertTrue($server->hasMailBox('Flagged Email'), 'Has mailbox "Flagged Email"');
+        $this->assertFalse($server->hasMailBox('Cheese'), 'Does not have mailbox "Cheese"');
+    }
+
+    public function testCreateMailbox()
+    {
+        $server = Static::getServer();
+
+        $this->assertFalse($server->hasMailBox('Cheese'), 'Does not have mailbox "Cheese"');
+        $this->assertTrue($server->createMailBox('Cheese'), 'createMailbox returns true.');
+        $this->assertTrue($server->hasMailBox('Cheese'), 'Mailbox "Cheese" was created');
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     */
+    public function testSetOptionsException()
+    {
+        $server = Static::getServer();
+        $server->setOptions('purple');
+    }
+
+
+    public function testSetOptions()
+    {
+        $server = Static::getServer();
+        $server->setOptions(5);
+        $this->assertAttributeEquals(5, 'options', $server);
+    }
+
+
+    public function testExpunge()
+    {
+        $server = Static::getServer();
+        $message = $server->getMessageByUid(12);
+
+        $this->assertInstanceOf('\Fetch\Message', $message, 'Message exists');
+
+        $message->delete();
+
+        $this->assertInstanceOf('\Fetch\Message', $server->getMessageByUid(12), 'Message still present after being deleted but before being expunged.');
+
+        $server->expunge();
+
+        $this->assertFalse($server->getMessageByUid(12), 'Message successfully expunged');
+    }
+
+    static public function getServer()
+    {
+        $server = new Server(TESTING_SERVER_HOST, 143);
+        $server->setAuthentication(TEST_USER, TEST_PASSWORD);
+        return $server;
     }
 }
