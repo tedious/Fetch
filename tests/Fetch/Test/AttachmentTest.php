@@ -95,10 +95,21 @@ class AttachmentTest extends \PHPUnit_Framework_TestCase
         $tmpdir = rtrim(sys_get_temp_dir(), '/') . '/';
         $filepath = $tmpdir . 'RCA_Indian_Head_test_pattern.JPG.zip';
 
-        $attachment_RCA->saveToDirectory($tmpdir);
+        $this->assertTrue($attachment_RCA->saveToDirectory($tmpdir));
 
         $this->assertFileExists($filepath);
         $this->assertEquals(md5(file_get_contents($filepath)), md5($attachment_RCA->getData()));
+
+
+        $attachments = static::getAttachments('6');
+        $attachment_RCA = $attachments['RCA_Indian_Head_test_pattern.JPG.zip'];
+        $this->assertFalse($attachment_RCA->saveToDirectory('/'), 'Returns false when attempting to save without filesystem permission.');
+
+
+
+        $attachments = static::getAttachments('6');
+        $attachment_RCA = $attachments['RCA_Indian_Head_test_pattern.JPG.zip'];
+        $this->assertFalse($attachment_RCA->saveToDirectory($filepath), 'Returns false when attempting to save over a file.');
     }
 
 

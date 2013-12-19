@@ -35,6 +35,17 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     
         $this->assertEquals(str_replace('%host%', TESTING_SERVER_HOST, $expected), $server->getServerString());
     }
+
+    public function testFlagOverwrite()
+    {
+        $server = Static::getServer();
+
+        $server->setFlag('TestFlag', 'true');
+        $this->assertAttributeContains('TestFlag=true', 'flags', $server);
+
+        $server->setFlag('TestFlag', 'false');
+        $this->assertAttributeContains('TestFlag=false', 'flags', $server);
+    }
     
     public function flagsDataProvider() {
         return array(
@@ -138,6 +149,23 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($server->hasMailBox('Cheese'), 'Does not have mailbox "Cheese"');
         $this->assertTrue($server->createMailBox('Cheese'), 'createMailbox returns true.');
         $this->assertTrue($server->hasMailBox('Cheese'), 'Mailbox "Cheese" was created');
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     */
+    public function testSetOptionsException()
+    {
+        $server = Static::getServer();
+        $server->setOptions('purple');
+    }
+
+
+    public function testSetOptions()
+    {
+        $server = Static::getServer();
+        $server->setOptions(5);
+        $this->assertAttributeEquals(5, 'options', $server);
     }
 
 
