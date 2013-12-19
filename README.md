@@ -1,28 +1,44 @@
-Fetch
-=====
+# Fetch [![Build Status](https://travis-ci.org/tedivm/Fetch.png?branch=master)](https://travis-ci.org/tedivm/Fetch)
+
+[![Latest Stable Version](https://poser.pugx.org/tedivm/fetch/v/stable.png)](https://packagist.org/packages/tedivm/fetch)
+[![Total Downloads](https://poser.pugx.org/tedivm/fetch/downloads.png)](https://packagist.org/packages/tedivm/fetch)
 
 Fetch is a library for reading email and attachments, primarily using the POP 
 and IMAP protocols.
 
-Fetch was part of a large project, Mortar, which is hosted on Google Code. It is
-currently being migrated over to Github, as well as being updated to support
-modern php features. While the project is in flux I encourage you to try it out,
-but be careful about using it in a production environment without proper
-testing.
 
-Installation
-============
+## Installing
 
-The most easy way to install the library is via composer. To do so, you have to do
-the following:
+### Composer
 
-    php composer.phar require tedivm/fetch
+Installing Fetch can be done through a variety of methods, although Composer is
+recommended.
 
-Composer will then ask you which version you want to install. Until there are stable
-versions, by using "@dev" it'll install the latest version.
+Until Fetch reaches a stable API with version 1.0 it is recommended that you
+review changes before even Minor updates, although bug fixes will always be
+backwards compatible.
 
-Sample Usage
-============
+```
+"require": {
+  "tedivm/fetch": "0.5.*"
+}
+```
+
+### Pear
+
+Fetch is also available through Pear.
+
+```
+$ pear channel-discover pear.tedivm.com
+$ pear install tedivm/Fetch
+```
+
+### Github
+
+Releases of Stash are available on [Github](https://github.com/tedivm/Fetch/releases).
+
+
+## Sample Usage
 
 This is just a simple code to show how to access messages by using Fetch. It uses Fetch
 own autoload, but it can (and should be, if applicable) replaced with the one generated
@@ -39,3 +55,8 @@ by composer.
     foreach ($messages as $message) {
         echo "Subject: {$message->getSubject()}\nBody: {$message->getMessageBody()}\n";
     }
+
+
+## License
+
+Fetch is licensed under the BSD License. See the LICENSE file for details.
