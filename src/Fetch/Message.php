@@ -156,11 +156,19 @@ class Message
     protected $attachments = array();
 
     /**
+     * Contains the mailbox that the message resides in.
+     *
+     * @var string
+     */
+    protected $mailbox;
+
+    /**
      * This value defines the encoding we want the email message to use.
      *
      * @var string
      */
     public static $charset = 'UTF-8//TRANSLIT';
+
 
     /**
      * This constructor takes in the uid for the message and the Imap class representing the mailbox the
@@ -170,9 +178,10 @@ class Message
      * @param int    $messageUniqueId
      * @param Server $mailbox
      */
-    public function __construct($messageUniqueId, Server $mailbox)
+    public function __construct($messageUniqueId, Server $connection)
     {
-        $this->imapConnection = $mailbox;
+        $this->imapConnection = $connection;
+        $this->mailbox        = $connection->getMailBox();
         $this->uid            = $messageUniqueId;
         $this->imapStream     = $this->imapConnection->getImapStream();
         if($this->loadMessage() !== true)
@@ -658,8 +667,15 @@ class Message
      */
     public function moveToMailBox($mailbox)
     {
+        $currentBox = $this->imapConnection->getMailBox();
+        $this->imapConnection->setMailBox($this->mailbox);
+
         $returnValue = imap_mail_copy($this->imapStream, $this->uid, $mailbox, CP_UID | CP_MOVE);
         imap_expunge($this->imapStream);
+
+        $this->mailbox = $mailbox;
+
+        $this->imapConnection->setMailBox($currentBox);
 
         return $returnValue;
     }
