@@ -219,7 +219,7 @@ class Server
     public function setOptions($bitmask = 0)
     {
         if (!is_numeric($bitmask))
-            throw new \Exception();
+            throw new \RuntimeException('Function requires numeric argument.');
 
         $this->options = $bitmask;
     }
