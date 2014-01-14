@@ -35,7 +35,7 @@ $ pear install tedivm/Fetch
 
 ### Github
 
-Releases of Stash are available on [Github](https://github.com/tedivm/Fetch/releases).
+Releases of Fetch are available on [Github](https://github.com/tedivm/Fetch/releases).
 
 
 ## Sample Usage
