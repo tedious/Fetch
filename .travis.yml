@@ -7,7 +7,7 @@ php:
 
 before_script:
     - composer install --dev
-    - vendor/tests/SetupEnvironment.sh
+    - vendor/tedivm/dovecottesting/SetupEnvironment.sh
 
 
 script: phpunit --verbose --coverage-text
