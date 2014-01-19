@@ -23,7 +23,7 @@ if(getenv('TRAVIS'))
     define('TESTING_ENVIRONMENT', 'VAGRANT');
     define('TESTING_SERVER_HOST', '172.31.1.2');
     echo 'Initializing Environment using Vagrant' . PHP_EOL;
-    passthru('/bin/bash ' . __DIR__ . '/SetupEnvironment.sh');
+    passthru('/bin/bash ' . __DIR__ . '/vendor/tedivm/dovecottesting/SetupEnvironment.sh');
     echo 'Environment Initialized' . PHP_EOL . PHP_EOL . PHP_EOL;
 }
 
