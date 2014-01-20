@@ -6,7 +6,8 @@ php:
     - 5.5
 
 before_script:
-    - tests/SetupEnvironment.sh
     - composer install --dev
+    - vendor/tedivm/dovecottesting/SetupEnvironment.sh
+
 
 script: phpunit --verbose --coverage-text
