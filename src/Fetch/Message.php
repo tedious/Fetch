@@ -201,7 +201,7 @@ class Message
         if(!is_object($messageOverview = $this->getOverview()))
             return false;
 
-        $this->subject = $messageOverview->subject;
+        $this->subject = imap_utf8($messageOverview->subject);
         $this->date    = strtotime($messageOverview->date);
         $this->size    = $messageOverview->size;
 
