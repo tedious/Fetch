@@ -14,15 +14,16 @@ error_reporting(-1);
 define('TESTING', true);
 define('TEST_USER', 'testuser');
 define('TEST_PASSWORD', 'applesauce');
-define('TESTING_SERVER_HOST', '172.31.1.2');
 
 date_default_timezone_set('UTC');
 
 if(getenv('TRAVIS'))
 {
     define('TESTING_ENVIRONMENT', 'TRAVIS');
+    define('TESTING_SERVER_HOST', '127.0.0.1');
 }else{
     define('TESTING_ENVIRONMENT', 'VAGRANT');
+    define('TESTING_SERVER_HOST', '172.31.1.2');
     echo 'Initializing Environment using Vagrant' . PHP_EOL;
     passthru('/bin/bash ' . __DIR__ . '/../vendor/tedivm/dovecottesting/SetupEnvironment.sh');
     echo 'Environment Initialized' . PHP_EOL . PHP_EOL . PHP_EOL;
