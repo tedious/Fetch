@@ -392,7 +392,19 @@ class Message
      */
     public function getSubject()
     {
-        return isset($this->subject) ? $this->subject : null;
+        if (isset($this->subject)) {
+            $decoded = imap_mime_header_decode($this->subject);
+
+            $this->subject = '';
+
+            for ($i=0; $i<count($decoded); $i++) {
+                $this->subject .= $decoded[$i]->text;
+            }
+
+            return $this->subject;
+        }
+
+        return null;
     }
 
     /**
