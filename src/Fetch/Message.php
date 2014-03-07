@@ -571,8 +571,10 @@ class Message
             foreach ($addresses as $address) {
                 $currentAddress            = array();
                 $currentAddress['address'] = $address->mailbox . '@' . $address->host;
-                if (isset($address->personal))
-                    $currentAddress['name'] = $address->personal;
+                if (isset($address->personal)) {
+                    $decoded = imap_mime_header_decode($address->personal);
+                    $currentAddress['name'] = $decoded[0]->text;
+                }
                 $outputAddresses[] = $currentAddress;
             }
 
