@@ -432,10 +432,12 @@ class Message
             $attachment          = new Attachment($this, $structure, $partIdentifier);
             $this->attachments[] = $attachment;
         } elseif ($structure->type == 0 || $structure->type == 1) {
-
-            $messageBody = isset($partIdentifier) ?
-                imap_fetchbody($this->imapStream, $this->uid, $partIdentifier, FT_UID)
-                : imap_body($this->imapStream, $this->uid, FT_UID);
+            if($partIdentifier !== null) {
+                $section = is_int($structure->ifsubtype) ? (string)$partIdentifier.".".$structure->ifsubtype : $partIdentifier;
+                $messageBody = imap_fetchbody($this->imapStream, $this->uid, $section, FT_UID);
+            } else {
+                $messageBody = imap_body($this->imapStream, $this->uid, FT_UID);
+            }
 
             $messageBody = self::decode($messageBody, $structure->encoding);
 
