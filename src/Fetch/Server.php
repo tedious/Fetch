@@ -184,7 +184,7 @@ class Server
 
         if (is_array($_boxes)) {
             foreach ($_boxes as $box) {
-               $boxes[] = str_replace($this->getServerString(), '', imap_utf7_decode($box));
+               $boxes[] = str_replace($this->getServerString(), '', mb_convert_encoding($box, "UTF-8", "UTF7-IMAP"));
             }
         } else {
             throw new \RuntimeException(imap_last_error());
