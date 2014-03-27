@@ -444,7 +444,6 @@ class Message
             $attachment          = new Attachment($this, $structure, $partIdentifier);
             $this->attachments[] = $attachment;
         } elseif ($structure->type == 0 || $structure->type == 1) {
-
             $messageBody = isset($partIdentifier) ?
                 imap_fetchbody($this->imapStream, $this->uid, $partIdentifier, FT_UID)
                 : imap_body($this->imapStream, $this->uid, FT_UID);
@@ -454,7 +453,7 @@ class Message
             if (!empty($parameters['charset']) && $parameters['charset'] !== self::$charset)
                 $messageBody = iconv($parameters['charset'], self::$charset, $messageBody);
 
-            if (strtolower($structure->subtype) == 'plain' || $structure->type == 1) {
+            if (strtolower($structure->subtype) === 'plain' || ($structure->type == 1 && strtolower($structure->subtype) !== 'alternative')) {
                 if (isset($this->plaintextMessage)) {
                     $this->plaintextMessage .= PHP_EOL . PHP_EOL;
                 } else {
@@ -463,7 +462,6 @@ class Message
 
                 $this->plaintextMessage .= trim($messageBody);
             } else {
-
                 if (isset($this->htmlMessage)) {
                     $this->htmlMessage .= '<br><br>';
                 } else {
