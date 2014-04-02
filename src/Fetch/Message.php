@@ -21,6 +21,19 @@ namespace Fetch;
 class Message
 {
     /**
+	 * Primary Body Types
+	 * According to http://www.php.net/manual/en/function.imap-fetchstructure.php
+	 */
+	const TYPE_TEXT = 0;
+	const TYPE_MULTIPART = 1;
+	const TYPE_MESSAGE = 2;
+	const TYPE_APPLICATION = 3;
+	const TYPE_AUDIO = 4;
+	const TYPE_IMAGE = 5;
+	const TYPE_VIDEO = 6;
+	const TYPE_OTHER = 7;
+	
+	/**
      * This is the connection/mailbox class that the email came from.
      *
      * @var Server
@@ -415,6 +428,37 @@ class Message
     {
         return $this->imapConnection;
     }
+	
+	/**
+	 * Adds an attachment
+	 * 
+	 * @param array $parameters
+	 * @param \stdClass $structure
+	 * @param string $partIdentifier
+	 * 
+	 * @return boolean Successful attachment of file
+	 */
+	protected function addAttachment($parameters, $structure, $partIdentifier)
+	{
+		// make up a filename if none is provided (like Gmail and desktop clients do)
+		if (!(isset($parameters["name"]) || isset($parameters["filename"])) && $structure->type == self::TYPE_MESSAGE) {
+			error_log("is message");
+			error_log(print_r($structure, true));
+			$dpar = new \stdClass();
+			$dpar->attribute = "filename";
+			$dpar->value = "email.eml";
+			$structure->dparameters[] = $dpar;
+		}
+		
+		try {
+			$attachment          = new Attachment($this, $structure, $partIdentifier);
+			$this->attachments[] = $attachment;
+			return true;
+		} catch (Exteption $e) {
+			error_log("Unable to make attachment");
+			return false;
+		}
+	}
 
     /**
      * This function takes in a structure and identifier and processes that part of the message. If that portion of the
@@ -427,11 +471,14 @@ class Message
     protected function processStructure($structure, $partIdentifier = null)
     {
         $parameters = self::getParametersFromStructure($structure);
+		$attached = false;
+		
+		if ((isset($structure->disposition) && $structure->disposition == "attachment") && 
+			!($structure->type == self::TYPE_TEXT || $structure->type == self::TYPE_MULTIPART)) {
+			$attached = self::addAttachment($parameters, $structure, $partIdentifier);
+		}
 
-        if (isset($parameters['name']) || isset($parameters['filename'])) {
-            $attachment          = new Attachment($this, $structure, $partIdentifier);
-            $this->attachments[] = $attachment;
-        } elseif ($structure->type == 0 || $structure->type == 1) {
+        if (!$attached && ($structure->type == self::TYPE_TEXT || $structure->type == self::TYPE_MULTIPART)) {
             $messageBody = isset($partIdentifier) ?
                 imap_fetchbody($this->imapStream, $this->uid, $partIdentifier, FT_UID)
                 : imap_body($this->imapStream, $this->uid, FT_UID);
@@ -441,7 +488,7 @@ class Message
             if (!empty($parameters['charset']) && $parameters['charset'] !== self::$charset)
                 $messageBody = iconv($parameters['charset'], self::$charset, $messageBody);
 
-            if (strtolower($structure->subtype) === 'plain' || ($structure->type == 1 && strtolower($structure->subtype) !== 'alternative')) {
+            if (strtolower($structure->subtype) === 'plain' || ($structure->type == self::TYPE_MULTIPART && strtolower($structure->subtype) !== 'alternative')) {
                 if (isset($this->plaintextMessage)) {
                     $this->plaintextMessage .= PHP_EOL . PHP_EOL;
                 } else {
@@ -458,19 +505,18 @@ class Message
 
                 $this->htmlMessage .= $messageBody;
             }
-        }
+        
+			if (isset($structure->parts)) { // multipart: iterate through each part
+				foreach ($structure->parts as $partIndex => $part) {
+					$partId = $partIndex + 1;
 
-        if (isset($structure->parts)) { // multipart: iterate through each part
+					if (isset($partIdentifier))
+						$partId = $partIdentifier . '.' . $partId;
 
-            foreach ($structure->parts as $partIndex => $part) {
-                $partId = $partIndex + 1;
-
-                if (isset($partIdentifier))
-                    $partId = $partIdentifier . '.' . $partId;
-
-                $this->processStructure($part, $partId);
-            }
-        }
+					$this->processStructure($part, $partId);
+				}
+			}
+		}
     }
 
     /**
