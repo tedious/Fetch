@@ -459,8 +459,6 @@ class Message
 	{
 		// make up a filename if none is provided (like Gmail and desktop clients do)
 		if (!(isset($parameters["name"]) || isset($parameters["filename"])) && $structure->type == self::TYPE_MESSAGE) {
-			error_log("is message");
-			error_log(print_r($structure, true));
 			$dpar = new \stdClass();
 			$dpar->attribute = "filename";
 			$dpar->value = "email.eml";
@@ -471,8 +469,7 @@ class Message
 			$attachment          = new Attachment($this, $structure, $partIdentifier);
 			$this->attachments[] = $attachment;
 			return true;
-		} catch (Exteption $e) {
-			error_log("Unable to make attachment");
+		} catch (Exception $e) {
 			return false;
 		}
 	}
