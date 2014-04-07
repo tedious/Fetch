@@ -200,8 +200,10 @@ class Message
 
         if(!is_object($messageOverview = $this->getOverview()))
             return false;
-
-        $this->subject = $messageOverview->subject;
+    
+        if (isset($messageOverview->subject)) {
+            $this->subject = $messageOverview->subject;
+        }
         $this->date    = strtotime($messageOverview->date);
         $this->size    = $messageOverview->size;
 
