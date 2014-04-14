@@ -201,9 +201,15 @@ class Message
         if(!is_object($messageOverview = $this->getOverview()))
             return false;
 
-        $this->subject = $messageOverview->subject;
-        $this->date    = strtotime($messageOverview->date);
-        $this->size    = $messageOverview->size;
+        $this->subject = isset($messageOverview->subject)
+            ? $messageOverview->subject
+            : '';
+        $this->date    = isset($messageOverview->date)
+            ? strtotime($messageOverview->date)
+            : 0;
+        $this->size    = isset($messageOverview->size)
+            ? $messageOverview->size
+            : 0;
 
         foreach (self::$flagTypes as $flag)
             $this->status[$flag] = ($messageOverview->$flag == 1);
@@ -277,7 +283,9 @@ class Message
             $headerObject = imap_rfc822_parse_headers($rawHeaders);
 
             // to keep this object as close as possible to the original header object we add the udate property
-            $headerObject->udate = strtotime($headerObject->date);
+            $headerObject->udate = isset($headerObject->date) 
+                ? strtotime($headerObject->date)
+                : 0;
 
             $this->headers = $headerObject;
         }
