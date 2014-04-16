@@ -19,6 +19,8 @@ use Fetch\Server;
  */
 class ServerTest extends \PHPUnit_Framework_TestCase
 {
+    static $num_messages_inbox = 12;
+
     /**
      * @dataProvider flagsDataProvider
      * @param string  $expected server string with %host% placeholder
@@ -97,7 +99,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     {
         $server = Static::getServer();
         $numMessages = $server->numMessages();
-        $this->assertEquals(11, $numMessages);
+        $this->assertEquals(self::$num_messages_inbox, $numMessages);
     }
 
     public function testGetMessages()
