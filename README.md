@@ -2,6 +2,7 @@
 
 [![Latest Stable Version](https://poser.pugx.org/tedivm/fetch/v/stable.png)](https://packagist.org/packages/tedivm/fetch)
 [![Total Downloads](https://poser.pugx.org/tedivm/fetch/downloads.png)](https://packagist.org/packages/tedivm/fetch)
+[![Coverage Status](https://coveralls.io/repos/tedivm/Fetch/badge.png?branch=master)](https://coveralls.io/r/tedivm/Fetch?branch=master)
 
 Fetch is a library for reading email and attachments, primarily using the POP 
 and IMAP protocols.
