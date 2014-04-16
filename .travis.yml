@@ -6,8 +6,11 @@ php:
     - 5.5
 
 before_script:
-    - composer install --dev
+    - composer self-update && composer install --dev
     - vendor/tedivm/dovecottesting/SetupEnvironment.sh
 
 
-script: phpunit --verbose --coverage-text
+script: ./tests/runTests.sh
+
+after_script:
+    - php vendor/bin/coveralls -v
