@@ -1,5 +1,4 @@
 .vagrant
-
 /.idea
 /.settings
 /.buildpath
@@ -7,3 +6,4 @@
 /composer.lock
 /vendor
 /report
+/build

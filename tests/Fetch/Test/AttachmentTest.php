@@ -11,7 +11,6 @@
 
 namespace Fetch\Test;
 
-
 /**
  * @package Fetch
  * @author  Robert Hafner <tedivm@tedivm.com>
@@ -27,6 +26,7 @@ class AttachmentTest extends \PHPUnit_Framework_TestCase
         $returnAttachments = array();
         foreach($attachments as $attachment)
             $returnAttachments[$attachment->getFileName()] = $attachment;
+
         return $returnAttachments;
     }
 
@@ -100,20 +100,16 @@ class AttachmentTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($filepath);
         $this->assertEquals(md5(file_get_contents($filepath)), md5($attachment_RCA->getData()));
 
-
         $attachments = static::getAttachments('6');
         $attachment_RCA = $attachments['RCA_Indian_Head_test_pattern.JPG.zip'];
         $this->assertFalse($attachment_RCA->saveToDirectory('/'), 'Returns false when attempting to save without filesystem permission.');
-
-
 
         $attachments = static::getAttachments('6');
         $attachment_RCA = $attachments['RCA_Indian_Head_test_pattern.JPG.zip'];
         $this->assertFalse($attachment_RCA->saveToDirectory($filepath), 'Returns false when attempting to save over a file.');
     }
 
-
-    static function tearDownAfterClass()
+    public static function tearDownAfterClass()
     {
         $tmpdir = rtrim(sys_get_temp_dir(), '/') . '/';
         $filepath = $tmpdir . 'RCA_Indian_Head_test_pattern.JPG.zip';
