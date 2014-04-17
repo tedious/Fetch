@@ -477,7 +477,16 @@ class Message
 			return false;
 		}
 	}
-	
+	/**
+	 * This function extracts the body of an email part, decodes it, 
+	 * converts it to the charset of the parent message, and returns the result.
+	 * 
+	 * @param array $parameters
+	 * @param \stdClass $structure
+	 * @param string $partIdentifier
+	 * 
+	 * @return string
+	 */
 	protected function processBody($parameters, $structure, $partIdentifier) {
 		$messageBody = isset($partIdentifier) ?
 			imap_fetchbody($this->imapStream, $this->uid, $partIdentifier, FT_UID)
