@@ -442,9 +442,13 @@ class Message
 	{
 		// make up a filename if none is provided (like Gmail and desktop clients do)
 		if (!(isset($parameters["name"]) || isset($parameters["filename"])) && $structure->type == self::TYPE_MESSAGE) {
+			$matches = array();
+			preg_match('/Subject:\s(.*)\n/', self::processBody($parameters, $structure, $partIdentifier), $matches);
+			$filename = !empty($matches[1]) ? $matches[1] : "email";
+			
 			$dpar = new \stdClass();
 			$dpar->attribute = "filename";
-			$dpar->value = "email.eml";
+			$dpar->value = str_replace(array("\r", "\n"), '', $filename) . ".eml";
 			$structure->dparameters[] = $dpar;
 		}
 		
@@ -455,6 +459,20 @@ class Message
 		} catch (Exception $e) {
 			return false;
 		}
+	}
+	
+	protected function processBody($parameters, $structure, $partIdentifier) {
+		$messageBody = isset($partIdentifier) ?
+			imap_fetchbody($this->imapStream, $this->uid, $partIdentifier, FT_UID)
+			: imap_body($this->imapStream, $this->uid, FT_UID);
+
+		$messageBody = self::decode($messageBody, $structure->encoding);
+
+		if (!empty($parameters['charset']) && $parameters['charset'] !== self::$charset) {
+			$messageBody = iconv($parameters['charset'], self::$charset, $messageBody);
+		}
+		
+		return $messageBody;
 	}
 
     /**
@@ -476,14 +494,7 @@ class Message
 		}
 
         if (!$attached && ($structure->type == self::TYPE_TEXT || $structure->type == self::TYPE_MULTIPART)) {
-            $messageBody = isset($partIdentifier) ?
-                imap_fetchbody($this->imapStream, $this->uid, $partIdentifier, FT_UID)
-                : imap_body($this->imapStream, $this->uid, FT_UID);
-
-            $messageBody = self::decode($messageBody, $structure->encoding);
-
-            if (!empty($parameters['charset']) && $parameters['charset'] !== self::$charset)
-                $messageBody = iconv($parameters['charset'], self::$charset, $messageBody);
+            $messageBody = self::processBody($parameters, $structure, $partIdentifier);
 
             if (strtolower($structure->subtype) === 'plain' || ($structure->type == self::TYPE_MULTIPART && strtolower($structure->subtype) !== 'alternative')) {
                 if (isset($this->plaintextMessage)) {
