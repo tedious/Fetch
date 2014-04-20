@@ -7,11 +7,11 @@ if [ ! -n "$TRAVIS" ]; then
 fi
 
 echo 'Running unit tests.'
-phpunit --verbose --coverage-clover build/logs/clover.xml
+./vendor/bin/phpunit --verbose --coverage-clover build/logs/clover.xml
 
 echo ''
 echo ''
 echo ''
 echo 'Testing for Coding Styling Compliance.'
 echo 'All code should follow PSR standards.'
-./vendor/fabpot/php-cs-fixer/php-cs-fixer fix ./ --level="all" -vv --dry-run
+./vendor/bin/php-cs-fixer fix ./ --level="all" -vv --dry-run
