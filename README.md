@@ -1,8 +1,9 @@
-# Fetch [![Build Status](https://travis-ci.org/tedivm/Fetch.png?branch=master)](https://travis-ci.org/tedivm/Fetch)
+# Fetch [![Build Status](https://travis-ci.org/tedivm/Fetch.svg?branch=master)](https://travis-ci.org/tedivm/Fetch)
 
-[![Latest Stable Version](https://poser.pugx.org/tedivm/fetch/v/stable.png)](https://packagist.org/packages/tedivm/fetch)
+[![License](http://img.shields.io/packagist/l/tedivm/fetch.svg)](https://github.com/tedivm/fetch/blob/master/LICENSE)
+[![Latest Stable Version](http://img.shields.io/github/release/tedivm/fetch.svg)](https://packagist.org/packages/tedivm/fetch)
+[![Coverage Status](http://img.shields.io/coveralls/tedivm/Fetch.svg)](https://coveralls.io/r/tedivm/Fetch?branch=master)
 [![Total Downloads](https://poser.pugx.org/tedivm/fetch/downloads.png)](https://packagist.org/packages/tedivm/fetch)
-[![Coverage Status](https://coveralls.io/repos/tedivm/Fetch/badge.png?branch=master)](https://coveralls.io/r/tedivm/Fetch?branch=master)
 
 Fetch is a library for reading email and attachments, primarily using the POP 
 and IMAP protocols.
