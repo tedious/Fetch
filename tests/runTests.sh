@@ -7,7 +7,7 @@ if [ ! -n "$TRAVIS" ]; then
 fi
 
 echo 'Running unit tests.'
-phpunit --verbose --coverage-clover build/logs/clover.xml
+./vendor/bin/phpunit --verbose --coverage-clover build/logs/clover.xml
 
 echo ''
 echo ''
