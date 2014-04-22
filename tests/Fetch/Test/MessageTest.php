@@ -157,6 +157,11 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($message->setFlag('answered', false), 'setFlag returned true.');
         $this->assertFalse($message->checkFlag('answered'), 'Message was successfully unanswered.');
 
+        $this->assertTrue($message->checkFlag('seen'));
+
+        $this->assertTrue($message->setFlag('seen', false), 'setFlag returned true.');
+        $this->assertFalse($message->checkFlag('seen'), 'Message was successfully unread.');
+
         $message = static::getMessage('2');
         $this->assertFalse($message->checkFlag('flagged'), 'Message is not flagged.');
 
