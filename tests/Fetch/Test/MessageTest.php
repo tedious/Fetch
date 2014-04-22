@@ -173,6 +173,19 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($message->checkFlag('flagged'), 'Message was successfully unflagged.');
     }
 
+    public function testMessagePeek()
+    {
+        $message = static::getMessage('3');
+        $message->setFlag('seen', false);
+
+        $server = ServerTest::getServer();
+        new \Fetch\Message('3', $server, true);
+
+        // reload to get state
+        $message = static::getMessage('3');
+        $this->assertFalse($message->checkFlag('seen'), 'The message should be unread');
+    }
+
     public function testMoveToMailbox()
     {
         $server = ServerTest::getServer();
