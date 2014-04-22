@@ -159,8 +159,6 @@ class Server
             return false;
         }
 
-
-
         $this->mailbox = $mailbox;
         if (isset($this->imapStream)) {
             $this->setImapStream();
@@ -184,8 +182,9 @@ class Server
      */
     public function setFlag($flag, $value = null)
     {
-        if (!self::$sslEnable && in_array($flag, self::$sslFlags))
+        if (!self::$sslEnable && in_array($flag, self::$sslFlags)) {
             return;
+        }
 
         if (isset(self::$exclusiveFlags[$flag])) {
             $kill = self::$exclusiveFlags[$flag];
@@ -193,8 +192,9 @@ class Server
             $kill = $index;
         }
 
-        if (isset($kill) && false !== $index = array_search($kill, $this->flags))
+        if (isset($kill) && false !== $index = array_search($kill, $this->flags)) {
             unset($this->flags[$index]);
+        }
 
         $index = array_search($flag, $this->flags);
         if (isset($value) && $value !== true) {
@@ -221,8 +221,9 @@ class Server
      */
     public function setOptions($bitmask = 0)
     {
-        if (!is_numeric($bitmask))
+        if (!is_numeric($bitmask)) {
             throw new \RuntimeException('Function requires numeric argument.');
+        }
 
         $this->options = $bitmask;
     }
@@ -234,8 +235,9 @@ class Server
      */
     public function getImapStream()
     {
-        if (!isset($this->imapStream))
+        if (!isset($this->imapStream)) {
             $this->setImapStream();
+        }
 
         return $this->imapStream;
     }
@@ -250,8 +252,9 @@ class Server
     {
         $mailboxPath = $this->getServerSpecification();
 
-        if (isset($this->mailbox))
+        if (isset($this->mailbox)) {
             $mailboxPath .= $this->mailbox;
+        }
 
         return $mailboxPath;
     }
@@ -265,11 +268,13 @@ class Server
     {
         $mailboxPath = '{' . $this->serverPath;
 
-        if (isset($this->port))
+        if (isset($this->port)) {
             $mailboxPath .= ':' . $this->port;
+        }
 
-        if ($this->service != 'imap')
+        if ($this->service != 'imap') {
             $mailboxPath .= '/' . $this->service;
+        }
 
         foreach ($this->flags as $flag) {
             $mailboxPath .= '/' . $flag;
@@ -287,13 +292,15 @@ class Server
     protected function setImapStream()
     {
         if (isset($this->imapStream)) {
-            if (!imap_reopen($this->imapStream, $this->getServerString(), $this->options, 1))
+            if (!imap_reopen($this->imapStream, $this->getServerString(), $this->options, 1)) {
                 throw new \RuntimeException(imap_last_error());
+            }
         } else {
             $imapStream = imap_open($this->getServerString(), $this->username, $this->password, $this->options, 1);
 
-            if ($imapStream === false)
+            if ($imapStream === false) {
                 throw new \RuntimeException(imap_last_error());
+            }
 
             $this->imapStream = $imapStream;
         }
@@ -316,20 +323,21 @@ class Server
      *
      * @link http://us.php.net/imap_search
      * @link http://www.faqs.org/rfcs/rfc2060
-     * @param  string   $criteria
-     * @param  null|int $limit
-     * @return array    An array of ImapMessage objects
+     * @param  string    $criteria
+     * @param  null|int  $limit
+     * @param  bool      $peek
+     * @return Message[] An array of ImapMessage objects
      */
-    public function search($criteria = 'ALL', $limit = null)
+    public function search($criteria = 'ALL', $limit = null, $peek = false)
     {
         if ($results = imap_search($this->getImapStream(), $criteria, SE_UID)) {
-            if (isset($limit) && count($results) > $limit)
+            if (isset($limit) && count($results) > $limit) {
                 $results = array_slice($results, 0, $limit);
-
+            }
             $messages = array();
-
-            foreach ($results as $messageId)
-                $messages[] = new Message($messageId, $this);
+            foreach ($results as $messageId) {
+                $messages[] = new Message($messageId, $this, $peek);
+            }
 
             return $messages;
         } else {
@@ -352,23 +360,26 @@ class Server
      * Returns the emails in the current mailbox as an array of ImapMessage objects.
      *
      * @param  null|int  $limit
-     * @return Message[]
+     * @param  bool      $peek
+     * @return Message[] An array of ImapMessage objects
      */
-    public function getMessages($limit = null)
+    public function getMessages($limit = null, $peek = false)
     {
         $numMessages = $this->numMessages();
 
-        if (isset($limit) && is_numeric($limit) && $limit < $numMessages)
+        if (isset($limit) && is_numeric($limit) && $limit < $numMessages) {
             $numMessages = $limit;
+        }
 
-        if ($numMessages < 1)
+        if ($numMessages < 1) {
             return array();
+        }
 
-        $stream   = $this->getImapStream();
+        $stream = $this->getImapStream();
         $messages = array();
         for ($i = 1; $i <= $numMessages; $i++) {
-            $uid        = imap_uid($stream, $i);
-            $messages[] = new Message($uid, $this);
+            $uid = imap_uid($stream, $i);
+            $messages[] = new Message($uid, $this, $peek);
         }
 
         return $messages;

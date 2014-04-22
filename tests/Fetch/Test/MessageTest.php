@@ -157,6 +157,11 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($message->setFlag('answered', false), 'setFlag returned true.');
         $this->assertFalse($message->checkFlag('answered'), 'Message was successfully unanswered.');
 
+        $this->assertTrue($message->checkFlag('seen'));
+
+        $this->assertTrue($message->setFlag('seen', false), 'setFlag returned true.');
+        $this->assertFalse($message->checkFlag('seen'), 'Message was successfully unread.');
+
         $message = static::getMessage('2');
         $this->assertFalse($message->checkFlag('flagged'), 'Message is not flagged.');
 
@@ -166,6 +171,19 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         $message = static::getMessage('2');
         $this->assertTrue($message->setFlag('flagged', false), 'setFlag returned true.');
         $this->assertFalse($message->checkFlag('flagged'), 'Message was successfully unflagged.');
+    }
+
+    public function testMessagePeek()
+    {
+        $message = static::getMessage('3');
+        $message->setFlag('seen', false);
+
+        $server = ServerTest::getServer();
+        new \Fetch\Message('3', $server, true);
+
+        // reload to get state
+        $message = static::getMessage('3');
+        $this->assertFalse($message->checkFlag('seen'), 'The message should be unread');
     }
 
     public function testMoveToMailbox()

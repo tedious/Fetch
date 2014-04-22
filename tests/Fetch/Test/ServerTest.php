@@ -187,6 +187,27 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($server->getMessageByUid(12), 'Message successfully expunged');
     }
 
+    public function testPeek()
+    {
+        $server = Static::getServer();
+        $messages = $server->getMessages(3);
+        foreach ($messages as $message) {
+            $message->setFlag('seen', false);
+        }
+        $server->getMessages(3, true);
+
+        $messages = $server->search('ALL', 3, true);
+        foreach ($messages as $message) {
+            $this->assertFalse($message->checkFlag('seen'), 'The message should be unread');
+        }
+        $server->getMessages(3, true);
+
+        $messages = $server->getMessages(3);
+        foreach ($messages as $message) {
+            $this->assertFalse($message->checkFlag('seen'), 'The message should be unread');
+        }
+    }
+
     public static function getServer()
     {
         $server = new Server(TESTING_SERVER_HOST, 143);
