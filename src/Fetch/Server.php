@@ -375,6 +375,23 @@ class Server
     }
 
     /**
+     * Returns the emails in the current mailbox as an array of ImapMessage objects
+     * ordered by some ordering
+     *
+     * @see    http://php.net/manual/en/function.imap-sort.php
+     * @param  int       $orderBy
+     * @param  bool      $reverse
+     * @param  int       $limit
+     * @return Message[]
+     */
+    public function getOrdered($orderBy, $reverse, $limit)
+    {
+        $msgIds = imap_sort($this->getImapStream(), $orderBy, $reverse ? 1 : 0, SE_UID);
+
+        return array_map(array($this, 'getMessageByUid'), array_slice($msgIds, 0, $limit));
+    }
+
+    /**
      * Returns the requested email or false if it is not found.
      *
      * @param  int          $uid

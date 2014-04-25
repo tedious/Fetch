@@ -113,6 +113,24 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    public function testGetMessagesOrderedByDateAsc()
+    {
+        $server = Static::getServer();
+        $messages = $server->getOrdered(SORTDATE, false, 2);
+
+        $this->assertCount(2, $messages, 'Two messages returned');
+        $this->assertGreaterThan($messages[0]->getDate(), $messages[1]->getDate(), 'Messages in ascending order');
+    }
+
+    public function testGetMessagesOrderedByDateDesc()
+    {
+        $server = Static::getServer();
+        $messages = $server->getOrdered(SORTDATE, true, 2);
+
+        $this->assertCount(2, $messages, 'Two messages returned');
+        $this->assertLessThan($messages[0]->getDate(), $messages[1]->getDate(), 'Messages in descending order');
+    }
+
     public function testGetMailBox()
     {
         $server = Static::getServer();
