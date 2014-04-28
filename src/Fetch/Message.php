@@ -437,8 +437,9 @@ class Message
 
             $messageBody = self::decode($messageBody, $structure->encoding);
 
-            if (!empty($parameters['charset']) && $parameters['charset'] !== self::$charset)
-                $messageBody = iconv($parameters['charset'], self::$charset, $messageBody);
+            if (!empty($parameters['charset']) && $parameters['charset'] !== self::$charset) {
+                $messageBody = iconv($parameters['charset'], self::$charset, utf8_encode($messageBody));
+            }
 
             if (strtolower($structure->subtype) === 'plain' || ($structure->type == 1 && strtolower($structure->subtype) !== 'alternative')) {
                 if (isset($this->plaintextMessage)) {
