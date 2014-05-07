@@ -206,16 +206,24 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($sentFolderNumStart + 1, $server->numMessages(), 'Message moved into Sent Folder.');
     }
 
-
     public function testDecode()
     {
+        $quotedPrintableDecoded = "Now's the time for all folk to come to the aid of their country.";
+        $quotedPrintable = <<<'ENCODE'
+Now's the time =
+for all folk to come=
+ to the aid of their country.
+ENCODE;
+        $this->assertEquals($quotedPrintableDecoded, Message::decode($quotedPrintable, 'quoted-printable'), 'Decodes quoted printable');
+        $this->assertEquals($quotedPrintableDecoded, Message::decode($quotedPrintable, 4), 'Decodes quoted printable');
+
         $testString = 'This is a test string';
-
-        $quotedPrintable = quoted_printable_encode($testString);
-        $this->assertEquals($testString, Message::decode($quotedPrintable, 'quoted-printable'), 'Decodes quoted printable');
-
         $base64 = base64_encode($testString);
         $this->assertEquals($testString, Message::decode($base64, 'base64'), 'Decodes quoted base64');
+        $this->assertEquals($testString, Message::decode($base64, 3), 'Decodes quoted base64');
+
+        $notEncoded = '> w - www.somesite.com.au<http://example.com/track/click.php?u=30204369&id=af4110cab28e464cb0702723bc84b3f3>';
+        $this->assertEquals($notEncoded, Message::decode($notEncoded, 0), 'Nothing to decode');
     }
 
     public function testTypeIdToString()
