@@ -471,7 +471,7 @@ class Message
 			$attachment          = new Attachment($this, $structure, $partIdentifier);
 			$this->attachments[] = $attachment;
 			return true;
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return false;
 		}
 	}
@@ -490,7 +490,7 @@ class Message
 		$encodingMatches = array();
 		preg_match('/=\?(.[^?]*)\?([BQ])\?(.[^?]*)\?=\s*(.*)/', $subject, $encodingMatches);
 
-		if (count($encodingMatches) > 3) {
+		if (is_array($encodingMatches) && count($encodingMatches) > 3) {
 			array_shift($encodingMatches); // remove input
 			$charset = array_shift($encodingMatches); // remove charset
 			$encoding = array_shift($encodingMatches);
