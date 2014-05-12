@@ -208,8 +208,7 @@ class Message
      */
     protected function loadMessage()
     {
-
-        /* First load the message overview information */
+		/* First load the message overview information */
 
         if(!is_object($messageOverview = $this->getOverview()))
             return false;
@@ -246,8 +245,24 @@ class Message
             $this->processStructure($structure);
         } else {
             // multipart
-            foreach ($structure->parts as $id => $part)
+            foreach ($structure->parts as $id => $part) {
+				if (!empty($part->description)) {
+					$cleanFilename = self::processFilename(preg_replace('/_/', " ", $part->description);
+					$part->description = $cleanFilename;
+					foreach($part->parameters as $key => $parameter) {
+						if ($parameter->attribute === "name") {
+							$part->parameters[$key]->value = $cleanFilename;
+						}
+					}
+					foreach($part->dparameters as $key => $dparameter) {
+						if ($dparameter->attribute === "filename") {
+							$part->dparameters[$key]->value = $cleanFilename;
+						}
+					}
+				}
+				
                 $this->processStructure($part, $id + 1);
+			}
         }
 
         return true;
@@ -443,8 +458,8 @@ class Message
 		// make up a filename if none is provided (like Gmail and desktop clients do)
 		if (!(isset($parameters["name"]) || isset($parameters["filename"])) && $structure->type == self::TYPE_MESSAGE) {
 			$subjectMatches = array();
-			preg_match('/Subject:\s?(.*)(?=Thread-Topic:|$)/', self::processBody($parameters, $structure, $partIdentifier), $subjectMatches);
-			$filename = !empty($subjectMatches[1]) ? self::processSubject($subjectMatches[1]) : "email";
+			preg_match('/Subject:\s?(.*?)(?=\s*Thread-Topic:|$)/', self::processBody($parameters, $structure, $partIdentifier), $subjectMatches);
+			$filename = !empty($subjectMatches[1]) ? self::processFilename($subjectMatches[1]) : "email";
 			
 			$dpar = new \stdClass();
 			$dpar->attribute = "filename";
@@ -469,12 +484,11 @@ class Message
 	 * 
 	 * @return string decoded subject line
 	 */
-	protected function processSubject($subject) {
-		xdebug_break();
+	protected function processFilename($subject) {
 		$output = "";
 
 		$encodingMatches = array();
-		preg_match('/=\?(.[^?]*)\?([BQ])\?(.[^?]*)\?(.*)/', $subject, $encodingMatches);
+		preg_match('/=\?(.[^?]*)\?([BQ])\?(.[^?]*)\?=\s*(.*)/', $subject, $encodingMatches);
 
 		if (count($encodingMatches) > 3) {
 			array_shift($encodingMatches); // remove input
@@ -494,10 +508,12 @@ class Message
 					$decodedString = "";
 			}
 			
-			$output .= self::cleanFilename($charset, $decodedString);
+			$decodedString = iconv($charset, "UTF-8//TRANSLIT", $decodedString);
+			
+			$output .= self::cleanFilename($decodedString);
 
 			if (!empty($nextSection)) {
-				$output .= self::processSubject($nextSection);
+				$output .= self::processFilename($nextSection);
 			}
 
 			return $output;
@@ -510,12 +526,8 @@ class Message
 		return $output;
 	}
 	
-	protected function cleanFilename($charset, $rawName) {
-		// Strip special chars from filename
-		$sName = preg_replace('/[<>#%"{}|\\\^\[\]`;\/\?:@&=$,]/',"_", $rawName);
-		// Transliterate accented chars to un-accented equivalents
-		$stName = iconv($charset, "iso-8859-1//TRANSLIT", $sName);
-		return $stName;
+	protected function cleanFilename($oldName) {
+		return preg_replace('/[<>#%"{}|\\\^\[\]`;\/\?:@&=$,]/',"_", $oldName);
 	}
 	
 	/**
@@ -552,7 +564,7 @@ class Message
      */
     protected function processStructure($structure, $partIdentifier = null)
     {
-        $parameters = self::getParametersFromStructure($structure);
+		$parameters = self::getParametersFromStructure($structure);
 		$attached = false;
 		
 		// TODO: Process HTML files similarly to .eml files -- prevent them from becoming merged into the main email if their disposition is "attachment"
@@ -582,7 +594,7 @@ class Message
 
                 $this->htmlMessage .= $messageBody;
             }
-        
+			
 			if (isset($structure->parts)) { // multipart: iterate through each part
 				foreach ($structure->parts as $partIndex => $part) {
 					$partId = $partIndex + 1;
@@ -666,14 +678,18 @@ class Message
      */
     public static function getParametersFromStructure($structure)
     {
-        $parameters = array();
-        if (isset($structure->parameters))
-            foreach ($structure->parameters as $parameter)
-                $parameters[strtolower($parameter->attribute)] = $parameter->value;
+		$parameters = array();
+        if (isset($structure->parameters)) {
+            foreach ($structure->parameters as $parameter) {
+				$parameters[strtolower($parameter->attribute)] = $parameter->value;
+			}
+		}
 
-        if (isset($structure->dparameters))
-            foreach ($structure->dparameters as $parameter)
-                $parameters[strtolower($parameter->attribute)] = $parameter->value;
+        if (isset($structure->dparameters)) {
+            foreach ($structure->dparameters as $parameter) {
+				$parameters[strtolower($parameter->attribute)] = $parameter->value;
+			}
+		}
 
         return $parameters;
     }
