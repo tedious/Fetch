@@ -442,9 +442,9 @@ class Message
 	{
 		// make up a filename if none is provided (like Gmail and desktop clients do)
 		if (!(isset($parameters["name"]) || isset($parameters["filename"])) && $structure->type == self::TYPE_MESSAGE) {
-			$matches = array();
-			preg_match('/Subject:\s(.*)\n/', self::processBody($parameters, $structure, $partIdentifier), $matches);
-			$filename = !empty($matches[1]) ? $matches[1] : "email";
+			$subjectMatches = array();
+			preg_match('/Subject:\s?(.*)(?=Thread-Topic:|$)/', self::processBody($parameters, $structure, $partIdentifier), $subjectMatches);
+			$filename = !empty($subjectMatches[1]) ? self::processSubject($subjectMatches[1]) : "email";
 			
 			$dpar = new \stdClass();
 			$dpar->attribute = "filename";
@@ -460,6 +460,64 @@ class Message
 			return false;
 		}
 	}
+	
+	/**
+	 * Decodes the email subject line string passed to it
+	 * Designed to handle subject lines with special characters encoded in Base64 or Quoted-Printable
+	 * 
+	 * @param string $subject subject line to be processed and/or decoded
+	 * 
+	 * @return string decoded subject line
+	 */
+	protected function processSubject($subject) {
+		xdebug_break();
+		$output = "";
+
+		$encodingMatches = array();
+		preg_match('/=\?(.[^?]*)\?([BQ])\?(.[^?]*)\?(.*)/', $subject, $encodingMatches);
+
+		if (count($encodingMatches) > 3) {
+			array_shift($encodingMatches); // remove input
+			$charset = array_shift($encodingMatches); // remove charset
+			$encoding = array_shift($encodingMatches);
+			$encodedString = array_shift($encodingMatches);
+			$nextSection = array_shift($encodingMatches);
+
+			switch ($encoding) {
+				case "Q": // Quoted-Printable
+					$decodedString = quoted_printable_decode($encodedString);
+					break;
+				case "B": // Base64
+					$decodedString = base64_decode($encodedString);
+					break;
+				default:
+					$decodedString = "";
+			}
+			
+			$output .= self::cleanFilename($charset, $decodedString);
+
+			if (!empty($nextSection)) {
+				$output .= self::processSubject($nextSection);
+			}
+
+			return $output;
+		} else if (count($encodingMatches) > 0) {
+			return $output . $encodingMatches[0];
+		} else if (empty($encodingMatches)) {
+			return $subject;
+		}
+
+		return $output;
+	}
+	
+	protected function cleanFilename($charset, $rawName) {
+		// Strip special chars from filename
+		$sName = preg_replace('/[<>#%"{}|\\\^\[\]`;\/\?:@&=$,]/',"_", $rawName);
+		// Transliterate accented chars to un-accented equivalents
+		$stName = iconv($charset, "iso-8859-1//TRANSLIT", $sName);
+		return $stName;
+	}
+	
 	/**
 	 * This function extracts the body of an email part, decodes it, 
 	 * converts it to the charset of the parent message, and returns the result.
@@ -478,6 +536,7 @@ class Message
 		$messageBody = self::decode($messageBody, $structure->encoding);
 
 		if (!empty($parameters['charset']) && $parameters['charset'] !== self::$charset) {
+// TODO: ERROR HERE!!!
 			$messageBody = iconv($parameters['charset'], self::$charset, $messageBody);
 		}
 		
@@ -490,12 +549,13 @@ class Message
      *
      * @param \stdClass $structure
      * @param string    $partIdentifier
-     * @todoa process attachments.
      */
     protected function processStructure($structure, $partIdentifier = null)
     {
         $parameters = self::getParametersFromStructure($structure);
 		$attached = false;
+		
+		// TODO: Process HTML files similarly to .eml files -- prevent them from becoming merged into the main email if their disposition is "attachment"
 		
 		if ((isset($structure->disposition) && $structure->disposition == "attachment") && 
 			!($structure->type == self::TYPE_TEXT || $structure->type == self::TYPE_MULTIPART)) {
