@@ -247,7 +247,7 @@ class Message
             // multipart
             foreach ($structure->parts as $id => $part) {
 				if (!empty($part->description)) {
-					$cleanFilename = self::processFilename(preg_replace('/_/', " ", $part->description);
+					$cleanFilename = self::processFilename(preg_replace('/_/', " ", $part->description));
 					$part->description = $cleanFilename;
 					foreach($part->parameters as $key => $parameter) {
 						if ($parameter->attribute === "name") {
