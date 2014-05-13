@@ -17,11 +17,10 @@ define('TEST_PASSWORD', 'applesauce');
 
 date_default_timezone_set('UTC');
 
-if(getenv('TRAVIS'))
-{
+if (getenv('TRAVIS')) {
     define('TESTING_ENVIRONMENT', 'TRAVIS');
     define('TESTING_SERVER_HOST', '127.0.0.1');
-}else{
+} else {
     define('TESTING_ENVIRONMENT', 'VAGRANT');
     define('TESTING_SERVER_HOST', '172.31.1.2');
     echo 'Initializing Environment using Vagrant' . PHP_EOL;
@@ -38,7 +37,7 @@ if (!file_exists($filename)) {
     echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" . PHP_EOL . PHP_EOL;
     $filename = __DIR__ .'/../autoload.php';
     require_once $filename;
-}else{
+} else {
     $loader = require_once $filename;
     $loader->add('Fetch\\Test', __DIR__);
 }

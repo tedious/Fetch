@@ -21,18 +21,18 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider flagsDataProvider
-     * @param string $expected server string with %host% placeholder
-     * @param integer $port to use (needed to test behavior on port 143 and 993 from constructor)
-     * @param array $flags to set/unset ($flag => $value)
+     * @param string  $expected server string with %host% placeholder
+     * @param integer $port     to use (needed to test behavior on port 143 and 993 from constructor)
+     * @param array   $flags    to set/unset ($flag => $value)
      */
     public function testFlags($expected, $port, $flags)
     {
         $server = new Server(TESTING_SERVER_HOST, $port);
-    
+
         foreach ($flags as $flag => $value) {
             $server->setFlag($flag, $value);
         }
-    
+
         $this->assertEquals(str_replace('%host%', TESTING_SERVER_HOST, $expected), $server->getServerString());
     }
 
@@ -46,8 +46,9 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $server->setFlag('TestFlag', 'false');
         $this->assertAttributeContains('TestFlag=false', 'flags', $server);
     }
-    
-    public function flagsDataProvider() {
+
+    public function flagsDataProvider()
+    {
         return array(
                 array('{%host%:143/novalidate-cert}', 143, array()),
                 array('{%host%:143/validate-cert}', 143, array('validate-cert' => true)),
@@ -67,9 +68,9 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider connectionDataProvider
-     * @param integer $port to use (needed to test behavior on port 143 and 993 from constructor)
-     * @param array $flags to set/unset ($flag => $value)
-     * @param string $message Assertion message
+     * @param integer $port    to use (needed to test behavior on port 143 and 993 from constructor)
+     * @param array   $flags   to set/unset ($flag => $value)
+     * @param string  $message Assertion message
      */
     public function testConnection($port, $flags, $message)
     {
@@ -84,7 +85,8 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $this->assertInternalType('resource', $imapSteam, $message);
     }
 
-    public function connectionDataProvider() {
+    public function connectionDataProvider()
+    {
         return array(
             array(143, array(), 'Connects with default settings.'),
             array(993, array('novalidate-cert' => true), 'Connects over SSL (self signed).'),
@@ -104,7 +106,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $messages = $server->getMessages(5);
 
         $this->assertCount(5, $messages, 'Five messages returned');
-        foreach($messages as $message) {
+        foreach ($messages as $message) {
             $this->assertInstanceOf('\Fetch\Message', $message, 'Returned values are Messages');
         }
     }
@@ -160,14 +162,12 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $server->setOptions('purple');
     }
 
-
     public function testSetOptions()
     {
         $server = Static::getServer();
         $server->setOptions(5);
         $this->assertAttributeEquals(5, 'options', $server);
     }
-
 
     public function testExpunge()
     {
@@ -185,10 +185,11 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($server->getMessageByUid(12), 'Message successfully expunged');
     }
 
-    static public function getServer()
+    public static function getServer()
     {
         $server = new Server(TESTING_SERVER_HOST, 143);
         $server->setAuthentication(TEST_USER, TEST_PASSWORD);
+
         return $server;
     }
 }

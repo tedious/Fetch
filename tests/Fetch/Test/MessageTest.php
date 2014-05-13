@@ -12,7 +12,6 @@
 namespace Fetch\Test;
 use Fetch\Message;
 
-
 /**
  * @package Fetch
  * @author  Robert Hafner <tedivm@tedivm.com>
@@ -22,6 +21,7 @@ class MessageTest extends \PHPUnit_Framework_TestCase
     public static function getMessage($id)
     {
         $server = ServerTest::getServer();
+
         return new \Fetch\Message($id, $server);
     }
 
@@ -67,7 +67,6 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         $message = static::getMessage(3);
         $messageNonHTML = $message->getMessageBody();
         $this->assertEquals($plaintextTest, md5($messageNonHTML), 'Message returns as plaintext.');
-
 
         $messageHTML = $message->getMessageBody(true);
         $this->assertEquals($convertedHtmlTest, md5($messageHTML), 'Message converts from plaintext to HTML when requested.');
@@ -130,13 +129,11 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         $messageWithoutAttachments = static::getMessage('3');
         $this->assertFalse($messageWithoutAttachments->getAttachments(), 'getAttachments returns false when no attachments present.');
 
-
         $messageWithAttachments = static::getMessage('6');
         $attachments = $messageWithAttachments->getAttachments();
         $this->assertCount(2, $attachments);
         foreach($attachments as $attachment)
             $this->assertInstanceOf('\Fetch\Attachment', $attachment, 'getAttachments returns Fetch\Attachment objects.');
-
 
         $attachment = $messageWithAttachments->getAttachments('Test_card.png.zip');
         $this->assertInstanceOf('\Fetch\Attachment', $attachment, 'getAttachment returns specified Fetch\Attachment object.');
@@ -159,7 +156,6 @@ class MessageTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($message->setFlag('answered', false), 'setFlag returned true.');
         $this->assertFalse($message->checkFlag('answered'), 'Message was successfully unanswered.');
-
 
         $message = static::getMessage('2');
         $this->assertFalse($message->checkFlag('flagged'), 'Message is not flagged.');
@@ -189,7 +185,6 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         // Switch to Sent folder, count messages
         $server->setMailBox('Sent');
         $sentFolderNumStart = $server->numMessages();
-
 
         // Switch to "Flagged" folder in order to test that function properly returns to it
         $this->assertTrue($server->setMailBox('Flagged Email'));
@@ -245,6 +240,5 @@ class MessageTest extends \PHPUnit_Framework_TestCase
     {
 
     }
-
 
 }

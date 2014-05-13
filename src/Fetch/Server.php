@@ -150,12 +150,13 @@ class Server
     /**
      * This function sets the mailbox to connect to.
      *
-     * @param string $mailbox
+     * @param  string $mailbox
      * @return bool
      */
     public function setMailBox($mailbox = '')
     {
         if(!$this->hasMailBox($mailbox))
+
             return false;
 
         $this->mailbox = $mailbox;
@@ -374,19 +375,19 @@ class Server
     /**
      * Returns the requested email or false if it is not found.
      *
-     * @param  int  $uid
+     * @param  int          $uid
      * @return Message|bool
      */
     public function getMessageByUid($uid)
     {
         try {
             $message = new \Fetch\Message($uid, $this);
+
             return $message;
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return false;
         }
     }
-
 
     /**
      * This function removes all of the messages flagged for deletion from the mailbox.
