@@ -458,8 +458,8 @@ class Message
         // make up a filename if none is provided (like Gmail and desktop clients do)
         if (!(isset($parameters["name"]) || isset($parameters["filename"])) && $structure->type == self::TYPE_MESSAGE) {
             $subjectMatches = array();
-            preg_match('/Subject:\s?(.*?)(?=\s*Thread-Topic:|$)/', self::processBody($parameters, $structure, $partIdentifier), $subjectMatches);
-            $filename = !empty($subjectMatches[1]) ? self::processFilename($subjectMatches[1]) : "email";
+			preg_match('/^Subject:\s?([^\n]*)/m', self::processBody($parameters, $structure, $partIdentifier), $subjectMatches);
+            $filename = !empty($subjectMatches[1]) ? trim(self::processFilename($subjectMatches[1])) : "email";
 
             $dpar = new \stdClass();
             $dpar->attribute = "filename";
