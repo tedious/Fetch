@@ -32,7 +32,7 @@ class Message
     const TYPE_IMAGE = 5;
     const TYPE_VIDEO = 6;
     const TYPE_OTHER = 7;
-    
+
     /**
      * This is the connection/mailbox class that the email came from.
      *
@@ -183,24 +183,6 @@ class Message
     public static $charset = 'UTF-8';
 
     /**
-     * This value defines the flag set for encoding if the mb_convert_encoding
-     * function can't be found, and in this case iconv encoding will be used.
-     *
-     * @var string
-     */
-    public static $charsetFlag = '//TRANSLIT';
-
-    /**
-     * These constants can be used to easily access available flags
-     */
-    const FLAG_RECENT = 'recent';
-    const FLAG_FLAGGED = 'flagged';
-    const FLAG_ANSWERED = 'answered';
-    const FLAG_DELETED = 'deleted';
-    const FLAG_SEEN = 'seen';
-    const FLAG_DRAFT = 'draft';
-
-    /**
      * This constructor takes in the uid for the message and the Imap class representing the mailbox the
      * message should be opened from. This constructor should generally not be called directly, but rather retrieved
      * through the apprioriate Imap functions.
@@ -267,18 +249,18 @@ class Message
                 if (!empty($part->description)) {
                     $cleanFilename = self::processFilename(preg_replace('/_/', " ", $part->description));
                     $part->description = $cleanFilename;
-                    foreach($part->parameters as $key => $parameter) {
+                    foreach ($part->parameters as $key => $parameter) {
                         if ($parameter->attribute === "name") {
                             $part->parameters[$key]->value = $cleanFilename;
                         }
                     }
-                    foreach($part->dparameters as $key => $dparameter) {
+                    foreach ($part->dparameters as $key => $dparameter) {
                         if ($dparameter->attribute === "filename") {
                             $part->dparameters[$key]->value = $cleanFilename;
                         }
                     }
                 }
-                
+
                 $this->processStructure($part, $id + 1);
             }
         }
@@ -460,14 +442,14 @@ class Message
     {
         return $this->imapConnection;
     }
-    
+
     /**
      * Adds an attachment
-     * 
-     * @param array $parameters
+     *
+     * @param array     $parameters
      * @param \stdClass $structure
-     * @param string $partIdentifier
-     * 
+     * @param string    $partIdentifier
+     *
      * @return boolean Successful attachment of file
      */
     protected function addAttachment($parameters, $structure, $partIdentifier)
@@ -477,28 +459,29 @@ class Message
             $subjectMatches = array();
             preg_match('/Subject:\s?(.*?)(?=\s*Thread-Topic:|$)/', self::processBody($parameters, $structure, $partIdentifier), $subjectMatches);
             $filename = !empty($subjectMatches[1]) ? self::processFilename($subjectMatches[1]) : "email";
-            
+
             $dpar = new \stdClass();
             $dpar->attribute = "filename";
             $dpar->value = str_replace(array("\r", "\n"), '', $filename) . ".eml";
             $structure->dparameters[] = $dpar;
         }
-        
+
         try {
             $attachment          = new Attachment($this, $structure, $partIdentifier);
             $this->attachments[] = $attachment;
+
             return true;
         } catch (\Exception $e) {
             return false;
         }
     }
-    
+
     /**
      * Decodes the email subject line string passed to it
      * Designed to handle subject lines with special characters encoded in Base64 or Quoted-Printable
-     * 
+     *
      * @param string $subject subject line to be processed and/or decoded
-     * 
+     *
      * @return string decoded subject line
      */
     protected function processFilename($subject)
@@ -525,9 +508,9 @@ class Message
                 default:
                     $decodedString = "";
             }
-            
+
             $decodedString = iconv($charset, "UTF-8//TRANSLIT", $decodedString);
-            
+
             $output .= self::cleanFilename($decodedString);
 
             if (!empty($nextSection)) {
@@ -535,28 +518,28 @@ class Message
             }
 
             return $output;
-        } else if (count($encodingMatches) > 0) {
+        } elseif (count($encodingMatches) > 0) {
             return $output . $encodingMatches[0];
-        } else if (empty($encodingMatches)) {
+        } elseif (empty($encodingMatches)) {
             return $subject;
         }
 
         return $output;
     }
-    
+
     protected function cleanFilename($oldName)
     {
         return preg_replace('/[<>#%"{}|\\\^\[\]`;\/\?:@&=$,]/',"_", $oldName);
     }
-    
+
     /**
-     * This function extracts the body of an email part, decodes it, 
+     * This function extracts the body of an email part, decodes it,
      * converts it to the charset of the parent message, and returns the result.
-     * 
-     * @param array $parameters
+     *
+     * @param array     $parameters
      * @param \stdClass $structure
-     * @param string $partIdentifier
-     * 
+     * @param string    $partIdentifier
+     *
      * @return string
      */
     protected function processBody($parameters, $structure, $partIdentifier)
@@ -571,7 +554,7 @@ class Message
 // TODO: ERROR HERE!!!
             $messageBody = iconv($parameters['charset'], self::$charset, $messageBody);
         }
-        
+
         return $messageBody;
     }
 
@@ -586,10 +569,10 @@ class Message
     {
         $parameters = self::getParametersFromStructure($structure);
         $attached = false;
-        
+
         // TODO: Process HTML files similarly to .eml files -- prevent them from becoming merged into the main email if their disposition is "attachment"
-        
-        if ((isset($structure->disposition) && $structure->disposition == "attachment") && 
+
+        if ((isset($structure->disposition) && $structure->disposition == "attachment") &&
             !($structure->type == self::TYPE_TEXT || $structure->type == self::TYPE_MULTIPART)) {
             $attached = self::addAttachment($parameters, $structure, $partIdentifier);
         }
@@ -614,7 +597,7 @@ class Message
 
                 $this->htmlMessage .= $messageBody;
             }
-            
+
             if (isset($structure->parts)) { // multipart: iterate through each part
                 foreach ($structure->parts as $partIndex => $part) {
                     $partId = $partIndex + 1;
