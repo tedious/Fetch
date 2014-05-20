@@ -247,7 +247,7 @@ class Message
             // multipart
             foreach ($structure->parts as $id => $part) {
                 if (!empty($part->description)) {
-                    $cleanFilename = self::processFilename(preg_replace('/_/', " ", $part->description));
+                    $cleanFilename = $this->makeFilenameSafe($part->description);
                     $part->description = $cleanFilename;
                     foreach ($part->parameters as $key => $parameter) {
                         if ($parameter->attribute === "name") {
@@ -450,7 +450,6 @@ class Message
      * @param array     $parameters
      * @param \stdClass $structure
      * @param string    $partIdentifier
-     *
      * @return boolean Successful attachment of file
      */
     protected function addAttachment($parameters, $structure, $partIdentifier)
@@ -459,7 +458,7 @@ class Message
         if (!(isset($parameters["name"]) || isset($parameters["filename"])) && $structure->type == self::TYPE_MESSAGE) {
             $subjectMatches = array();
             preg_match('/^Subject:\s?([^\n]*)/m', self::processBody($parameters, $structure, $partIdentifier), $subjectMatches);
-            $filename = !empty($subjectMatches[1]) ? trim(self::processFilename($subjectMatches[1])) : "email";
+            $filename = !empty($subjectMatches[1]) ? trim($subjectMatches[1]) : "email";
 
             $dpar = new \stdClass();
             $dpar->attribute = "filename";
@@ -478,26 +477,86 @@ class Message
     }
 
     /**
-     * Decodes the email subject line string passed to it
-     * Designed to handle subject lines with special characters encoded in Base64 or Quoted-Printable
+     * This function extracts the body of an email part, strips harmful 
+     * Outlook-specific strings from it, processes any encoded one-liners, 
+     * decodes it, converts it to the charset of the parent message, and 
+     * returns the result.
      *
-     * @param string $subject subject line to be processed and/or decoded
-     *
-     * @return string decoded subject line
+     * @param array     $parameters
+     * @param \stdClass $structure
+     * @param string    $partIdentifier
+     * @return string
      */
-    protected function processFilename($subject)
+    protected function processBody($parameters, $structure, $partIdentifier)
+    {
+        $messageBody = isset($partIdentifier) ?
+            imap_fetchbody($this->imapStream, $this->uid, $partIdentifier, FT_UID)
+            : imap_body($this->imapStream, $this->uid, FT_UID);
+        
+        $messageBody = $this->stripOutlookSpecificStrings($messageBody);
+        
+        $messageBody = $this->processEncodedSubject($messageBody);
+        
+        $messageBody = self::decode($messageBody, $structure->encoding);
+
+        if (!empty($parameters['charset']) && $parameters['charset'] !== self::$charset) {
+            $messageBody = iconv($parameters['charset'], self::$charset, $messageBody);
+        }
+
+        return $messageBody;
+    }
+    
+    /**
+     * Removes "Thread-Topic:" and "Thread-Index:" lines from the message body 
+     * which are placed there by Outlook and mess up the other processing steps
+     * 
+     * @param string $messageBody
+     * @return string
+     */
+    protected function stripOutlookSpecificStrings($messageBody)
+    {
+        $messageBody = preg_replace('/Thread-Topic:.*$/m', "", $messageBody);
+        $messageBody = preg_replace('/Thread-Index:.*$/m', "", $messageBody);
+        
+        return $messageBody;
+    }
+    
+    /**
+     * Grabs the encoded strings (usually subject line) from the string passed 
+     * to it, and passes them to decodeSubject() for processing, then replaces 
+     * them in the original string, before returning the modified string
+     *
+     * @param string $haystack
+     * @return string
+     */
+    protected function processEncodedSubject($haystack)
+    {
+        $haystack = preg_replace_callback('/=\?([^?]*)\?([^?])\?([^?]*)\?=(.*)$/m', function($encodedStrings)
+        {
+            return $this->decodeSubject($encodedStrings);
+        }, $haystack);
+        
+        return $haystack;
+    }
+    
+    /**
+     * Decodes the email subject line array passed to it. It is designed 
+     * to handle subject lines with special characters encoded in Base64 or 
+     * Quoted-Printable in "=?charset?encoding?content?=" format
+     * 
+     * @param array $encodedStrings
+     * @return string
+     */
+    protected function decodeSubject($encodedStrings)
     {
         $output = "";
-
-        $encodingMatches = array();
-        preg_match('/=\?(.[^?]*)\?([BQ])\?(.[^?]*)\?=\s*(.*)/', $subject, $encodingMatches);
-
-        if (is_array($encodingMatches) && count($encodingMatches) > 3) {
-            array_shift($encodingMatches); // remove input
-            $charset = array_shift($encodingMatches); // remove charset
-            $encoding = array_shift($encodingMatches);
-            $encodedString = array_shift($encodingMatches);
-            $nextSection = array_shift($encodingMatches);
+        
+        if (is_array($encodedStrings) && count($encodedStrings) > 3) {
+            $subject = array_shift($encodedStrings); // remove input
+            $charset = array_shift($encodedStrings); // remove charset
+            $encoding = array_shift($encodedStrings);
+            $encodedString = array_shift($encodedStrings);
+            $nextSection = array_shift($encodedStrings);
 
             switch ($encoding) {
                 case "Q": // Quoted-Printable
@@ -510,55 +569,39 @@ class Message
                     $decodedString = "";
             }
 
-            $decodedString = iconv($charset, "UTF-8//TRANSLIT", $decodedString);
+            $decodedString = iconv($charset, self::$charset, $decodedString);
 
-            $output .= self::cleanFilename($decodedString);
+            $output .= $this->makeFilenameSafe($decodedString);
 
-            if (!empty($nextSection)) {
-                $output .= self::processFilename($nextSection);
+            $test = preg_replace('/\s*/', "", $nextSection);
+            $test = trim($test);
+            if ($test != "") {
+                $output .= $this->processEncodedSubject($nextSection);
             }
 
             return $output;
-        } elseif (count($encodingMatches) > 0) {
-            return $output . $encodingMatches[0];
-        } elseif (empty($encodingMatches)) {
+        } elseif (count($encodedStrings) > 0) {
+            return $output . $encodedStrings[0];
+        } elseif (empty($encodedStrings)) {
             return $subject;
         }
 
         return $output;
     }
-
-    protected function cleanFilename($oldName)
+    
+    /**
+     * This function takes in a string to be used as a filename and replaces 
+     * any dangerous characters with underscores to ensure compatibility with 
+     * various file systems
+     * 
+     * @param string $oldName
+     * @return string
+     */
+    protected function makeFilenameSafe($oldName)
     {
         return preg_replace('/[<>#%"{}|\\\^\[\]`;\/\?:@&=$,]/',"_", $oldName);
     }
-
-    /**
-     * This function extracts the body of an email part, decodes it,
-     * converts it to the charset of the parent message, and returns the result.
-     *
-     * @param array     $parameters
-     * @param \stdClass $structure
-     * @param string    $partIdentifier
-     *
-     * @return string
-     */
-    protected function processBody($parameters, $structure, $partIdentifier)
-    {
-        $messageBody = isset($partIdentifier) ?
-            imap_fetchbody($this->imapStream, $this->uid, $partIdentifier, FT_UID)
-            : imap_body($this->imapStream, $this->uid, FT_UID);
-
-        $messageBody = self::decode($messageBody, $structure->encoding);
-
-        if (!empty($parameters['charset']) && $parameters['charset'] !== self::$charset) {
-// TODO: ERROR HERE!!!
-            $messageBody = iconv($parameters['charset'], self::$charset, $messageBody);
-        }
-
-        return $messageBody;
-    }
-
+    
     /**
      * This function takes in a structure and identifier and processes that part of the message. If that portion of the
      * message has its own subparts, those are recursively processed using this function.
@@ -570,16 +613,14 @@ class Message
     {
         $parameters = self::getParametersFromStructure($structure);
         $attached = false;
-
-        // TODO: Process HTML files similarly to .eml files -- prevent them from becoming merged into the main email if their disposition is "attachment"
-
+        
         if ((isset($structure->disposition) && $structure->disposition == "attachment") &&
             !($structure->type == self::TYPE_TEXT || $structure->type == self::TYPE_MULTIPART)) {
-            $attached = self::addAttachment($parameters, $structure, $partIdentifier);
+            $attached = $this->addAttachment($parameters, $structure, $partIdentifier);
         }
 
         if (!$attached && ($structure->type == self::TYPE_TEXT || $structure->type == self::TYPE_MULTIPART)) {
-            $messageBody = self::processBody($parameters, $structure, $partIdentifier);
+            $messageBody = $this->processBody($parameters, $structure, $partIdentifier);
 
             if (strtolower($structure->subtype) === 'plain' || ($structure->type == self::TYPE_MULTIPART && strtolower($structure->subtype) !== 'alternative')) {
                 if (isset($this->plaintextMessage)) {
@@ -637,7 +678,7 @@ class Message
                 return $data;
         }
     }
-
+    
     /**
      * This function returns the body type that an imap integer maps to.
      *
