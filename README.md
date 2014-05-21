@@ -1,8 +1,8 @@
-# Fetch [![Build Status](https://travis-ci.org/tedivm/Fetch.svg?branch=master)](https://travis-ci.org/tedivm/Fetch)
+# Fetch [![Build Status](https://travis-ci.org/tedious/Fetch.svg?branch=master)](https://travis-ci.org/tedious/Fetch)
 
-[![License](http://img.shields.io/packagist/l/tedivm/fetch.svg)](https://github.com/tedivm/fetch/blob/master/LICENSE)
-[![Latest Stable Version](http://img.shields.io/github/release/tedivm/fetch.svg)](https://packagist.org/packages/tedivm/fetch)
-[![Coverage Status](http://img.shields.io/coveralls/tedivm/Fetch.svg)](https://coveralls.io/r/tedivm/Fetch?branch=master)
+[![License](http://img.shields.io/packagist/l/tedivm/fetch.svg)](https://github.com/tedious/fetch/blob/master/LICENSE)
+[![Latest Stable Version](http://img.shields.io/github/release/tedious/fetch.svg)](https://packagist.org/packages/tedivm/fetch)
+[![Coverage Status](http://img.shields.io/coveralls/tedious/Fetch.svg)](https://coveralls.io/r/tedious/Fetch?branch=master)
 [![Total Downloads](http://img.shields.io/packagist/dt/tedivm/fetch.svg)](https://packagist.org/packages/tedivm/fetch)
 
 Fetch is a library for reading email and attachments, primarily using the POP 
@@ -37,7 +37,7 @@ $ pear install tedivm/Fetch
 
 ### Github
 
-Releases of Fetch are available on [Github](https://github.com/tedivm/Fetch/releases).
+Releases of Fetch are available on [Github](https://github.com/tedious/Fetch/releases).
 
 
 ## Sample Usage
