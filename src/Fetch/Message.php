@@ -446,6 +446,11 @@ class Message
 
     /**
      * Adds an attachment
+     * 
+     * If a filename is not provided and the attachment is a message/rfc822 
+     * email, parse the Subject line and use it as the filename. If the Subject 
+     * line is blank or illegible, use a default filename (like Gmail and some 
+     * desktop clients do)
      *
      * @param array     $parameters
      * @param \stdClass $structure
@@ -454,12 +459,14 @@ class Message
      */
     protected function addAttachment($parameters, $structure, $partIdentifier)
     {
-        // make up a filename if none is provided (like Gmail and desktop clients do)
         if (!(isset($parameters["name"]) || isset($parameters["filename"])) && $structure->type == self::TYPE_MESSAGE) {
-            $subjectMatches = array();
-            preg_match('/^Subject:\s?([^\n]*)/m', self::processBody($parameters, $structure, $partIdentifier), $subjectMatches);
-            $filename = !empty($subjectMatches[1]) ? trim($subjectMatches[1]) : "email";
-
+            $body = isset($partIdentifier) ?
+                imap_fetchbody($this->imapStream, $this->uid, $partIdentifier, FT_UID)
+                : imap_body($this->imapStream, $this->uid, FT_UID);
+            
+            $headers = iconv_mime_decode_headers($body, 0, self::$charset);
+            $filename = !empty($headers["Subject"]) ? $this->makeFilenameSafe($headers["Subject"]) : "email";
+            
             $dpar = new \stdClass();
             $dpar->attribute = "filename";
             $dpar->value = str_replace(array("\r", "\n"), '', $filename) . ".eml";
@@ -487,106 +494,53 @@ class Message
      * @param string    $partIdentifier
      * @return string
      */
-    protected function processBody($parameters, $structure, $partIdentifier)
+    protected function processBody($structure, $partIdentifier)
     {
-        $messageBody = isset($partIdentifier) ?
-            imap_fetchbody($this->imapStream, $this->uid, $partIdentifier, FT_UID)
-            : imap_body($this->imapStream, $this->uid, FT_UID);
+        $rawBody = isset($partIdentifier) ?
+                imap_fetchbody($this->imapStream, $this->uid, $partIdentifier, FT_UID)
+                : imap_body($this->imapStream, $this->uid, FT_UID);
         
-        $messageBody = $this->stripOutlookSpecificStrings($messageBody);
+        $bodyNoOutlook = $this->stripOutlookSpecificStrings($rawBody);
         
-        $messageBody = $this->processEncodedSubject($messageBody);
+        $decodedBody = self::decode($bodyNoOutlook, $structure->encoding);
         
-        $messageBody = self::decode($messageBody, $structure->encoding);
-
-        if (!empty($parameters['charset']) && $parameters['charset'] !== self::$charset) {
-            $messageBody = iconv($parameters['charset'], self::$charset, $messageBody);
+        $inCharset = $inCharset = mb_detect_encoding($decodedBody, array(
+            "US-ASCII",
+            "ISO-8859-1",
+            "UTF-8",
+            "UTF-7",
+            "ASCII",
+            "EUC-JP",
+            "SJIS",
+            "eucJP-win",
+            "SJIS-win",
+            "JIS",
+            "ISO-2022-JP",
+            "UTF-16",
+            "UTF-32",
+            "UCS2",
+            "UCS4")
+        );
+        
+        if ($inCharset && $inCharset !== self::$charset) {
+            $decodedBody = iconv($inCharset, self::$charset, $decodedBody);
         }
 
-        return $messageBody;
+        return $decodedBody;
     }
     
     /**
-     * Removes "Thread-Topic:" and "Thread-Index:" lines from the message body 
-     * which are placed there by Outlook and mess up the other processing steps
+     * Removes "Thread-Index:" line from the message body which is placed there 
+     * by Outlook and messes up the other processing steps.
      * 
      * @param string $messageBody
      * @return string
      */
-    protected function stripOutlookSpecificStrings($messageBody)
+    protected function stripOutlookSpecificStrings($bodyBefore)
     {
-        $messageBody = preg_replace('/Thread-Topic:.*$/m', "", $messageBody);
-        $messageBody = preg_replace('/Thread-Index:.*$/m', "", $messageBody);
+        $bodyAfter = preg_replace('/Thread-Index:.*$/m', "", $bodyBefore);
         
-        return $messageBody;
-    }
-    
-    /**
-     * Grabs the encoded strings (usually subject line) from the string passed 
-     * to it, and passes them to decodeSubject() for processing, then replaces 
-     * them in the original string, before returning the modified string
-     *
-     * @param string $haystack
-     * @return string
-     */
-    protected function processEncodedSubject($haystack)
-    {
-        $haystack = preg_replace_callback('/=\?([^?]*)\?([^?])\?([^?]*)\?=(.*)$/m', function($encodedStrings)
-        {
-            return $this->decodeSubject($encodedStrings);
-        }, $haystack);
-        
-        return $haystack;
-    }
-    
-    /**
-     * Decodes the email subject line array passed to it. It is designed 
-     * to handle subject lines with special characters encoded in Base64 or 
-     * Quoted-Printable in "=?charset?encoding?content?=" format
-     * 
-     * @param array $encodedStrings
-     * @return string
-     */
-    protected function decodeSubject($encodedStrings)
-    {
-        $output = "";
-        
-        if (is_array($encodedStrings) && count($encodedStrings) > 3) {
-            $subject = array_shift($encodedStrings); // remove input
-            $charset = array_shift($encodedStrings); // remove charset
-            $encoding = array_shift($encodedStrings);
-            $encodedString = array_shift($encodedStrings);
-            $nextSection = array_shift($encodedStrings);
-
-            switch ($encoding) {
-                case "Q": // Quoted-Printable
-                    $decodedString = quoted_printable_decode($encodedString);
-                    break;
-                case "B": // Base64
-                    $decodedString = base64_decode($encodedString);
-                    break;
-                default:
-                    $decodedString = "";
-            }
-
-            $decodedString = iconv($charset, self::$charset, $decodedString);
-
-            $output .= $this->makeFilenameSafe($decodedString);
-
-            $test = preg_replace('/\s*/', "", $nextSection);
-            $test = trim($test);
-            if ($test != "") {
-                $output .= $this->processEncodedSubject($nextSection);
-            }
-
-            return $output;
-        } elseif (count($encodedStrings) > 0) {
-            return $output . $encodedStrings[0];
-        } elseif (empty($encodedStrings)) {
-            return $subject;
-        }
-
-        return $output;
+        return $bodyAfter;
     }
     
     /**
@@ -599,7 +553,7 @@ class Message
      */
     protected function makeFilenameSafe($oldName)
     {
-        return preg_replace('/[<>#%"{}|\\\^\[\]`;\/\?:@&=$,]/',"_", $oldName);
+        return preg_replace('/[<>"{}|\\\^\[\]`;\/\?:@&=$,]/',"_", $oldName);
     }
     
     /**
@@ -611,16 +565,17 @@ class Message
      */
     protected function processStructure($structure, $partIdentifier = null)
     {
-        $parameters = self::getParametersFromStructure($structure);
         $attached = false;
         
+        // TODO: Get HTML attachments working, too!
         if ((isset($structure->disposition) && $structure->disposition == "attachment") &&
             !($structure->type == self::TYPE_TEXT || $structure->type == self::TYPE_MULTIPART)) {
+            $parameters = self::getParametersFromStructure($structure);
             $attached = $this->addAttachment($parameters, $structure, $partIdentifier);
         }
 
         if (!$attached && ($structure->type == self::TYPE_TEXT || $structure->type == self::TYPE_MULTIPART)) {
-            $messageBody = $this->processBody($parameters, $structure, $partIdentifier);
+            $messageBody = $this->processBody($structure, $partIdentifier);
 
             if (strtolower($structure->subtype) === 'plain' || ($structure->type == self::TYPE_MULTIPART && strtolower($structure->subtype) !== 'alternative')) {
                 if (isset($this->plaintextMessage)) {
@@ -664,7 +619,7 @@ class Message
     {
         if (!is_numeric($encoding))
             $encoding = strtolower($encoding);
-
+        
         switch ($encoding) {
             case 'quoted-printable':
             case 4:
