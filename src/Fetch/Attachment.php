@@ -109,20 +109,28 @@ class Attachment
     }
 
     /**
-     * This function returns the data of the attachment. Combined with getMimeType() it can be used to directly output
-     * data to a browser.
+     * This function returns the data of the attachment. Combined with 
+     * getMimeType() it can be used to directly output data to a browser.
+     * 
+     * If the attachment file is message/rfc822, skip processing/decoding the 
+     * contents in order to avoid mangling the file. Otherwise, decode as 
+     * normal to ensure other files are handled correctly.
      *
      * @return string
      */
     public function getData()
     {
         if (!isset($this->data)) {
-            $messageBody = isset($this->partId) ?
+            $rawBody = isset($this->partId) ?
                 imap_fetchbody($this->imapStream, $this->messageId, $this->partId, FT_UID)
                 : imap_body($this->imapStream, $this->messageId, FT_UID);
 
-            $messageBody = Message::decode($messageBody, $this->encoding);
-            $this->data  = $messageBody;
+            if (strpos(strtolower($this->mimeType), "rfc822") !== false) {
+                $this->data = $rawBody;
+            } else {
+                $decodedBody = Message::decode($rawBody, $this->encoding);
+                $this->data  = $decodedBody;
+            }
         }
 
         return $this->data;
