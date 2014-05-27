@@ -567,8 +567,7 @@ class Message
         $attached = false;
         
         // TODO: Get HTML attachments working, too!
-        if ((isset($structure->disposition) && $structure->disposition == "attachment") &&
-            !($structure->type == self::TYPE_TEXT || $structure->type == self::TYPE_MULTIPART)) {
+        if (isset($structure->disposition) && $structure->disposition == "attachment") {
             $parameters = self::getParametersFromStructure($structure);
             $attached = $this->addAttachment($parameters, $structure, $partIdentifier);
         }
