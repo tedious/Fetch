@@ -201,7 +201,7 @@ class Message
 
             return false;
 
-        $this->subject = $messageOverview->subject;
+        $this->subject = isset($messageOverview->subject) ? $messageOverview->subject : null;
         $this->date    = strtotime($messageOverview->date);
         $this->size    = $messageOverview->size;
 
