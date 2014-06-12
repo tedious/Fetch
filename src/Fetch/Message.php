@@ -437,7 +437,7 @@ class Message
 
             $messageBody = self::decode($messageBody, $structure->encoding);
 
-            if (!empty($parameters['charset']) && $parameters['charset'] !== self::$charset)
+            if (!empty($parameters['charset']) && !preg_match('/utf-?8/i', $parameters['charset']) && $parameters['charset'] !== self::$charset)
                 $messageBody = iconv($parameters['charset'], self::$charset, $messageBody);
 
             if (strtolower($structure->subtype) === 'plain' || ($structure->type == 1 && strtolower($structure->subtype) !== 'alternative')) {
