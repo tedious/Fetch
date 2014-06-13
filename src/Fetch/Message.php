@@ -448,8 +448,9 @@ class Message
             if (!empty($parameters['charset']) && $parameters['charset'] !== self::$charset) {
                 if (function_exists('mb_convert_encoding')) {
                     $messageBody = mb_convert_encoding($messageBody, self::$charset, $parameters['charset']);
+                } else {
+                    $messageBody = iconv($parameters['charset'], self::$charset . self::$charsetFlag, $messageBody);
                 }
-                $messageBody = iconv($parameters['charset'], self::$charset . self::$charsetFlag, $messageBody);
             }
 
             if (strtolower($structure->subtype) === 'plain' || ($structure->type == 1 && strtolower($structure->subtype) !== 'alternative')) {
