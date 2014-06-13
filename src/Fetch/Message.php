@@ -176,7 +176,7 @@ class Message
      *
 =======
      * function can't be found, and in this case iconv encoding will be used.
-     * 
+     *
 >>>>>>> d4d7f367ba5420678d140f500aa3374a1f7544d8
      * @var string
      */
