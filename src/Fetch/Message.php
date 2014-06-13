@@ -171,8 +171,13 @@ class Message
 
     /**
      * This value defines the flag set for encoding if the mb_convert_encoding
+<<<<<<< HEAD
      * function can't be found. In this case iconv encoding will be used.
      *
+=======
+     * function can't be found, and in this case iconv encoding will be used.
+     * 
+>>>>>>> d4d7f367ba5420678d140f500aa3374a1f7544d8
      * @var string
      */
     public static $charsetFlag = '//TRANSLIT';
