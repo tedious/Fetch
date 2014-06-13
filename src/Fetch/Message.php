@@ -167,7 +167,7 @@ class Message
      *
      * @var string
      */
-    public static $charset = 'UTF-8//TRANSLIT';
+    public static $charset = 'UTF-8';
 
     /**
      * This constructor takes in the uid for the message and the Imap class representing the mailbox the
@@ -438,7 +438,7 @@ class Message
             $messageBody = self::decode($messageBody, $structure->encoding);
 
             if (!empty($parameters['charset']) && $parameters['charset'] !== self::$charset)
-                $messageBody = iconv($parameters['charset'], self::$charset, $messageBody);
+                $messageBody = mb_convert_encoding($messageBody, self::$charset, $parameters['charset']);
 
             if (strtolower($structure->subtype) === 'plain' || ($structure->type == 1 && strtolower($structure->subtype) !== 'alternative')) {
                 if (isset($this->plaintextMessage)) {
