@@ -168,6 +168,14 @@ class Message
      * @var string
      */
     public static $charset = 'UTF-8';
+    
+    /**
+     * This value defines the flag set for encoding if the mb_convert_encoding
+     * function can't be found. In this case iconv encoding will be used.
+     * 
+     * @var string
+     */
+    public static $charsetFlag = '//TRANSLIT';
 
     /**
      * This constructor takes in the uid for the message and the Imap class representing the mailbox the
@@ -437,8 +445,13 @@ class Message
 
             $messageBody = self::decode($messageBody, $structure->encoding);
 
-            if (!empty($parameters['charset']) && $parameters['charset'] !== self::$charset)
-                $messageBody = mb_convert_encoding($messageBody, self::$charset, $parameters['charset']);
+            if (!empty($parameters['charset']) && $parameters['charset'] !== self::$charset) {
+                if (function_exists('mb_convert_encoding')) {
+                    $messageBody = mb_convert_encoding($messageBody, self::$charset, $parameters['charset']);
+                } else {
+                    $messageBody = iconv($parameters['charset'], self::$charset . self::$charsetFlag, $messageBody);
+                }
+            }
 
             if (strtolower($structure->subtype) === 'plain' || ($structure->type == 1 && strtolower($structure->subtype) !== 'alternative')) {
                 if (isset($this->plaintextMessage)) {
