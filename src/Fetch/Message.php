@@ -168,11 +168,11 @@ class Message
      * @var string
      */
     public static $charset = 'UTF-8';
-    
+
     /**
      * This value defines the flag set for encoding if the mb_convert_encoding
      * function can't be found. In this case iconv encoding will be used.
-     * 
+     *
      * @var string
      */
     public static $charsetFlag = '//TRANSLIT';
@@ -359,7 +359,6 @@ class Message
 
         if (!in_array($type, $addressTypes) || !isset($this->$type) || count($this->$type) < 1)
             return false;
-
 
         if (!$asString) {
             if ($type == 'from')
