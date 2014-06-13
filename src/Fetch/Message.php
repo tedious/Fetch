@@ -171,7 +171,7 @@ class Message
     
     /**
      * This value defines the flag set for encoding if the mb_convert_encoding
-     * function can't be found. In this case iconv encoding will be used.
+     * function can't be found, and in this case iconv encoding will be used.
      * 
      * @var string
      */
