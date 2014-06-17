@@ -139,12 +139,12 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('Sent', $server->getMailBox());
     }
 
-	public function testGetMailboxes()
-	{
-		$box = ["INBOX","Sent","Flagged Email"];
-		$server = Static::getServer();
-		$this->assertEquals($box, $server->getMailBoxes());
-	}
+    public function testGetMailboxes()
+    {
+        $box = ["INBOX","Sent","Flagged Email"];
+        $server = Static::getServer();
+        $this->assertEquals($box, $server->getMailBoxes());
+    }
 
     public function testSetMailBox()
     {
