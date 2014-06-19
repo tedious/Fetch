@@ -445,12 +445,12 @@ class Server
     {
         return imap_createmailbox($this->getImapStream(), $this->getServerSpecification() . $mailbox);
     }
-    
+
     /**
      * Deletes the given mailbox.
-     * 
+     *
      * @param $mailbox
-     * 
+     *
      * @return bool
      */
      public function deleteMailBox($mailbox)
