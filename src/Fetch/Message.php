@@ -448,7 +448,7 @@ class Message
                 }
 
                 $this->plaintextMessage .= trim($messageBody);
-            } elseif( strtolower($structure->subtype) ===  'html') {
+            } elseif (strtolower($structure->subtype) === 'html') {
                 if (isset($this->htmlMessage)) {
                     $this->htmlMessage .= '<br><br>';
                 } else {
