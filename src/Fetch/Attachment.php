@@ -211,7 +211,7 @@ class Attachment
 
         case 4:
         case 'quoted-printable':
-            $streamFilter = stream_filter_append($handle, 'convert.quoted-printable', STREAM_FILTER_WRITE);
+            $streamFilter = stream_filter_append($filePointer, 'convert.quoted-printable', STREAM_FILTER_WRITE);
             break;
 
         default:
