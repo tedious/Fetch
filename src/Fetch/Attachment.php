@@ -203,9 +203,29 @@ class Attachment
         if (($filePointer = fopen($path, 'w')) == false)
             return false;
 
-        $results = fwrite($filePointer, $this->getData());
+        switch ($this->encoding) {
+        case 3:
+        case 'base64':
+            $streamFilter = stream_filter_append($filePointer, 'convert.base64-decode', STREAM_FILTER_WRITE);
+            break;
+
+        case 4:
+        case 'quoted-printable':
+            $streamFilter = stream_filter_append($handle, 'convert.quoted-printable', STREAM_FILTER_WRITE);
+            break;
+
+        default:
+            $streamFilter = null;
+        }
+
+        $result = imap_savebody($this->imapStream, $filePointer, $this->messageId, $this->partId ?: 1, FT_UID);
+
+        if ($streamFilter) {
+            stream_filter_remove($streamFilter);
+        }
+
         fclose($filePointer);
 
-        return is_numeric($results);
+        return $result;
     }
 }
