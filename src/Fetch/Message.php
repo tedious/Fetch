@@ -178,6 +178,16 @@ class Message
     public static $charsetFlag = '//TRANSLIT';
 
     /**
+     * These constants can be used to easily access available flags
+     */
+    const FLAG_RECENT = 'recent';
+    const FLAG_FLAGGED = 'flagged';
+    const FLAG_ANSWERED = 'answered';
+    const FLAG_DELETED = 'deleted';
+    const FLAG_SEEN = 'seen';
+    const FLAG_DRAFT = 'draft';
+
+    /**
      * This constructor takes in the uid for the message and the Imap class representing the mailbox the
      * message should be opened from. This constructor should generally not be called directly, but rather retrieved
      * through the apprioriate Imap functions.
