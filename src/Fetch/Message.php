@@ -180,7 +180,7 @@ class Message
      *
      * @var string
      */
-    public static $charset = 'UTF-8';
+    public static $charset = 'UTF-8//TRANSLIT';
 
     /**
      * This constructor takes in the uid for the message and the Imap class representing the mailbox the
