@@ -159,8 +159,6 @@ class Server
             return false;
         }
 
-
-
         $this->mailbox = $mailbox;
         if (isset($this->imapStream)) {
             $this->setImapStream();
