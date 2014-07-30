@@ -155,12 +155,10 @@ class Server
      */
     public function setMailBox($mailbox = '')
     {
-        if(!$this->hasMailBox($mailbox))
+        if(!$this->hasMailBox($mailbox)) {
 
             return false;
         }
-
-
 
         $this->mailbox = $mailbox;
         if (isset($this->imapStream)) {
