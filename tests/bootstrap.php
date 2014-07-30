@@ -35,6 +35,6 @@ if (!file_exists($filename)) {
     $filename = __DIR__ .'/../autoload.php';
     require_once $filename;
 } else {
-    $loader = require_once $filename;
+    $loader = require $filename;
     $loader->add('Fetch\\Test', __DIR__);
 }
