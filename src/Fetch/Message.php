@@ -445,16 +445,16 @@ class Message
 
     /**
      * Adds an attachment
-     * 
-     * If a filename is not provided and the attachment is a message/rfc822 
-     * email, parse the Subject line and use it as the filename. If the Subject 
-     * line is blank or illegible, use a default filename (like Gmail and some 
+     *
+     * If a filename is not provided and the attachment is a message/rfc822
+     * email, parse the Subject line and use it as the filename. If the Subject
+     * line is blank or illegible, use a default filename (like Gmail and some
      * desktop clients do)
      *
-     * @param array     $parameters
-     * @param \stdClass $structure
-     * @param string    $partIdentifier
-     * @return boolean Successful attachment of file
+     * @param  array     $parameters
+     * @param  \stdClass $structure
+     * @param  string    $partIdentifier
+     * @return boolean   Successful attachment of file
      */
     protected function addAttachment($parameters, $structure, $partIdentifier)
     {
@@ -462,10 +462,10 @@ class Message
             $body = isset($partIdentifier) ?
                 imap_fetchbody($this->imapStream, $this->uid, $partIdentifier, FT_UID)
                 : imap_body($this->imapStream, $this->uid, FT_UID);
-            
+
             $headers = iconv_mime_decode_headers($body, 0, self::$charset);
             $filename = !empty($headers["Subject"]) ? $this->makeFilenameSafe($headers["Subject"]) : "email";
-            
+
             $dpar = new \stdClass();
             $dpar->attribute = "filename";
             $dpar->value = str_replace(array("\r", "\n"), '', $filename) . ".eml";
@@ -483,14 +483,14 @@ class Message
     }
 
     /**
-     * This function extracts the body of an email part, strips harmful 
-     * Outlook-specific strings from it, processes any encoded one-liners, 
-     * decodes it, converts it to the charset of the parent message, and 
+     * This function extracts the body of an email part, strips harmful
+     * Outlook-specific strings from it, processes any encoded one-liners,
+     * decodes it, converts it to the charset of the parent message, and
      * returns the result.
      *
-     * @param array     $parameters
-     * @param \stdClass $structure
-     * @param string    $partIdentifier
+     * @param  array     $parameters
+     * @param  \stdClass $structure
+     * @param  string    $partIdentifier
      * @return string
      */
     protected function processBody($structure, $partIdentifier)
@@ -498,11 +498,11 @@ class Message
         $rawBody = isset($partIdentifier) ?
                 imap_fetchbody($this->imapStream, $this->uid, $partIdentifier, FT_UID)
                 : imap_body($this->imapStream, $this->uid, FT_UID);
-        
+
         $bodyNoOutlook = $this->stripOutlookSpecificStrings($rawBody);
-        
+
         $decodedBody = self::decode($bodyNoOutlook, $structure->encoding);
-        
+
         $inCharset = $inCharset = mb_detect_encoding($decodedBody, array(
             "US-ASCII",
             "ISO-8859-1",
@@ -520,41 +520,41 @@ class Message
             "UCS2",
             "UCS4")
         );
-        
+
         if ($inCharset && $inCharset !== self::$charset) {
             $decodedBody = iconv($inCharset, self::$charset, $decodedBody);
         }
 
         return $decodedBody;
     }
-    
+
     /**
-     * Removes "Thread-Index:" line from the message body which is placed there 
+     * Removes "Thread-Index:" line from the message body which is placed there
      * by Outlook and messes up the other processing steps.
-     * 
-     * @param string $messageBody
+     *
+     * @param  string $messageBody
      * @return string
      */
     protected function stripOutlookSpecificStrings($bodyBefore)
     {
         $bodyAfter = preg_replace('/Thread-Index:.*$/m', "", $bodyBefore);
-        
+
         return $bodyAfter;
     }
-    
+
     /**
-     * This function takes in a string to be used as a filename and replaces 
-     * any dangerous characters with underscores to ensure compatibility with 
+     * This function takes in a string to be used as a filename and replaces
+     * any dangerous characters with underscores to ensure compatibility with
      * various file systems
-     * 
-     * @param string $oldName
+     *
+     * @param  string $oldName
      * @return string
      */
     protected function makeFilenameSafe($oldName)
     {
         return preg_replace('/[<>"{}|\\\^\[\]`;\/\?:@&=$,]/',"_", $oldName);
     }
-    
+
     /**
      * This function takes in a structure and identifier and processes that part of the message. If that portion of the
      * message has its own subparts, those are recursively processed using this function.
@@ -565,7 +565,7 @@ class Message
     protected function processStructure($structure, $partIdentifier = null)
     {
         $attached = false;
-        
+
         // TODO: Get HTML attachments working, too!
         if (isset($structure->disposition) && $structure->disposition == "attachment") {
             $parameters = self::getParametersFromStructure($structure);
@@ -632,7 +632,7 @@ class Message
                 return $data;
         }
     }
-    
+
     /**
      * This function returns the body type that an imap integer maps to.
      *

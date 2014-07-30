@@ -109,11 +109,11 @@ class Attachment
     }
 
     /**
-     * This function returns the data of the attachment. Combined with 
+     * This function returns the data of the attachment. Combined with
      * getMimeType() it can be used to directly output data to a browser.
-     * 
-     * If the attachment file is message/rfc822, skip processing/decoding the 
-     * contents in order to avoid mangling the file. Otherwise, decode as 
+     *
+     * If the attachment file is message/rfc822, skip processing/decoding the
+     * contents in order to avoid mangling the file. Otherwise, decode as
      * normal to ensure other files are handled correctly.
      *
      * @return string

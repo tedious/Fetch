@@ -155,8 +155,7 @@ class Server
      */
     public function setMailBox($mailbox = '')
     {
-        if(!$this->hasMailBox($mailbox)) {
-
+        if (!$this->hasMailBox($mailbox)) {
             return false;
         }
 
