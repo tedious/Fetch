@@ -272,6 +272,9 @@ class Message
             // returns an array, and since we just want one message we can grab the only result
             $results               = imap_fetch_overview($this->imapStream, $this->uid, FT_UID);
             $this->messageOverview = array_shift($results);
+            if ( ! isset($this->messageOverview->date)) {
+                $this->messageOverview->date = null;
+            }
         }
 
         return $this->messageOverview;
@@ -295,7 +298,12 @@ class Message
             $headerObject = imap_rfc822_parse_headers($rawHeaders);
 
             // to keep this object as close as possible to the original header object we add the udate property
-            $headerObject->udate = strtotime($headerObject->date);
+            if (isset($headerObject->date)) {
+                $headerObject->udate = strtotime($headerObject->date);
+            } else {
+                $headerObject->date = null;
+                $headerObject->udate = null;
+            }
 
             $this->headers = $headerObject;
         }
