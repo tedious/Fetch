@@ -12,7 +12,8 @@
     }
   ],
   "require": {
-    "php": ">=5.3.0"
+    "php": ">=5.3.0",
+    "ext-imap": "*"
   },
   "require-dev": {
     "tedivm/dovecottesting": "1.2.3",
