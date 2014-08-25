@@ -206,13 +206,11 @@ class Attachment
         }
 
         switch ($this->encoding) {
-            case 3:
-            case 'base64':
+            case 3: //base64
                 $streamFilter = stream_filter_append($filePointer, 'convert.base64-decode', STREAM_FILTER_WRITE);
                 break;
 
-            case 4:
-            case 'quoted-printable':
+            case 4: //quoted-printable
                 $streamFilter = stream_filter_append($filePointer, 'convert.quoted-printable-decode', STREAM_FILTER_WRITE);
                 break;
 
