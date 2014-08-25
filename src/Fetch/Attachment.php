@@ -194,28 +194,30 @@ class Attachment
     {
         $dirname = dirname($path);
         if (file_exists($path)) {
-            if (!is_writable($path))
+            if (!is_writable($path)) {
                 return false;
+            }
         } elseif (!is_dir($dirname) || !is_writable($dirname)) {
             return false;
         }
 
-        if (($filePointer = fopen($path, 'w')) == false)
+        if (($filePointer = fopen($path, 'w')) == false) {
             return false;
+        }
 
         switch ($this->encoding) {
-        case 3:
-        case 'base64':
-            $streamFilter = stream_filter_append($filePointer, 'convert.base64-decode', STREAM_FILTER_WRITE);
-            break;
+            case 3:
+            case 'base64':
+                $streamFilter = stream_filter_append($filePointer, 'convert.base64-decode', STREAM_FILTER_WRITE);
+                break;
 
-        case 4:
-        case 'quoted-printable':
-            $streamFilter = stream_filter_append($filePointer, 'convert.quoted-printable-decode', STREAM_FILTER_WRITE);
-            break;
+            case 4:
+            case 'quoted-printable':
+                $streamFilter = stream_filter_append($filePointer, 'convert.quoted-printable-decode', STREAM_FILTER_WRITE);
+                break;
 
-        default:
-            $streamFilter = null;
+            default:
+                $streamFilter = null;
         }
 
         $result = imap_savebody($this->imapStream, $filePointer, $this->messageId, $this->partId ?: 1, FT_UID);
