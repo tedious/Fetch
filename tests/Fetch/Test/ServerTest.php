@@ -205,6 +205,16 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($server->getMessageByUid(12), 'Message successfully expunged');
     }
 
+    public function testListMailbox()
+    {
+        $server = Static::getServer();
+        $spec = sprintf('{%s:143/novalidate-cert}', TESTING_SERVER_HOST);
+
+        $list = $server->listMailbox('*');
+        $this->assertContains($spec.'Sent', $list);
+        $this->assertNotContains($spec.'Cheese', $list);
+    }
+
     public static function getServer()
     {
         $server = new Server(TESTING_SERVER_HOST, 143);

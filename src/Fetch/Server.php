@@ -445,4 +445,16 @@ class Server
     {
         return imap_createmailbox($this->getImapStream(), $this->getServerSpecification() . $mailbox);
     }
+
+    /**
+     * List available mailboxes
+     *
+     * @param  string $pattern
+     *
+     * @return array
+     */
+    public function listMailbox($pattern = '*')
+    {
+        return imap_list($this->getImapStream(), $this->getServerSpecification(), $pattern);
+    }
 }
