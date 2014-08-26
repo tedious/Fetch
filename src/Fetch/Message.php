@@ -524,7 +524,7 @@ class Message
 
     public static function decodeHeader($header, $outEncoding = null)
     {
-        if($header === null) {
+        if ($header === null) {
             return null;
         }
 
