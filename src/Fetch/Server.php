@@ -159,8 +159,6 @@ class Server
             return false;
         }
 
-
-
         $this->mailbox = $mailbox;
         if (isset($this->imapStream)) {
             $this->setImapStream();
@@ -449,7 +447,7 @@ class Server
     /**
      * List available mailboxes
      *
-     * @param  string $pattern
+     * @param string $pattern
      *
      * @return array
      */
