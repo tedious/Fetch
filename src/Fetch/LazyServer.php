@@ -7,30 +7,33 @@ namespace Fetch;
  *
  * @author Rodrigo Santellan
  */
-class LazyServer extends Server{
-
+class LazyServer extends Server
+{
     private $uidList = array();
     private $page = 0;
     private $limitSize = 10;
     private $cacheHandler = null;
-    
-    public function getLimitSize() {
+
+    public function getLimitSize()
+    {
       return $this->limitSize;
     }
 
-    public function setLimitSize($limitSize) {
+    public function setLimitSize($limitSize)
+    {
       $this->limitSize = $limitSize;
     }
-    
-    public function getCacheHandler() {
+
+    public function getCacheHandler()
+    {
       return $this->cacheHandler;
     }
 
-    public function setCacheHandler($cacheHandler) {
+    public function setCacheHandler($cacheHandler)
+    {
       $this->cacheHandler = $cacheHandler;
     }
 
-    
     /**
      * This function returns an array of ImapMessage object for emails that fit the criteria passed. The criteria string
      * should be formatted according to the imap search standard, which can be found on the php "imap_search" page or in
@@ -45,58 +48,77 @@ class LazyServer extends Server{
     public function search($criteria = 'ALL', $limit = null)
     {
         $cacheKey = $this->getServerString().'-'.$criteria;
-        if($this->cacheHandler !== null)
-        {
-          
-          $results = $this->cacheHandler->getData($cacheKey);
-          if($results){
+        if ($this->cacheHandler !== null) {
+
+          $results = $this->cacheHandler->getData($cacheKey, 'uidlist');
+          if ($results) {
             $this->uidList = $results;
+
             return true;
           }
         }
-        
-        
+
         if ($results = imap_search($this->getImapStream(), $criteria, SE_UID)) {
             $this->uidList = $results;
-            if($this->cacheHandler !== null)
-            {
-              $this->cacheHandler->saveData($cacheKey, $results);
+            if ($this->cacheHandler !== null) {
+              $this->cacheHandler->saveData($cacheKey, 'uidlist', $results);
             }
+
             return true;
         } else {
             return false;
         }
     }
-    
+
     public function retrieveNextMessagesInLine()
     {
       $results = array_slice($this->uidList, $this->page, $this->getLimitSize());
       $messages = array();
       $this->page ++;
-      foreach ($results as $messageId)
-      {
+      foreach ($results as $messageId) {
         $cacheKey = $this->getServerString().'-'.$messageId;
         $inCache = false;
-        if($this->cacheHandler !== null)
-        {
-          $message  = $this->cacheHandler->getData($cacheKey);
-          if($message){
+        if ($this->cacheHandler !== null) {
+          $message  = $this->cacheHandler->getData($cacheKey, 'messagelist');
+          if ($message) {
             $messages[] = $message;
             $inCache = true;
           }
         }
-        if(!$inCache)
-        {
+        if (!$inCache) {
           $message = new Message($messageId, $this);
           $messages[] = $message;
-          if($this->cacheHandler !== null)
-          {
-            $this->cacheHandler->saveData($cacheKey, $message);
+          if ($this->cacheHandler !== null) {
+            $this->cacheHandler->saveData($cacheKey, 'messagelist', $message);
           }
         }
       }
+
       return $messages;
     }
+    
+    
+    public function retrieveAllMailboxes()
+    {
+      if ($this->cacheHandler !== null) {
+        $folders  = $this->cacheHandler->getData($this->getServerSpecification(), 'folderlist');
+        if($folders !== null)
+        {
+          return $folders;
+        }
+        
+      }
+      $folders = imap_list($this->getImapStream(), $this->getServerSpecification(), '*');
+      $returnFolders = array();
+      foreach ($folders as $folder) {
+        $folder = str_replace($this->getServerSpecification(), "", imap_utf7_decode($folder));
+        $returnFolders[] = $folder;
+      }
+      var_dump($returnFolders);
+      if ($this->cacheHandler !== null) {
+        $this->cacheHandler->saveData($this->getServerSpecification(), 'folderlist', $returnFolders);
+      }
+      return $returnFolders;
+      
+    }
 }
-
-

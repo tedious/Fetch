@@ -7,13 +7,10 @@ namespace Fetch;
  *
  * @author Rodrigo Santellan
  */
-interface CacheInterface {
+interface CacheInterface
+{
+  public function getData($key, $datatype);
 
-  public function getData($key, $expiration = 3600);
-  
-  public function saveData($key, $data);
-  
-  
+  public function saveData($key, $datatype, $data);
+
 }
-
-

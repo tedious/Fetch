@@ -5,30 +5,36 @@ namespace Fetch;
 /**
  * Description of FileCache
  *
- * @author rodrigo
+ * @author Rodrigo Santellan
  */
-class FileCache implements \Fetch\CacheInterface {
-
-  function __construct($dir) {
+class FileCache implements \Fetch\CacheInterface
+{
+  public function __construct($dir)
+  {
     $this->dir = $dir;
   }
 
-  private function _name($key) {
+  private function _name($key)
+  {
     return sprintf("%s/%s", $this->dir, sha1($key));
   }
 
-  private function clear($key) {
+  private function clear($key)
+  {
     $cache_path = $this->_name($key);
 
     if (file_exists($cache_path)) {
       unlink($cache_path);
+
       return TRUE;
     }
 
     return FALSE;
   }
 
-  public function getData($key, $expiration = 3600) {
+  public function getData($key, $datatype)
+  {
+    $expiration = 3600;
     if (!is_dir($this->dir) OR !is_writable($this->dir)) {
       return FALSE;
     }
@@ -41,6 +47,7 @@ class FileCache implements \Fetch\CacheInterface {
 
     if (filemtime($cache_path) < (time() - $expiration)) {
       $this->clear($key);
+
       return FALSE;
     }
 
@@ -57,20 +64,18 @@ class FileCache implements \Fetch\CacheInterface {
     } else {
       $cache = NULL;
     }
-
     flock($fp, LOCK_UN);
     fclose($fp);
 
     return $cache;
   }
 
-  public function saveData($key, $data) {
+  public function saveData($key, $datatype, $data)
+  {
     if (!is_dir($this->dir) OR !is_writable($this->dir)) {
       return FALSE;
     }
-
     $cache_path = $this->_name($key);
-
     if (!$fp = fopen($cache_path, 'wb')) {
       return FALSE;
     }
@@ -83,8 +88,7 @@ class FileCache implements \Fetch\CacheInterface {
     }
     fclose($fp);
     @chmod($cache_path, 0777);
+
     return TRUE;
   }
-
 }
-

@@ -701,4 +701,84 @@ class Message
 
         return $returnValue;
     }
+    
+    public function getStatus() {
+      return $this->status;
+    }
+
+    public function setStatus($status) {
+      $this->status = $status;
+    }
+
+    public function getPlaintextMessage() {
+      return $this->plaintextMessage;
+    }
+
+    public function setPlaintextMessage($plaintextMessage) {
+      $this->plaintextMessage = $plaintextMessage;
+    }
+
+    public function getHtmlMessage() {
+      return $this->htmlMessage;
+    }
+
+    public function setHtmlMessage($htmlMessage) {
+      $this->htmlMessage = $htmlMessage;
+    }
+
+    public function getSize() {
+      return $this->size;
+    }
+
+    public function setSize($size) {
+      $this->size = $size;
+    }
+
+    public function getFrom() {
+      return $this->from;
+    }
+
+    public function setFrom($from) {
+      $this->from = $from;
+    }
+
+    public function getTo() {
+      return $this->to;
+    }
+
+    public function setTo($to) {
+      $this->to = $to;
+    }
+
+    public function getCc() {
+      return $this->cc;
+    }
+
+    public function setCc($cc) {
+      $this->cc = $cc;
+    }
+
+    public function getBcc() {
+      return $this->bcc;
+    }
+
+    public function setBcc($bcc) {
+      $this->bcc = $bcc;
+    }
+
+    public function getReplyTo() {
+      return $this->replyTo;
+    }
+
+    public function setReplyTo($replyTo) {
+      $this->replyTo = $replyTo;
+    }
+
+    public function getMailbox() {
+      return $this->mailbox;
+    }
+
+    public function setMailbox($mailbox) {
+      $this->mailbox = $mailbox;
+    }
 }

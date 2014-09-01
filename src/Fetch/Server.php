@@ -298,10 +298,10 @@ class Server
             $this->imapStream = $imapStream;
         }
     }
-    
+
     /**
      * This close the imap connection
-     * 
+     *
      */
     public function closeImapStream()
     {
