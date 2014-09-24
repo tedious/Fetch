@@ -164,6 +164,16 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($server->hasMailBox('Cheese'), 'Does not have mailbox "Cheese"');
     }
 
+    public function testListMailbox()
+    {
+        $server = Static::getServer();
+        $spec = sprintf('{%s:143/novalidate-cert}', TESTING_SERVER_HOST);
+
+        $list = $server->listMailbox('*');
+        $this->assertContains($spec.'Sent', $list, 'Has mailbox "Sent"');
+        $this->assertNotContains($spec.'Cheese', $list, 'Does not have mailbox "Cheese"');
+    }
+
     public function testCreateMailbox()
     {
         $server = Static::getServer();

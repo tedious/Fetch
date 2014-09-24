@@ -159,8 +159,6 @@ class Server
             return false;
         }
 
-
-
         $this->mailbox = $mailbox;
         if (isset($this->imapStream)) {
             $this->setImapStream();
@@ -444,5 +442,17 @@ class Server
     public function createMailBox($mailbox)
     {
         return imap_createmailbox($this->getImapStream(), $this->getServerSpecification() . $mailbox);
+    }
+
+    /**
+     * List available mailboxes
+     *
+     * @param string $pattern
+     *
+     * @return array
+     */
+    public function listMailbox($pattern = '*')
+    {
+        return imap_list($this->getImapStream(), $this->getServerSpecification(), $pattern);
     }
 }
