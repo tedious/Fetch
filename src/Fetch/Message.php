@@ -239,7 +239,7 @@ class Message
         if (isset($headers->bcc))
             $this->bcc = $this->processAddressObject($headers->bcc);
 
-        $this->from    = $this->processAddressObject($headers->from);
+        $this->from    = isset($headers->from) ? $this->processAddressObject($headers->from) : array('');
         $this->replyTo = isset($headers->reply_to) ? $this->processAddressObject($headers->reply_to) : $this->from;
 
         /* Finally load the structure itself */
