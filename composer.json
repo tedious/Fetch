@@ -17,8 +17,8 @@
   },
   "require-dev": {
     "tedivm/dovecottesting": "1.2.3",
-    "fabpot/php-cs-fixer": "0.4.0",
     "phpunit/phpunit": "4.2.*",
+    "fabpot/php-cs-fixer": "0.5.*",
     "satooshi/php-coveralls": "dev-master"
 
     },

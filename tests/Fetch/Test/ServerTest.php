@@ -19,7 +19,7 @@ use Fetch\Server;
  */
 class ServerTest extends \PHPUnit_Framework_TestCase
 {
-    static $num_messages_inbox = 12;
+    public static $num_messages_inbox = 12;
 
     /**
      * @dataProvider flagsDataProvider
@@ -40,7 +40,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
     public function testFlagOverwrite()
     {
-        $server = Static::getServer();
+        $server = static::getServer();
 
         $server->setFlag('TestFlag', 'true');
         $this->assertAttributeContains('TestFlag=true', 'flags', $server);
@@ -97,14 +97,14 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
     public function testNumMessages()
     {
-        $server = Static::getServer();
+        $server = static::getServer();
         $numMessages = $server->numMessages();
         $this->assertEquals(self::$num_messages_inbox, $numMessages);
     }
 
     public function testGetMessages()
     {
-        $server = Static::getServer();
+        $server = static::getServer();
         $messages = $server->getMessages(5);
 
         $this->assertCount(5, $messages, 'Five messages returned');
@@ -115,7 +115,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetMessagesOrderedByDateAsc()
     {
-        $server = Static::getServer();
+        $server = static::getServer();
         $messages = $server->getOrdered(SORTDATE, false, 2);
 
         $this->assertCount(2, $messages, 'Two messages returned');
@@ -124,7 +124,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetMessagesOrderedByDateDesc()
     {
-        $server = Static::getServer();
+        $server = static::getServer();
         $messages = $server->getOrdered(SORTDATE, true, 2);
 
         $this->assertCount(2, $messages, 'Two messages returned');
@@ -133,7 +133,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetMailBox()
     {
-        $server = Static::getServer();
+        $server = static::getServer();
         $this->assertEquals('', $server->getMailBox());
         $this->assertTrue($server->setMailBox('Sent'));
         $this->assertEquals('Sent', $server->getMailBox());
@@ -141,7 +141,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
     public function testSetMailBox()
     {
-        $server = Static::getServer();
+        $server = static::getServer();
 
         $this->assertTrue($server->setMailBox('Sent'));
         $this->assertEquals('Sent', $server->getMailBox());
@@ -157,7 +157,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
     public function testHasMailBox()
     {
-        $server = Static::getServer();
+        $server = static::getServer();
 
         $this->assertTrue($server->hasMailBox('Sent'), 'Has mailbox "Sent"');
         $this->assertTrue($server->hasMailBox('Flagged Email'), 'Has mailbox "Flagged Email"');
@@ -166,7 +166,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
     public function testListMailbox()
     {
-        $server = Static::getServer();
+        $server = static::getServer();
         $spec = sprintf('{%s:143/novalidate-cert}', TESTING_SERVER_HOST);
 
         $list = $server->listMailbox('*');
@@ -176,7 +176,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateMailbox()
     {
-        $server = Static::getServer();
+        $server = static::getServer();
 
         $this->assertFalse($server->hasMailBox('Cheese'), 'Does not have mailbox "Cheese"');
         $this->assertTrue($server->createMailBox('Cheese'), 'createMailbox returns true.');
@@ -188,20 +188,20 @@ class ServerTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetOptionsException()
     {
-        $server = Static::getServer();
+        $server = static::getServer();
         $server->setOptions('purple');
     }
 
     public function testSetOptions()
     {
-        $server = Static::getServer();
+        $server = static::getServer();
         $server->setOptions(5);
         $this->assertAttributeEquals(5, 'options', $server);
     }
 
     public function testExpunge()
     {
-        $server = Static::getServer();
+        $server = static::getServer();
         $message = $server->getMessageByUid(12);
 
         $this->assertInstanceOf('\Fetch\Message', $message, 'Message exists');
