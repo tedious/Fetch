@@ -473,7 +473,7 @@ class Message
                         // @TODO Handle exception
                     }
                 }
-                if ( ! $mb_converted) {
+                if (!$mb_converted) {
                     try {
                         $messageBody = iconv($parameters['charset'], self::$charset . self::$charsetFlag, $messageBody);
                     } catch (Exception $e) {
