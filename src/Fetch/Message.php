@@ -220,7 +220,7 @@ class Message
 
             return false;
 
-        $this->subject = isset($messageOverview->subject) ? $messageOverview->subject : null;
+        $this->subject = isset($messageOverview->subject) ? imap_utf8($messageOverview->subject) : null;
         $this->date    = strtotime($messageOverview->date);
         $this->size    = $messageOverview->size;
 
