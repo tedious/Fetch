@@ -677,27 +677,36 @@ class Message
     }
 
     /**
-     * This function is used to enable or disable a flag on the imap message.
+     * This function is used to enable or disable one or more flags on the imap message.
      *
-     * @param  string                    $flag   Flagged, Answered, Deleted, Seen, Draft
+     * @param  string|array              $flag   Flagged, Answered, Deleted, Seen, Draft
      * @param  bool                      $enable
      * @throws \InvalidArgumentException
      * @return bool
      */
     public function setFlag($flag, $enable = true)
     {
-        if (!in_array($flag, self::$flagTypes) || $flag == self::FLAG_RECENT)
-            throw new \InvalidArgumentException('Unable to set invalid flag "' . $flag . '"');
+        $flags = (is_array($flag)) ? $flag : array($flag);
 
-        $imapifiedFlag = '\\' . ucfirst($flag);
+        foreach ($flags as $i => $flag) {
+            $flag = ltrim(strtolower($flag), '\\');
+            if (!in_array($flag, self::$flagTypes) || $flag == self::FLAG_RECENT)
+                throw new \InvalidArgumentException('Unable to set invalid flag "' . $flag . '"');
+
+            if ($enable) {
+                $this->status[$flag] = true;
+            } else {
+                unset($this->status[$flag]);
+            }
+
+            $flags[$i] = $flag;
+        }
+
+        $imapifiedFlag = '\\'.implode(' \\', array_map('ucfirst', $flags));
 
         if ($enable === true) {
-            $this->status[$flag] = true;
-
             return imap_setflag_full($this->imapStream, $this->uid, $imapifiedFlag, ST_UID);
         } else {
-            unset($this->status[$flag]);
-
             return imap_clearflag_full($this->imapStream, $this->uid, $imapifiedFlag, ST_UID);
         }
     }
