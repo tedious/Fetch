@@ -77,7 +77,7 @@ class Message
      *
      * @var string
      */
-    protected static $flagTypes = array('recent', 'flagged', 'answered', 'deleted', 'seen', 'draft');
+    protected static $flagTypes = array(self::FLAG_RECENT, self::FLAG_FLAGGED, self::FLAG_ANSWERED, self::FLAG_DELETED, self::FLAG_SEEN, self::FLAG_DRAFT);
 
     /**
      * This holds the plantext email message.
@@ -671,7 +671,7 @@ class Message
      * @param  string $flag Recent, Flagged, Answered, Deleted, Seen, Draft
      * @return bool
      */
-    public function checkFlag($flag = 'flagged')
+    public function checkFlag($flag = self::FLAG_FLAGGED)
     {
         return (isset($this->status[$flag]) && $this->status[$flag] === true);
     }
@@ -686,7 +686,7 @@ class Message
      */
     public function setFlag($flag, $enable = true)
     {
-        if (!in_array($flag, self::$flagTypes) || $flag == 'recent')
+        if (!in_array($flag, self::$flagTypes) || $flag == self::FLAG_RECENT)
             throw new \InvalidArgumentException('Unable to set invalid flag "' . $flag . '"');
 
         $imapifiedFlag = '\\' . ucfirst($flag);
