@@ -220,7 +220,16 @@ class Message
 
             return false;
 
-        $this->subject = isset($messageOverview->subject) ? $messageOverview->subject : null;
+        $this->subject = null;
+        if(isset($messageOverview->subject)){
+            $temp_subject = "";
+            $temp_decoded_subject = imap_mime_header_decode($messageOverview->subject);
+            foreach ($temp_decoded_subject as $value) {
+                $temp_subject .= $value->text;
+            }
+            $this->subject = $temp_subject;
+        }
+        
         $this->date    = strtotime($messageOverview->date);
         $this->size    = $messageOverview->size;
 
