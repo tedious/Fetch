@@ -122,6 +122,13 @@ class Message
     protected $from;
 
     /**
+     * This is an array containing information about the address the email was sent from.
+     *
+     * @var string
+     */
+    protected $sender;
+
+    /**
      * This is an array of arrays that contains information about the addresses the email was sent to.
      *
      * @var array
@@ -239,6 +246,9 @@ class Message
 
         if (isset($headers->bcc))
             $this->bcc = $this->processAddressObject($headers->bcc);
+
+        if (isset($headers->sender))
+            $this->sender = $this->processAddressObject($headers->sender);
 
         $this->from    = isset($headers->from) ? $this->processAddressObject($headers->from) : array('');
         $this->replyTo = isset($headers->reply_to) ? $this->processAddressObject($headers->reply_to) : $this->from;
@@ -367,14 +377,14 @@ class Message
      * This function returns either an array of email addresses and names or, optionally, a string that can be used in
      * mail headers.
      *
-     * @param  string            $type     Should be 'to', 'cc', 'bcc', 'from', or 'reply-to'.
+     * @param  string            $type     Should be 'to', 'cc', 'bcc', 'from', 'sender', or 'reply-to'.
      * @param  bool              $asString
      * @return array|string|bool
      */
     public function getAddresses($type, $asString = false)
     {
         $type = ( $type == 'reply-to' ) ? 'replyTo' : $type;
-        $addressTypes = array('to', 'cc', 'bcc', 'from', 'replyTo');
+        $addressTypes = array('to', 'cc', 'bcc', 'from', 'sender', 'replyTo');
 
         if (!in_array($type, $addressTypes) || !isset($this->$type) || count($this->$type) < 1)
             return false;
@@ -382,6 +392,8 @@ class Message
         if (!$asString) {
             if ($type == 'from')
                 return $this->from[0];
+            elseif ($type == 'sender')
+                return $this->sender[0];
 
             return $this->$type;
         } else {
