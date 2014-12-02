@@ -247,16 +247,21 @@ class Message
 
         $structure = $this->getStructure();
 
-        if (!isset($structure->parts)) {
-            // not multipart
-            $this->processStructure($structure);
-        } else {
-            // multipart
-            foreach ($structure->parts as $id => $part)
-                $this->processStructure($part, $id + 1);
-        }
+        $this->loadMessageParts($structure);
 
         return true;
+    }
+
+    protected function loadMessageParts($structure, $partIdentifier = null){
+    	if (!isset($structure->parts)) {
+            // not multipart
+            $this->processStructure($structure, $partIdentifier);
+        } else {
+            // multipart
+            foreach ($structure->parts as $id => $part){
+                $this->loadMessageParts($part, (!empty($partIdentifier) ? $partIdentifier.'.' : '').($id + 1));
+            }
+        }
     }
 
     /**
