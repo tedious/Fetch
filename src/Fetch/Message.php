@@ -252,13 +252,14 @@ class Message
         return true;
     }
 
-    protected function loadMessageParts($structure, $partIdentifier = null){
-    	if (!isset($structure->parts)) {
+    protected function loadMessageParts($structure, $partIdentifier = null)
+    {
+        if (!isset($structure->parts)) {
             // not multipart
             $this->processStructure($structure, $partIdentifier);
         } else {
             // multipart
-            foreach ($structure->parts as $id => $part){
+            foreach ($structure->parts as $id => $part) {
                 $this->loadMessageParts($part, (!empty($partIdentifier) ? $partIdentifier.'.' : '').($id + 1));
             }
         }
