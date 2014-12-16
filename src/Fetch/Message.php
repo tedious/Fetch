@@ -541,14 +541,17 @@ class Message
             $encoding = strtolower($encoding);
         }
 
-        switch (true) {
-            case $encoding === 'quoted-printable':
-            case $encoding === 4:
-                return quoted_printable_decode($data);
-
-            case $encoding === 'base64':
-            case $encoding === 3:
+        switch ($encoding) {
+            case 'base64':
+            case 3:
+            case 5:
+            case 6:
+            case 7:
                 return base64_decode($data);
+
+            case 'quoted-printable':
+            case 4:
+                return quoted_printable_decode($data);
 
             default:
                 return $data;
