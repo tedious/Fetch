@@ -116,7 +116,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     public function testGetMessagesOrderedByDateAsc()
     {
         $server = static::getServer();
-        $messages = $server->getOrdered(SORTDATE, false, 2);
+        $messages = $server->getOrderedMessages(SORTDATE, false, 2);
 
         $this->assertCount(2, $messages, 'Two messages returned');
         $this->assertGreaterThan($messages[0]->getDate(), $messages[1]->getDate(), 'Messages in ascending order');
@@ -125,7 +125,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     public function testGetMessagesOrderedByDateDesc()
     {
         $server = static::getServer();
-        $messages = $server->getOrdered(SORTDATE, true, 2);
+        $messages = $server->getOrderedMessages(SORTDATE, true, 2);
 
         $this->assertCount(2, $messages, 'Two messages returned');
         $this->assertLessThan($messages[0]->getDate(), $messages[1]->getDate(), 'Messages in descending order');
@@ -164,12 +164,12 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($server->hasMailBox('Cheese'), 'Does not have mailbox "Cheese"');
     }
 
-    public function testListMailbox()
+    public function testListMailBoxes()
     {
         $server = static::getServer();
         $spec = sprintf('{%s:143/novalidate-cert}', TESTING_SERVER_HOST);
 
-        $list = $server->listMailbox('*');
+        $list = $server->listMailboxes('*');
         $this->assertContains($spec.'Sent', $list, 'Has mailbox "Sent"');
         $this->assertNotContains($spec.'Cheese', $list, 'Does not have mailbox "Cheese"');
     }
