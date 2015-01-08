@@ -22,7 +22,7 @@ backwards compatible.
 
 ```
 "require": {
-  "tedivm/fetch": "0.5.*"
+  "tedivm/fetch": "0.6.*"
 }
 ```
 
