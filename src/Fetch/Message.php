@@ -228,6 +228,7 @@ class Message
             return false;
 
         $this->subject = isset($messageOverview->subject) ? $messageOverview->subject : null;
+        $this->subject = self::decodeHeader($this->subject);
         $this->date    = strtotime($messageOverview->date);
         $this->size    = $messageOverview->size;
 
@@ -555,6 +556,30 @@ class Message
         }
     }
 
+    public static function decodeHeader($header, $outEncoding = null)
+    {
+        if ($header === null) {
+            return null;
+        }
+
+        if (!$outEncoding) {
+            $outEncoding = self::$charset;
+        }
+
+        $header = imap_mime_header_decode($header);
+
+        $decoded = '';
+        for ($i = 0; $i < count($header); $i++) {
+            if ($header[$i]->charset != 'default') {
+                $decoded .= iconv($header[$i]->charset, $outEncoding, $header[$i]->text);
+            } else {
+                $decoded .= $header[$i]->text;
+            }
+        }
+
+        return $decoded;
+    }
+
     /**
      * This function returns the body type that an imap integer maps to.
      *
@@ -626,7 +651,7 @@ class Message
                 $currentAddress            = array();
                 $currentAddress['address'] = $address->mailbox . '@' . $address->host;
                 if (isset($address->personal))
-                    $currentAddress['name'] = $address->personal;
+                    $currentAddress['name'] = self::decodeHeader($address->personal);
                 $outputAddresses[] = $currentAddress;
             }
 
