@@ -10,6 +10,7 @@
  */
 
 namespace Fetch;
+use Exception;
 
 /**
  * This library is a wrapper around the Imap library functions included in php. This class represents a single email
@@ -121,6 +122,13 @@ class Message
     protected $from;
 
     /**
+     * This is an array containing information about the address the email was sent from.
+     *
+     * @var string
+     */
+    protected $sender;
+
+    /**
      * This is an array of arrays that contains information about the addresses the email was sent to.
      *
      * @var array
@@ -167,8 +175,25 @@ class Message
      *
      * @var string
      */
-    public static $charset = 'UTF-8//TRANSLIT';
+    public static $charset = 'UTF-8';
 
+    /**
+     * This value defines the flag set for encoding if the mb_convert_encoding
+     * function can't be found, and in this case iconv encoding will be used.
+     *
+     * @var string
+     */
+    public static $charsetFlag = '//TRANSLIT';
+
+    /**
+     * These constants can be used to easily access available flags
+     */
+    const FLAG_RECENT = 'recent';
+    const FLAG_FLAGGED = 'flagged';
+    const FLAG_ANSWERED = 'answered';
+    const FLAG_DELETED = 'deleted';
+    const FLAG_SEEN = 'seen';
+    const FLAG_DRAFT = 'draft';
 
     /**
      * This constructor takes in the uid for the message and the Imap class representing the mailbox the
@@ -199,9 +224,10 @@ class Message
         /* First load the message overview information */
 
         if(!is_object($messageOverview = $this->getOverview()))
+
             return false;
 
-        $this->subject = $messageOverview->subject;
+        $this->subject = isset($messageOverview->subject) ? $messageOverview->subject : null;
         $this->date    = strtotime($messageOverview->date);
         $this->size    = $messageOverview->size;
 
@@ -221,7 +247,10 @@ class Message
         if (isset($headers->bcc))
             $this->bcc = $this->processAddressObject($headers->bcc);
 
-        $this->from    = $this->processAddressObject($headers->from);
+        if (isset($headers->sender))
+            $this->sender = $this->processAddressObject($headers->sender);
+
+        $this->from    = isset($headers->from) ? $this->processAddressObject($headers->from) : array('');
         $this->replyTo = isset($headers->reply_to) ? $this->processAddressObject($headers->reply_to) : $this->from;
 
         /* Finally load the structure itself */
@@ -254,6 +283,9 @@ class Message
             // returns an array, and since we just want one message we can grab the only result
             $results               = imap_fetch_overview($this->imapStream, $this->uid, FT_UID);
             $this->messageOverview = array_shift($results);
+            if ( ! isset($this->messageOverview->date)) {
+                $this->messageOverview->date = null;
+            }
         }
 
         return $this->messageOverview;
@@ -277,7 +309,12 @@ class Message
             $headerObject = imap_rfc822_parse_headers($rawHeaders);
 
             // to keep this object as close as possible to the original header object we add the udate property
-            $headerObject->udate = strtotime($headerObject->date);
+            if (isset($headerObject->date)) {
+                $headerObject->udate = strtotime($headerObject->date);
+            } else {
+                $headerObject->date = null;
+                $headerObject->udate = null;
+            }
 
             $this->headers = $headerObject;
         }
@@ -340,22 +377,23 @@ class Message
      * This function returns either an array of email addresses and names or, optionally, a string that can be used in
      * mail headers.
      *
-     * @param  string            $type     Should be 'to', 'cc', 'bcc', 'from', or 'reply-to'.
+     * @param  string            $type     Should be 'to', 'cc', 'bcc', 'from', 'sender', or 'reply-to'.
      * @param  bool              $asString
      * @return array|string|bool
      */
     public function getAddresses($type, $asString = false)
     {
         $type = ( $type == 'reply-to' ) ? 'replyTo' : $type;
-        $addressTypes = array('to', 'cc', 'bcc', 'from', 'replyTo');
+        $addressTypes = array('to', 'cc', 'bcc', 'from', 'sender', 'replyTo');
 
         if (!in_array($type, $addressTypes) || !isset($this->$type) || count($this->$type) < 1)
             return false;
 
-
         if (!$asString) {
             if ($type == 'from')
                 return $this->from[0];
+            elseif ($type == 'sender')
+                return $this->sender[0];
 
             return $this->$type;
         } else {
@@ -422,13 +460,14 @@ class Message
      *
      * @param \stdClass $structure
      * @param string    $partIdentifier
-     * @todoa process attachments.
      */
     protected function processStructure($structure, $partIdentifier = null)
     {
         $parameters = self::getParametersFromStructure($structure);
 
-        if (isset($parameters['name']) || isset($parameters['filename'])) {
+        if ((isset($parameters['name']) || isset($parameters['filename']))
+            || (isset($structure->subtype) && strtolower($structure->subtype) == 'rfc822')
+        ) {
             $attachment          = new Attachment($this, $structure, $partIdentifier);
             $this->attachments[] = $attachment;
         } elseif ($structure->type == 0 || $structure->type == 1) {
@@ -438,8 +477,24 @@ class Message
 
             $messageBody = self::decode($messageBody, $structure->encoding);
 
-            if (!empty($parameters['charset']) && $parameters['charset'] !== self::$charset)
-                $messageBody = iconv($parameters['charset'], self::$charset, $messageBody);
+            if (!empty($parameters['charset']) && $parameters['charset'] !== self::$charset) {
+                $mb_converted = false;
+                if (function_exists('mb_convert_encoding')) {
+                    try {
+                        $messageBody = mb_convert_encoding($messageBody, self::$charset, $parameters['charset']);
+                        $mb_converted = true;
+                    } catch (Exception $e) {
+                        // @TODO Handle exception
+                    }
+                }
+                if (!$mb_converted) {
+                    try {
+                        $messageBody = iconv($parameters['charset'], self::$charset . self::$charsetFlag, $messageBody);
+                    } catch (Exception $e) {
+                        // @TODO Handle exception
+                    }
+                }
+            }
 
             if (strtolower($structure->subtype) === 'plain' || ($structure->type == 1 && strtolower($structure->subtype) !== 'alternative')) {
                 if (isset($this->plaintextMessage)) {
@@ -449,7 +504,7 @@ class Message
                 }
 
                 $this->plaintextMessage .= trim($messageBody);
-            } else {
+            } elseif (strtolower($structure->subtype) === 'html') {
                 if (isset($this->htmlMessage)) {
                     $this->htmlMessage .= '<br><br>';
                 } else {
@@ -482,16 +537,17 @@ class Message
      */
     public static function decode($data, $encoding)
     {
-        if (!is_numeric($encoding))
+        if (!is_numeric($encoding)) {
             $encoding = strtolower($encoding);
+        }
 
-        switch ($encoding) {
-            case 'quoted-printable':
-            case 4:
+        switch (true) {
+            case $encoding === 'quoted-printable':
+            case $encoding === 4:
                 return quoted_printable_decode($data);
 
-            case 'base64':
-            case 3:
+            case $encoding === 'base64':
+            case $encoding === 3:
                 return base64_decode($data);
 
             default:
@@ -651,9 +707,11 @@ class Message
 
         if ($enable === true) {
             $this->status[$flag] = true;
+
             return imap_setflag_full($this->imapStream, $this->uid, $imapifiedFlag, ST_UID);
         } else {
             unset($this->status[$flag]);
+
             return imap_clearflag_full($this->imapStream, $this->uid, $imapifiedFlag, ST_UID);
         }
     }

@@ -382,7 +382,7 @@ class Server
      * @param  int       $limit
      * @return Message[]
      */
-    public function getOrdered($orderBy, $reverse, $limit)
+    public function getOrderedMessages($orderBy, $reverse, $limit)
     {
         $msgIds = imap_sort($this->getImapStream(), $orderBy, $reverse ? 1 : 0, SE_UID);
 
@@ -451,7 +451,7 @@ class Server
      *
      * @return array
      */
-    public function listMailbox($pattern = '*')
+    public function listMailBoxes($pattern = '*')
     {
         return imap_list($this->getImapStream(), $this->getServerSpecification(), $pattern);
     }
