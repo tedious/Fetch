@@ -20,6 +20,10 @@ namespace Fetch;
  */
 class Server
 {
+    const DISABLE_AUTHENTICATOR = 'DISABLE_AUTHENTICATOR';
+    const GSSAPI = 'GSSAPI';
+    const NTLM = 'NTLM';
+
     /**
      * When SSL isn't compiled into PHP we need to make some adjustments to prevent soul crushing annoyances.
      *
@@ -108,6 +112,13 @@ class Server
      * @var string
      */
     protected $service = 'imap';
+
+    /**
+     * These are the optional connection parameters
+     *
+     * @var array
+     */
+    protected $connectionParams = array();
 
     /**
      * This constructor takes the location and service thats trying to be connected to as its arguments.
@@ -212,7 +223,7 @@ class Server
     }
 
     /**
-     * This funtion is used to set various options for connecting to the server.
+     * This function is used to set various options for connecting to the server.
      *
      * @param  int        $bitmask
      * @throws \Exception
@@ -279,6 +290,52 @@ class Server
     }
 
     /**
+     * This function is used to disable GSSAPI authenticator
+     *
+     * @return $this
+     */
+    public function disableGssapiAuthenticator()
+    {
+        $this->connectionParams[self::DISABLE_AUTHENTICATOR] = self::GSSAPI;
+
+        return $this;
+    }
+
+    /**
+     * This function is used to disable NTML authenticator
+     *
+     * @return $this
+     */
+    public function disableNtmlAuthenticator()
+    {
+        $this->connectionParams[self::DISABLE_AUTHENTICATOR] = self::NTLM;
+
+        return $this;
+    }
+
+    /**
+     * This function is used to enable authentication
+     *
+     * @return $this
+     */
+    public function enableAuthentication()
+    {
+        unset($this->connectionParams[self::DISABLE_AUTHENTICATOR]);
+
+        return $this;
+    }
+
+    /**
+     * This function gets the optional connection parameters
+     *
+     * @return array|null
+     */
+    protected function getConnectionParams()
+    {
+        return $this->connectionParams;
+    }
+
+    /**
      * This function creates or reopens an imapStream when called.
      *
      */
@@ -288,7 +345,7 @@ class Server
             if (!imap_reopen($this->imapStream, $this->getServerString(), $this->options, 1))
                 throw new \RuntimeException(imap_last_error());
         } else {
-            $imapStream = imap_open($this->getServerString(), $this->username, $this->password, $this->options, 1);
+            $imapStream = imap_open($this->getServerString(), $this->username, $this->password, $this->options, 1, $this->getConnectionParams());
 
             if ($imapStream === false)
                 throw new \RuntimeException(imap_last_error());
