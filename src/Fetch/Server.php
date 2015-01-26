@@ -110,6 +110,13 @@ class Server
     protected $service = 'imap';
 
     /**
+     * Contains all of the IMAP errors that have occurred
+     *
+     * @var array
+     */
+    protected $imapErrors = array();
+
+    /**
      * This constructor takes the location and service thats trying to be connected to as its arguments.
      *
      * @param string      $serverPath
@@ -133,6 +140,33 @@ class Server
         }
 
         $this->service = $service;
+    }
+
+    public function __destruct()
+    {
+        $this->setImapErrors();
+    }
+
+    /**
+     * Returns all of the IMAP errors that have occurred
+     *
+     * @return array
+     */
+    public function getImapErrors()
+    {
+        if(empty($this->imapErrors)) {
+            $this->setImapErrors();
+        }
+
+        return $this->imapErrors;
+    }
+
+    /**
+     * Sets all the IMAP errors that have occurred
+     */
+    public function setImapErrors()
+    {
+        $this->imapErrors = imap_errors();
     }
 
     /**
@@ -288,7 +322,7 @@ class Server
             if (!imap_reopen($this->imapStream, $this->getServerString(), $this->options, 1))
                 throw new \RuntimeException(imap_last_error());
         } else {
-            $imapStream = imap_open($this->getServerString(), $this->username, $this->password, $this->options, 1);
+            $imapStream = @imap_open($this->getServerString(), $this->username, $this->password, $this->options, 1);
 
             if ($imapStream === false)
                 throw new \RuntimeException(imap_last_error());
@@ -455,4 +489,6 @@ class Server
     {
         return imap_list($this->getImapStream(), $this->getServerSpecification(), $pattern);
     }
+
+
 }
