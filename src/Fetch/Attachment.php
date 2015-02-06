@@ -93,9 +93,9 @@ class Attachment
         $parameters = Message::getParametersFromStructure($structure);
 
         if (isset($parameters['filename'])) {
-            $this->filename = $parameters['filename'];
+            $this->filename = imap_utf8($parameters['filename']);
         } elseif (isset($parameters['name'])) {
-            $this->filename = $parameters['name'];
+            $this->filename = imap_utf8($parameters['name']);
         }
 
         $this->size = $structure->bytes;
