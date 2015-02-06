@@ -623,10 +623,13 @@ class Message
         $outputAddresses = array();
         if (is_array($addresses))
             foreach ($addresses as $address) {
-                $currentAddress            = array();
-                $currentAddress['address'] = $address->mailbox . '@' . $address->host;
-                if (isset($address->personal))
-                    $currentAddress['name'] = $address->personal;
+                if (property_exists($address, 'mailbox') && $address->mailbox != 'undisclosed-recipients') {
+                    $currentAddress = array();
+                    $currentAddress['address'] = $address->mailbox . '@' . $address->host;
+                    if (isset($address->personal)) {
+                        $currentAddress['name'] = $address->personal;
+                    }
+                }
                 $outputAddresses[] = $currentAddress;
             }
 
