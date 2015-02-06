@@ -77,7 +77,7 @@ class Message
      *
      * @var string
      */
-    protected static $flagTypes = array('recent', 'flagged', 'answered', 'deleted', 'seen', 'draft');
+    protected static $flagTypes = array(self::FLAG_RECENT, self::FLAG_FLAGGED, self::FLAG_ANSWERED, self::FLAG_DELETED, self::FLAG_SEEN, self::FLAG_DRAFT);
 
     /**
      * This holds the plantext email message.
@@ -361,7 +361,7 @@ class Message
             }
         } else {
             if (!isset($this->plaintextMessage) && isset($this->htmlMessage)) {
-                $output = preg_replace('/\<br(\s*)?\/?\>/i', PHP_EOL, trim($this->htmlMessage) );
+                $output = preg_replace('/\s*\<br\s*\/?\>/i', PHP_EOL, trim($this->htmlMessage) );
                 $output = strip_tags($output);
 
                 return $output;
@@ -686,33 +686,42 @@ class Message
      * @param  string $flag Recent, Flagged, Answered, Deleted, Seen, Draft
      * @return bool
      */
-    public function checkFlag($flag = 'flagged')
+    public function checkFlag($flag = self::FLAG_FLAGGED)
     {
         return (isset($this->status[$flag]) && $this->status[$flag] === true);
     }
 
     /**
-     * This function is used to enable or disable a flag on the imap message.
+     * This function is used to enable or disable one or more flags on the imap message.
      *
-     * @param  string                    $flag   Flagged, Answered, Deleted, Seen, Draft
+     * @param  string|array              $flag   Flagged, Answered, Deleted, Seen, Draft
      * @param  bool                      $enable
      * @throws \InvalidArgumentException
      * @return bool
      */
     public function setFlag($flag, $enable = true)
     {
-        if (!in_array($flag, self::$flagTypes) || $flag == 'recent')
-            throw new \InvalidArgumentException('Unable to set invalid flag "' . $flag . '"');
+        $flags = (is_array($flag)) ? $flag : array($flag);
 
-        $imapifiedFlag = '\\' . ucfirst($flag);
+        foreach ($flags as $i => $flag) {
+            $flag = ltrim(strtolower($flag), '\\');
+            if (!in_array($flag, self::$flagTypes) || $flag == self::FLAG_RECENT)
+                throw new \InvalidArgumentException('Unable to set invalid flag "' . $flag . '"');
+
+            if ($enable) {
+                $this->status[$flag] = true;
+            } else {
+                unset($this->status[$flag]);
+            }
+
+            $flags[$i] = $flag;
+        }
+
+        $imapifiedFlag = '\\'.implode(' \\', array_map('ucfirst', $flags));
 
         if ($enable === true) {
-            $this->status[$flag] = true;
-
             return imap_setflag_full($this->imapStream, $this->uid, $imapifiedFlag, ST_UID);
         } else {
-            unset($this->status[$flag]);
-
             return imap_clearflag_full($this->imapStream, $this->uid, $imapifiedFlag, ST_UID);
         }
     }
