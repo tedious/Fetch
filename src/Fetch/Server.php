@@ -94,6 +94,13 @@ class Server
     protected $options = 0;
 
     /**
+     * This is the set of connection parameters
+     *
+     * @var array
+     */
+    protected $params = array();
+
+    /**
      * This is the resource connection to the server. It is required by a number of imap based functions to specify how
      * to connect.
      *
@@ -226,6 +233,16 @@ class Server
     }
 
     /**
+     * This function is used to set connection parameters
+     *
+     * @param string $key
+     * @param string $value
+     */
+    public function setParam($key, $value) {
+        $this->params[$key] = $value;
+    }
+
+    /**
      * This function gets the current saved imap resource and returns it.
      *
      * @return resource
@@ -288,7 +305,7 @@ class Server
             if (!imap_reopen($this->imapStream, $this->getServerString(), $this->options, 1))
                 throw new \RuntimeException(imap_last_error());
         } else {
-            $imapStream = imap_open($this->getServerString(), $this->username, $this->password, $this->options, 1);
+            $imapStream = imap_open($this->getServerString(), $this->username, $this->password, $this->options, 1, $this->params);
 
             if ($imapStream === false)
                 throw new \RuntimeException(imap_last_error());
