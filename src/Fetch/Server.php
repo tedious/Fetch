@@ -238,7 +238,8 @@ class Server
      * @param string $key
      * @param string $value
      */
-    public function setParam($key, $value) {
+    public function setParam($key, $value)
+    {
         $this->params[$key] = $value;
     }
 
