@@ -374,6 +374,24 @@ class Message
     }
 
     /**
+     * This function returns the plain text version of the email or false if not present.
+     * @return string|bool Returns false if not present
+     */
+    public function getPlainTextMessage()
+    {
+        return isset($this->plaintextMessage) ? $this->plaintextMessage : false;
+    }
+
+    /**
+     * This function returns the HTML version of the email or false if not present.
+     * @return string|bool Returns false if not present
+     */
+    public function getHtmlMessage()
+    {
+        return isset($this->htmlMessage) ? $this->htmlMessage : false;
+    }
+
+    /**
      * This function returns either an array of email addresses and names or, optionally, a string that can be used in
      * mail headers.
      *
