@@ -374,19 +374,19 @@ class Message
     }
 
     /**
-     * This function returns the plain text version of the email or false if not present.
+     * This function returns the plain text body of the email or false if not present.
      * @return string|bool Returns false if not present
      */
-    public function getPlainTextMessage()
+    public function getPlainTextBody()
     {
         return isset($this->plaintextMessage) ? $this->plaintextMessage : false;
     }
 
     /**
-     * This function returns the HTML version of the email or false if not present.
+     * This function returns the HTML body of the email or false if not present.
      * @return string|bool Returns false if not present
      */
-    public function getHtmlMessage()
+    public function getHtmlBody()
     {
         return isset($this->htmlMessage) ? $this->htmlMessage : false;
     }

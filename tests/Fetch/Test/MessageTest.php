@@ -77,7 +77,7 @@ class MessageTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    public function testGetPlainTextMessage()
+    public function testGetPlainTextBody()
     {
         // easiest way to deal with php encoding issues is simply not to.
         $plaintextTest1 = 'f9377a89c9c935463a2b35c92dd61042';
@@ -85,31 +85,31 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         $plaintextTest3 = 'd41d8cd98f00b204e9800998ecf8427e';
 
         $message = static::getMessage(3);
-        $messagePlainText = $message->getPlainTextMessage();
+        $messagePlainText = $message->getPlainTextBody();
         $this->assertEquals($plaintextTest1, md5($messagePlainText), 'Message returns as plaintext.');
 
         $message = static::getMessage(4);
-        $messagePlainText = $message->getPlainTextMessage();
+        $messagePlainText = $message->getPlainTextBody();
         $this->assertEquals($plaintextTest2, md5($messagePlainText), 'Message returns as plaintext.');
 
         $message = static::getMessage(6);
-        $messagePlainText = $message->getPlainTextMessage();
+        $messagePlainText = $message->getPlainTextBody();
         $this->assertEquals($plaintextTest3, md5($messagePlainText), 'Message does not return as plaintext.');
 
     }
 
-    public function testGetHtmlMessage()
+    public function testGetHtmlBody()
     {
         // easiest way to deal with php encoding issues is simply not to.
         $HtmlTest1 = 'd41d8cd98f00b204e9800998ecf8427e';
         $HtmlTest2 = '6a366ddecf080199284146d991d52169';
 
         $message = static::getMessage(3);
-        $messageHtml = $message->getHtmlMessage();
+        $messageHtml = $message->getHtmlBody();
         $this->assertEquals($HtmlTest1, md5($messageHtml), 'Message does not return as HTML.');
 
         $message = static::getMessage(4);
-        $messageHtml = $message->getHtmlMessage();
+        $messageHtml = $message->getHtmlBody();
         $this->assertEquals($HtmlTest2, md5($messageHtml), 'Message returns as HTML.');
 
     }
