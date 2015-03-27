@@ -629,8 +629,8 @@ class Message
                     if (isset($address->personal)) {
                         $currentAddress['name'] = $address->personal;
                     }
+                    $outputAddresses[] = $currentAddress;
                 }
-                $outputAddresses[] = $currentAddress;
             }
 
         return $outputAddresses;
