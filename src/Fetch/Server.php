@@ -250,7 +250,7 @@ class Server
      */
     public function getImapStream()
     {
-        if (!isset($this->imapStream))
+        if (empty($this->imapStream))
             $this->setImapStream();
 
         return $this->imapStream;
@@ -302,7 +302,7 @@ class Server
      */
     protected function setImapStream()
     {
-        if (isset($this->imapStream)) {
+        if (!empty($this->imapStream)) {
             if (!imap_reopen($this->imapStream, $this->getServerString(), $this->options, 1))
                 throw new \RuntimeException(imap_last_error());
         } else {
