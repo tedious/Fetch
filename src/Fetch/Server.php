@@ -473,4 +473,37 @@ class Server
     {
         return imap_list($this->getImapStream(), $this->getServerSpecification(), $pattern);
     }
+
+    /**
+     * List available subscribed mailboxes
+     *
+     * @param string $pattern
+     *
+     * @return array
+     */
+    public function listSubscribedMailbox($pattern = '*') {
+        return imap_lsub($this->getImapStream(), $this->getServerSpecification(), $pattern);
+    }
+
+    /**
+     * Subscribe to the given mailbox
+     *
+     * @param string $mailbox
+     *
+     * @return bool
+     */
+    public function subscribeToMailBox($mailbox) {
+             return imap_subscribe($this->getImapStream(), $this->getServerSpecification() . $mailbox);
+    }
+
+    /**
+     * Unsubscribe from the given mailbox
+     *
+     * @param string $mailbox
+     *
+     * @return bool
+     */
+    public function unsubscribeFromMailBox($mailbox) {
+             return imap_unsubscribe($this->getImapStream(), $this->getServerSpecification() . $mailbox);
+    }
 }
