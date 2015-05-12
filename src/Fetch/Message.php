@@ -44,7 +44,7 @@ class Message
     protected $imapStream;
 
 	/**
-	 * This as an object which contains raw header information for the message.
+	 * This as an string which contains raw header information for the message.
 	 *
 	 * @var string
 	 */
