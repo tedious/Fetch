@@ -43,12 +43,12 @@ class Message
      */
     protected $imapStream;
 
-	/**
-	 * This as an string which contains raw header information for the message.
-	 *
-	 * @var string
-	 */
-	protected $rawHeaders;
+    /**
+     * This as an string which contains raw header information for the message.
+     *
+     * @var string
+     */
+    protected $rawHeaders;
 
     /**
      * This as an object which contains header information for the message.
@@ -298,23 +298,23 @@ class Message
         return $this->messageOverview;
     }
 
-	/**
-	 * This function returns an object containing the raw headers of the message.
-	 *
-	 * @param  bool      $forceReload
-	 * @return string
-	 */
-	public function getRawHeaders($forceReload = false)
-	{
-		if ($forceReload || !isset($this->rawHeaders)) {
-			// raw headers (since imap_headerinfo doesn't use the unique id)
-			$this->rawHeaders = imap_fetchheader($this->imapStream, $this->uid, FT_UID);
-		}
+    /**
+     * This function returns an object containing the raw headers of the message.
+     *
+     * @param  bool      $forceReload
+     * @return string
+     */
+    public function getRawHeaders($forceReload = false)
+    {
+        if ($forceReload || !isset($this->rawHeaders)) {
+            // raw headers (since imap_headerinfo doesn't use the unique id)
+            $this->rawHeaders = imap_fetchheader($this->imapStream, $this->uid, FT_UID);
+        }
 
-		return $this->rawHeaders;
-	}
+        return $this->rawHeaders;
+    }
 
-	/**
+    /**
      * This function returns an object containing the headers of the message. This is done by taking the raw headers
      * and running them through the imap_rfc822_parse_headers function. The results are only retrieved from the server
      * once unless passed true as a parameter.
