@@ -301,7 +301,7 @@ class Message
     /**
      * This function returns an object containing the raw headers of the message.
      *
-     * @param  bool      $forceReload
+     * @param  bool   $forceReload
      * @return string
      */
     public function getRawHeaders($forceReload = false)
