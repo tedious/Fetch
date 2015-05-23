@@ -318,11 +318,18 @@ class Server
     /**
      * This returns the number of messages that the current mailbox contains.
      *
+     * @param   string  $mailbox    the mailbox path if required to get sub-folder counts
      * @return int
      */
-    public function numMessages()
+    public function numMessages( $mailbox='' )
     {
-        return imap_num_msg($this->getImapStream());
+        $oldMailbox = $this->getMailBox();
+        if( $mailbox !== '' ) {
+            $this->setMailbox( $mailbox );
+        }
+        $cnt = imap_num_msg($this->getImapStream());
+        $this->setMailbox( $oldMailbox );
+        return $cnt;
     }
 
     /**
