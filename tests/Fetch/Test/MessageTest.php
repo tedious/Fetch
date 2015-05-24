@@ -175,16 +175,14 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         // Testing by moving message from "Test Folder" to "Sent"
 
         // Count Test Folder
-        $server->setMailBox('Test Folder');
-        $testFolderNumStart = $server->numMessages();
+        $testFolderNumStart = $server->numMessages('Test Folder');
 
         // Get message from Test Folder
         $message = $server->getMessageByUid(1);
         $this->assertInstanceOf('\Fetch\Message', $message, 'Server returned Message.');
 
         // Switch to Sent folder, count messages
-        $server->setMailBox('Sent');
-        $sentFolderNumStart = $server->numMessages();
+        $sentFolderNumStart = $server->numMessages('Sent');
 
         // Switch to "Flagged" folder in order to test that function properly returns to it
         $this->assertTrue($server->setMailBox('Flagged Email'));
@@ -199,11 +197,11 @@ class MessageTest extends \PHPUnit_Framework_TestCase
 
         // Make sure Test Folder lost a message
         $this->assertTrue($server->setMailBox('Test Folder'));
-        $this->assertEquals($testFolderNumStart - 1, $server->numMessages(), 'Message moved out of Test Folder.');
+        $this->assertEquals($testFolderNumStart - 1, $server->numMessages('Test Folder'), 'Message moved out of Test Folder.');
 
         // Make sure Sent folder gains one
         $this->assertTrue($server->setMailBox('Sent'));
-        $this->assertEquals($sentFolderNumStart + 1, $server->numMessages(), 'Message moved into Sent Folder.');
+        $this->assertEquals($sentFolderNumStart + 1, $server->numMessages('Sent'), 'Message moved into Sent Folder.');
     }
 
     public function testDecode()
