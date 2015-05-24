@@ -153,7 +153,7 @@ class Server
     {
         $this->username = $username;
         $this->password = $password;
-        if( $tryFasterAuth ) {
+        if ($tryFasterAuth) {
             $this->setParam('DISABLE_AUTHENTICATOR', array('GSSAPI','NTLM'));
         }
     }
