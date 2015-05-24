@@ -321,18 +321,18 @@ class Server
      * @param   string  $mailbox    the mailbox path if required to get sub-folder counts
      * @return int
      */
-    public function numMessages( $mailbox='' )
+    public function numMessages($mailbox='')
     {
-        $mboxExists = $this->hasMailbox( $mailbox );
-        if( $mboxExists ) {
+        $mboxExists = $this->hasMailbox($mailbox);
+        if ($mboxExists){
             $oldMailbox = $this->getMailBox();
-            $this->setMailbox( $mailbox );
+            $this->setMailbox($mailbox);
         }
-        $cnt = imap_num_msg( $this->getImapStream() );
-        if( $mboxExists ) {
-            $this->setMailbox( $oldMailbox );
+        $cnt = imap_num_msg($this->getImapStream());
+        if ( $mboxExists ){
+            $this->setMailbox($oldMailbox);
         }
-        return ( !$mboxExists && $mailbox !== '' ) ? 0 : $cnt;
+        return ((!$mboxExists && $mailbox !== '') ? 0 : $cnt);
     }
 
     /**
