@@ -318,7 +318,7 @@ class Server
     /**
      * This returns the number of messages that the current mailbox contains.
      *
-     * @param  string   $mailbox    the mailbox path if required to get sub-folder counts
+     * @param  string   $mailbox
      * @return int
      */
     public function numMessages($mailbox='')
@@ -332,7 +332,7 @@ class Server
             $cnt = $this->numMessages();
             $this->setMailbox($oldMailbox);
         }
-        
+
         return ((int) $cnt);
     }
 
