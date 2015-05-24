@@ -178,7 +178,7 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         $testFolderNumStart = $server->numMessages('Test Folder');
 
         // Get message from Test Folder
-        $message = $server->getMessageByUid(1);
+        $message = $server->getMessage(1);
         $this->assertInstanceOf('\Fetch\Message', $message, 'Server returned Message.');
 
         // Switch to Sent folder, count messages
