@@ -175,14 +175,18 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         // Testing by moving message from "Test Folder" to "Sent"
 
         // Count Test Folder
+        $server->setMailbox('Test Folder');
         $testFolderNumStart = $server->numMessages('Test Folder');
+        $this->assertEquals($testFolderNumStart, $server->numMessages(), 'Server presents consistent information between numMessages when mailbox set and directly queried for number of messages');
 
         // Get message from Test Folder
         $message = current($server->getMessages(1));
         $this->assertInstanceOf('\Fetch\Message', $message, 'Server returned Message.');
 
         // Switch to Sent folder, count messages
+        $server->setMailbox('Sent');
         $sentFolderNumStart = $server->numMessages('Sent');
+        $this->assertEquals($sentFolderNumStart, $server->numMessages(), 'Server presents consistent information between numMessages when mailbox set and directly queried for number of messages');
 
         // Switch to "Flagged" folder in order to test that function properly returns to it
         $this->assertTrue($server->setMailBox('Flagged Email'));
