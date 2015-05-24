@@ -324,11 +324,11 @@ class Server
     public function numMessages($mailbox='')
     {
         $oldMailbox = $this->getMailBox();
-        $mboxExists = ($this->hasMailbox($mailbox) && $oldMailbox != $mailbox);
+        $mboxExists = ($this->hasMailbox($mailbox) && $oldMailbox !== $mailbox && $mailbox !== '');
         if ($mboxExists){
             $this->setMailbox($mailbox);
         }
-        $cnt = imap_num_msg($this->getImapStream());
+        $cnt = imap_num_msg( $this->getImapStream() );
         if ($mboxExists){
             $this->setMailbox($oldMailbox);
         }
