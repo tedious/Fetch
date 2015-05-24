@@ -323,17 +323,16 @@ class Server
      */
     public function numMessages($mailbox='')
     {
+        $cnt = 0;
         if ($mailbox==='') {
-            return imap_num_msg($this->getImapStream());
+            $cnt = imap_num_msg($this->getImapStream());
+        } elseif ($this->hasMailbox($mailbox) && $mailbox !== '') {
+            $oldMailbox = $this->getMailBox();
+            $this->setMailbox($mailbox);
+            $cnt = $this->numMessages();
+            $this->setMailbox($oldMailbox);
         }
-        if (!$this->hasMailbox($mailbox) && $mailbox !== '') {
-            return 0;
-        }
-        $oldMailbox = $this->getMailBox();
-        $this->setMailbox($mailbox);
-        $cnt = $this->numMessages();
-        $this->setMailbox($oldMailbox);
-        return $cnt;
+        return ((int)$cnt);
     }
 
     /**
