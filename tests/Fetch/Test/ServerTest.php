@@ -185,7 +185,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
     public function testDeleteMailbox()
     {
-        $server = Static::getServer();
+        $server = static::getServer();
         $this->assertTrue($server->hasMailBox('Cheese'), 'Does have mailbox "Cheese"');
         $this->assertTrue($server->deleteMailBox('Cheese'), 'deleteMailBox returns true.');
         $this->assertFalse($server->hasMailBox('Cheese'), 'Mailbox "Cheese" was deleted');
