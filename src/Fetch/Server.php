@@ -443,7 +443,19 @@ class Server
      */
     public function hasMailBox($mailbox)
     {
-        return (boolean) imap_getmailboxes(
+        return (boolean) $this->getMailBoxDetails($mailbox);
+    }
+
+    /**
+    * Return information about the mailbox or mailboxes
+    *
+    * @param $mailbox
+    *
+    * @return bool
+    */
+    public function getMailBoxDetails($mailbox)
+    {
+        return imap_getmailboxes(
             $this->getImapStream(),
             $this->getServerString(),
             $this->getServerSpecification() . $mailbox
