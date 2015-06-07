@@ -473,4 +473,16 @@ class Server
     {
         return imap_list($this->getImapStream(), $this->getServerSpecification(), $pattern);
     }
+
+    /**
+     * Deletes the given mailbox.
+     *
+     * @param $mailbox
+     *
+     * @return bool
+     */
+     public function deleteMailBox($mailbox)
+     {
+         return imap_deletemailbox($this->getImapStream(), $this->getServerSpecification() . $mailbox);
+     }
 }
