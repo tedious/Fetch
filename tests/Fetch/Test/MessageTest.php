@@ -77,6 +77,43 @@ class MessageTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    public function testGetPlainTextBody()
+    {
+        // easiest way to deal with php encoding issues is simply not to.
+        $plaintextTest1 = 'f9377a89c9c935463a2b35c92dd61042';
+        $plaintextTest2 = '0b8fc9b534a1789f1071f996f238a07a';
+        $plaintextTest3 = 'd41d8cd98f00b204e9800998ecf8427e';
+
+        $message = static::getMessage(3);
+        $messagePlainText = $message->getPlainTextBody();
+        $this->assertEquals($plaintextTest1, md5($messagePlainText), 'Message returns as plaintext.');
+
+        $message = static::getMessage(4);
+        $messagePlainText = $message->getPlainTextBody();
+        $this->assertEquals($plaintextTest2, md5($messagePlainText), 'Message returns as plaintext.');
+
+        $message = static::getMessage(6);
+        $messagePlainText = $message->getPlainTextBody();
+        $this->assertEquals($plaintextTest3, md5($messagePlainText), 'Message does not return as plaintext.');
+
+    }
+
+    public function testGetHtmlBody()
+    {
+        // easiest way to deal with php encoding issues is simply not to.
+        $HtmlTest1 = 'd41d8cd98f00b204e9800998ecf8427e';
+        $HtmlTest2 = '6a366ddecf080199284146d991d52169';
+
+        $message = static::getMessage(3);
+        $messageHtml = $message->getHtmlBody();
+        $this->assertEquals($HtmlTest1, md5($messageHtml), 'Message does not return as HTML.');
+
+        $message = static::getMessage(4);
+        $messageHtml = $message->getHtmlBody();
+        $this->assertEquals($HtmlTest2, md5($messageHtml), 'Message returns as HTML.');
+
+    }
+
     public function testGetAddresses()
     {
         $message = static::getMessage(3);
