@@ -451,7 +451,7 @@ class Server
     *
     * @param $mailbox
     *
-    * @return bool
+    * @return array
     */
     public function getMailBoxDetails($mailbox)
     {
