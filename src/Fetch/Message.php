@@ -289,6 +289,9 @@ class Message
         if ($forceReload || !isset($this->messageOverview)) {
             // returns an array, and since we just want one message we can grab the only result
             $results               = imap_fetch_overview($this->imapStream, $this->uid, FT_UID);
+            if ( sizeof($results) == 0 ) {
+                throw new \RuntimeException('Error fetching overview');
+            }
             $this->messageOverview = array_shift($results);
             if ( ! isset($this->messageOverview->date)) {
                 $this->messageOverview->date = null;
