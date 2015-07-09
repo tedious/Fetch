@@ -513,8 +513,8 @@ class Message
             $this->attachments[] = $attachment;
         } elseif ($structure->type == 0 || $structure->type == 1) {
             $messageBody = isset($partIdentifier) ?
-                imap_fetchbody($this->imapStream, $this->uid, $partIdentifier, FT_UID)
-                : imap_body($this->imapStream, $this->uid, FT_UID);
+                imap_fetchbody($this->imapStream, $this->uid, $partIdentifier, FT_UID | FT_PEEK)
+                : imap_body($this->imapStream, $this->uid, FT_UID | FT_PEEK);
 
             $messageBody = self::decode($messageBody, $structure->encoding);
 
