@@ -163,7 +163,7 @@ class Server
     public function setMailBox($mailbox = '')
     {
         if (!$this->hasMailBox($mailbox)) {
-            return false;
+            throw new \RuntimeException('No mailbox found');
         }
 
         $this->mailbox = $mailbox;
