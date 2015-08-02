@@ -310,7 +310,7 @@ class Server
             if (!imap_reopen($this->imapStream, $this->getServerString(), $this->options, 1))
                 throw new \RuntimeException(imap_last_error());
         } else {
-            $imapStream = imap_open($this->getServerString(), $this->username, $this->password, $this->options, 1, $this->params);
+            $imapStream = @imap_open($this->getServerString(), $this->username, $this->password, $this->options, 1, $this->params);
 
             if ($imapStream === false)
                 throw new \RuntimeException(imap_last_error());
