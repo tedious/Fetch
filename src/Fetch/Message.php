@@ -10,7 +10,6 @@
  */
 
 namespace Fetch;
-use Exception;
 
 /**
  * This library is a wrapper around the Imap library functions included in php. This class represents a single email
