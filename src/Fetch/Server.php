@@ -147,11 +147,15 @@ class Server
      *
      * @param string $username
      * @param string $password
+     * @param bool   $tryFasterAuth tries to auth faster by disabling GSSAPI & NTLM auth methods (set to false if you use either of these auth methods)
      */
-    public function setAuthentication($username, $password)
+    public function setAuthentication($username, $password, $tryFasterAuth=true)
     {
         $this->username = $username;
         $this->password = $password;
+        if ($tryFasterAuth) {
+            $this->setParam('DISABLE_AUTHENTICATOR', array('GSSAPI','NTLM'));
+        }
     }
 
     /**
