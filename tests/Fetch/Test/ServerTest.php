@@ -100,6 +100,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $server = static::getServer();
         $numMessages = $server->numMessages();
         $this->assertEquals(self::$num_messages_inbox, $numMessages);
+        $this->assertEquals(0, $server->numMessages( 'DOESNOTEXIST'.time() ) );
     }
 
     public function testGetMessages()

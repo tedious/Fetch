@@ -322,11 +322,22 @@ class Server
     /**
      * This returns the number of messages that the current mailbox contains.
      *
+     * @param  string   $mailbox
      * @return int
      */
-    public function numMessages()
+    public function numMessages($mailbox='')
     {
-        return imap_num_msg($this->getImapStream());
+        $cnt = 0;
+        if ($mailbox==='') {
+            $cnt = imap_num_msg($this->getImapStream());
+        } elseif ($this->hasMailbox($mailbox) && $mailbox !== '') {
+            $oldMailbox = $this->getMailBox();
+            $this->setMailbox($mailbox);
+            $cnt = $this->numMessages();
+            $this->setMailbox($oldMailbox);
+        }
+
+        return ((int) $cnt);
     }
 
     /**
