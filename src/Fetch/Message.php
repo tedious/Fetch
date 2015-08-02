@@ -477,11 +477,11 @@ class Message
     }
     
     /**
-     * Decode a header to a flat string
+     * Decode a header
      *
      * @return string
      */
-    public function flatDecodeHeader($header)
+    public function decodeHeader($header)
     {
         $array = imap_mime_header_decode($header);
         $str = '';
