@@ -322,7 +322,7 @@ class Server
     /**
      * This returns the number of messages that the current mailbox contains.
      *
-     * @param  string   $mailbox
+     * @param  string $mailbox
      * @return int
      */
     public function numMessages($mailbox='')
