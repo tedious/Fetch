@@ -233,7 +233,7 @@ class Message
 
             return false;
 
-        $this->subject = isset($messageOverview->subject) ? imap_utf8($messageOverview->subject) : null;
+        $this->subject = MIME::decode($messageOverview->subject, self::$charset);
         $this->date    = strtotime($messageOverview->date);
         $this->size    = $messageOverview->size;
 
@@ -674,7 +674,7 @@ class Message
                     $currentAddress = array();
                     $currentAddress['address'] = $address->mailbox . '@' . $address->host;
                     if (isset($address->personal)) {
-                        $currentAddress['name'] = $address->personal;
+                        $currentAddress['name'] = MIME::decode($address->personal, self::$charset);
                     }
                     $outputAddresses[] = $currentAddress;
                 }
