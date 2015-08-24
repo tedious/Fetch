@@ -96,6 +96,8 @@ class Attachment
             $this->setFileName($parameters['filename']);
         } elseif (isset($parameters['name'])) {
             $this->setFileName($parameters['name']);
+        }  elseif (isset($structure->id)) {
+            $this->setFileName(str_replace(array('<', '>'), '', $structure->id));
         }
 
         $this->size = $structure->bytes;
