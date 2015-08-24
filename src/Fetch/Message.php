@@ -392,7 +392,7 @@ class Message
              * If we have inline images, we want to build the text message from the HTML source,
              * because it doesn't contain the encoded image.
              */
-            if (empty($listInlineImages) === false) {
+            if (empty($listInlineImages[1]) === false) {
                 unset($this->plaintextMessage);
             }
 
