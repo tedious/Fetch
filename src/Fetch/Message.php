@@ -407,26 +407,38 @@ class Message
                 // Silence the errors on dom loading, because it'll notice on every single weird tag
                 @$dom->loadHTML($output);
 
-                foreach ($dom->getElementsByTagName('img') as $img) {
+                // List the images in the document
+                $images = $dom->getElementsByTagName('img');
+
+                $i = $images->length - 1;
+                while ($i > -1) {
+                    // Get the current image node
+                    $thisImgNode = $images->item($i);
+
                     // Remove the CID bit from the src, if it exists, because our regex matches don't contain that
-                    $srcMatch = str_ireplace('cid:', '', $img->attributes->getNamedItem('src')->value);
+                    $srcMatch = str_ireplace('cid:', '', $thisImgNode->attributes->getNamedItem('src')->value);
 
                     // See if we can find this src in our inline matches list
                     if (in_array($srcMatch, $listInlineImages[1]) === true) {
-                        $imageTags[$srcMatch] = $dom->saveHTML($img);
+                        // Set up the text node for the replacement text
+                        $text = $dom->createTextNode('[Inline image "' . $srcMatch . '" converted to attachment]');
+
+                        // Replace the image tag with the text node
+                        $thisImgNode->parentNode->replaceChild($text, $thisImgNode);
                     }
+
+                    $i--;
                 }
 
-                // Replace CID image matches with a note about inline images move to attached
-                foreach ($imageTags as $srcName => $srcTag) {
-                    $output = str_ireplace($srcTag, '[Inline image "' . $srcName . '" converted to attachment]', $output);
-                }
+                // Write the updated HTML back to the output
+                $output = $dom->saveHTML();
 
                 // Replace all br with newlines
                 $output = preg_replace('/\<br(\s*)?\/?\>/i', PHP_EOL, trim($output));
 
                 // Strip the rest of the tags from the HTML output
                 $output = strip_tags($output);
+
                 return $output;
             } elseif (isset($this->plaintextMessage)) {
                 return $this->plaintextMessage;
