@@ -96,8 +96,6 @@ class Attachment
             $this->setFileName($parameters['filename']);
         } elseif (isset($parameters['name'])) {
             $this->setFileName($parameters['name']);
-        }  elseif (isset($structure->id)) {
-            $this->setFileName(str_replace(array('<', '>'), '', $structure->id));
         }
 
         $this->size = $structure->bytes;
@@ -108,6 +106,40 @@ class Attachment
             $this->mimeType .= '/' . strtolower($structure->subtype);
 
         $this->encoding = $structure->encoding;
+
+        /**
+         * If this has a structure ID, prioritize it over other file name variables, since it is likely
+         * this is an embedded image that we will hint to when we parse out the message text.
+         */
+        if (isset($structure->id) === true) {
+            $fileName = str_replace(array('<', '>'), '', $structure->id);
+
+            /**
+             * Get file extension from MIME type for images, since they're usually what's embedded
+             * in an email.
+             */
+            switch ($this->mimeType) {
+                case 'image/bmp':
+                case 'image/x-windows-bmp':
+                    $fileName .= '.bmp';
+                    break;
+                case 'image/gif':
+                    $fileName .= '.gif';
+                    break;
+                case 'image/jpeg':
+                    $fileName .= '.jpg';
+                    break;
+                case 'image/png':
+                    $fileName .= '.png';
+                    break;
+                case 'image/tiff':
+                case 'image/x-tiff':
+                    $fileName .= '.tif';
+                    break;
+            }
+
+            $this->setFileName($fileName);
+        }
     }
 
     /**
