@@ -37,7 +37,7 @@ final class MIME
         foreach (imap_mime_header_decode($text) as $word) {
             $ch = 'default' === $word->charset ? 'ascii' : $word->charset;
 
-            $result .= iconv($ch, $targetCharset, $word->text);
+            $result .= Message::charsetConvert($word->text, $ch, $targetCharset) ?: $word->text;
         }
 
         return $result;

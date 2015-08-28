@@ -240,6 +240,21 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($sentFolderNumStart + 1, $server->numMessages(), 'Message moved into Sent Folder.');
     }
 
+    public function testCharsetConvert()
+    {
+        $this->assertSame('Привет', Message::charsetConvert(
+            implode(array_map('chr', array(0xF0, 0xD2, 0xC9, 0xD7, 0xC5, 0xD4))),
+            'koi8-r',
+            'utf-8'
+        ));
+
+        $this->assertSame('test', Message::charsetConvert('test', 'unk1', 'unk1'), 'Same charsets not try converting');
+        $this->assertSame('', Message::charsetConvert('', 'unk1', 'unk1'), 'Empty text not try converting');
+
+        $this->assertSame(null, Message::charsetConvert('test', 'unk1', 'utf-8'), 'Null when source charset is unknown');
+        $this->assertSame(null, Message::charsetConvert('test', 'utf-8', 'unk1'), 'Null when destination charset is unknown');
+    }
+
     public function testDecode()
     {
         $quotedPrintableDecoded = "Now's the time for all folk to come to the aid of their country.";
