@@ -233,7 +233,12 @@ class Message
 
             return false;
 
-        $this->subject = MIME::decode($messageOverview->subject, self::$charset);
+        if (empty($messageOverview->subject) === false) {
+            $this->subject = MIME::decode($messageOverview->subject, self::$charset);
+        } else {
+            $this->subject = '';
+        }
+        
         $this->date    = strtotime($messageOverview->date);
         $this->size    = $messageOverview->size;
 
