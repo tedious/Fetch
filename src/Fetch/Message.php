@@ -524,10 +524,8 @@ class Message
                 $mb_converted = false;
                 if (function_exists('mb_convert_encoding')) {
                     if (!in_array($parameters['charset'], mb_list_encodings())) {
-                        if ($structure->encoding === 0) {
+                        if (empty($structure->encoding)) {
                             $parameters['charset'] = 'US-ASCII';
-                        } else {
-                            $parameters['charset'] = 'UTF-8';
                         }
                     }
 
