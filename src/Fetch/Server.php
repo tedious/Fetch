@@ -512,4 +512,17 @@ class Server
      {
          return imap_deletemailbox($this->getImapStream(), $this->getServerSpecification() . $mailbox);
      }
+
+    /**
+     * Rename a mailbox.
+     *
+     * @param $oldMailbox
+     * @param $newMailbox
+     *
+     * @return bool
+     */
+    public function renameMailbox($oldMailbox, $newMailbox)
+    {
+        return imap_renamemailbox($this->getImapStream(), $this->getServerSpecification() . $oldMailbox, $this->getServerSpecification() . $newMailbox);
+    }
 }
