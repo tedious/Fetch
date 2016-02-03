@@ -111,7 +111,7 @@ class Message
      *
      * @var string
      */
-    protected $subject;
+    protected $subject = '';
 
     /**
      * This is the size of the email.
@@ -229,11 +229,12 @@ class Message
 
         /* First load the message overview information */
 
-        if(!is_object($messageOverview = $this->getOverview()))
+        if(!is_object($messageOverview = $this->getOverview())) return false;
+        
+        if( isset($messageOverview->subject)) {
+            $this->subject = MIME::decode($messageOverview->subject, self::$charset);
+        }
 
-            return false;
-
-        $this->subject = MIME::decode($messageOverview->subject, self::$charset);
         $this->date    = strtotime($messageOverview->date);
         $this->size    = $messageOverview->size;
 
