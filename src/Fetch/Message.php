@@ -524,13 +524,17 @@ class Message
                 $mb_converted = false;
                 if (function_exists('mb_convert_encoding')) {
                     $encodings = mb_list_encodings();
-                    if ($key = array_search(
-                        strtolower($parameters['charset']),
-                        array_map(function($val){return mb_strtolower($val);}, $encodings)
-                    ) !== false) {
-                        $parameters['charset'] = $encodings[$key];
-                    }else {
-                        $parameters['charset'] = ($structure->encoding === 0 ? 'US-ASCII' : 'UTF-8');
+                    if (!in_array($parameters['charset'], $encodings)) {
+                        $encodingIndex = array_search($parameters['charset'], array_map('mb_strtolower', $encodings));
+                        if (false !== $encodingIndex) {
+                            $parameters['charset'] = $encodings[$encodingIndex];
+                        } else {
+                            if ($structure->encoding === 0) {
+                                $parameters['charset'] = 'US-ASCII';
+                            } else {
+                                $parameters['charset'] = 'UTF-8';
+                            }
+                        }
                     }
 
                     $messageBody = @mb_convert_encoding($messageBody, self::$charset, $parameters['charset']);
