@@ -525,6 +525,9 @@ class Message
                 if (function_exists('mb_convert_encoding')) {
                     $encodings = mb_list_encodings();
                     if (!in_array($parameters['charset'], $encodings)) {
+                        if ('cp1251' === $parameters['charset']) {
+                            $parameters['charset'] = 'windows-1251';
+                        }
                         $encodingIndex = array_search($parameters['charset'], array_map('mb_strtolower', $encodings));
                         if (false !== $encodingIndex) {
                             $parameters['charset'] = $encodings[$encodingIndex];
