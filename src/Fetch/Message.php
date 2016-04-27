@@ -794,4 +794,24 @@ class Message
 
         return $returnValue;
     }
+
+    /**
+     * Copy a message to the given mailbox.
+     *
+     * @param $mailbox
+     *
+     * @return bool
+     */
+    public function copyToMailBox($mailbox)
+    {
+        $currentBox = $this->imapConnection->getMailBox();
+        $this->imapConnection->setMailBox($this->mailbox);
+
+        $returnValue = imap_mail_copy($this->imapStream, $this->uid, $mailbox, CP_UID);
+
+        $this->imapConnection->setMailBox($currentBox);
+
+        return $returnValue;
+    }
+
 }
