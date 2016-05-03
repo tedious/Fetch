@@ -40,6 +40,9 @@ final class MIME
             if (strtoupper($ch) != strtoupper($targetCharset)) {
                 $result .= iconv($ch, $targetCharset, $word->text);
             }
+            else {
+                $result .= $word->text;
+            }
         }
 
         return $result;
