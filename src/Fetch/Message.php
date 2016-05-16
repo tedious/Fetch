@@ -192,6 +192,14 @@ class Message
     public static $charsetFlag = '//TRANSLIT';
 
     /**
+     * This value defines the flag set for encoding for iconv to ignore the
+     * iconv(): Detected an illegal character in input string.
+     *
+     * @var string
+     */
+    public static $charsetAltFlag = '//IGNORE';
+
+    /**
      * These constants can be used to easily access available flags
      */
     const FLAG_RECENT = 'recent';
@@ -233,7 +241,7 @@ class Message
 
             return false;
 
-        $this->subject = MIME::decode($messageOverview->subject, self::$charset);
+        $this->subject = MIME::decode($messageOverview->subject, self::$charset . self::$charsetAltFlag);
         $this->date    = strtotime($messageOverview->date);
         $this->size    = $messageOverview->size;
 
@@ -674,7 +682,7 @@ class Message
                     $currentAddress = array();
                     $currentAddress['address'] = $address->mailbox . '@' . $address->host;
                     if (isset($address->personal)) {
-                        $currentAddress['name'] = MIME::decode($address->personal, self::$charset);
+                        $currentAddress['name'] = MIME::decode($address->personal, self::$charset . self::$charsetAltFlag);
                     }
                     $outputAddresses[] = $currentAddress;
                 }
