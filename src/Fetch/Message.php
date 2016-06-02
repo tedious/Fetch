@@ -238,12 +238,15 @@ class Message
         /* First load the message overview information */
 
         if(!is_object($messageOverview = $this->getOverview()))
-
             return false;
 
-        $this->subject = MIME::decode($messageOverview->subject, self::$charset . self::$charsetAltFlag);
-        $this->date    = strtotime($messageOverview->date);
-        $this->size    = $messageOverview->size;
+        $subject = property_exists($messageOverview, 'subject')? $messageOverview->subject : '';
+        $date = property_exists($messageOverview, 'date')? $messageOverview->date : '';
+        $size = property_exists($messageOverview, 'size')? $messageOverview->size : '';
+
+        $this->subject = MIME::decode($subject, self::$charset . self::$charsetAltFlag);
+        $this->date    = strtotime($date);
+        $this->size    = $size;
 
         foreach (self::$flagTypes as $flag)
             $this->status[$flag] = ($messageOverview->$flag == 1);
