@@ -683,7 +683,8 @@ class Message
             foreach ($addresses as $address) {
                 if (property_exists($address, 'mailbox') && $address->mailbox != 'undisclosed-recipients') {
                     $currentAddress = array();
-                    $currentAddress['address'] = $address->mailbox . '@' . $address->host;
+                    $host = property_exists($address, 'host')?$address->host:'';
+                    $currentAddress['address'] = $address->mailbox . '@' . $host;
                     if (isset($address->personal)) {
                         $currentAddress['name'] = MIME::decode($address->personal, self::$charset . self::$charsetAltFlag);
                     }
