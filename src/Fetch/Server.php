@@ -490,6 +490,32 @@ class Server
     }
 
     /**
+     * Subscribe to a mailbox to make it appear in mail-clients like Thunderbird. Useful after using
+     * the createMailBox-function, to make sure mail-clients show the folder.
+     *
+     * @param $mailbox
+     *
+     * @return bool
+     */
+    public function subscribeMailBox($mailbox)
+    {
+        return imap_subscribe($this->getImapStream(), $this->getServerSpecification() . $mailbox);
+    }
+
+    /**
+     * Unsubscribe the given mailbox.
+     * Opposite of subscribeMailBox-function
+     *
+     * @param $mailbox
+     *
+     * @return bool
+     */
+    public function unsubscribeMailBox($mailbox)
+    {
+        return imap_unsubscribe($this->getImapStream(), $this->getServerSpecification() . $mailbox);
+    }
+
+    /**
      * List available mailboxes
      *
      * @param string $pattern
