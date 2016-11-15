@@ -1,7 +1,5 @@
 <?php
 
-
-
 /*
  * This file is part of the Fetch package.
  *
@@ -12,7 +10,7 @@
  */
 
 namespace Fetch;
-echo "in fetch";
+
 /**
  * This library is a wrapper around the Imap library functions included in php. This class in particular manages a
  * connection to the server (imap, pop, etc) and allows for the easy retrieval of stored messages.
@@ -56,24 +54,21 @@ class Server
      *
      * @var string
      */
-    protected $mailbox = ''; //nadeem
-//    protected $mailbox = 'testhelpdesk@computerassistance.co.uk';
+    protected $mailbox = '';
 
     /**
      * This is the username used to connect to the server.
      *
      * @var string
      */
-    protected $username; //nadeem
-//    protected $username ='testhelpdesk';
+    protected $username;
 
     /**
      * This is the password used to connect to the server.
      *
      * @var string
      */
-    protected $password; //nadeem
-//    protected $password ='Dan1024';
+    protected $password;
 
     /**
      * This is an array of flags that modify how the class connects to the server. Examples include "ssl" to enforce a
