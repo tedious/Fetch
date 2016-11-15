@@ -232,12 +232,13 @@ class Message
         if (!is_object($messageOverview = $this->getOverview()))
 
             return false;
-//        echo 'the function that checks the subject >'.$this->subject;
-//        print_r($messageOverview);
-        if (!($this->hasSubject($messageOverview))) { //nadeem
-            $this->requestNewEmailWithSubject($messageOverview->from); //nadeem
-        } else {
+
+        if (strlen($this->subject) > 0) {
             $this->subject = MIME::decode($messageOverview->subject, self::$charset);
+        } else {
+            $this->subject = "No subject - PLEASE CHANGE!";
+        }
+        
             $this->date = strtotime($messageOverview->date);
             $this->size = $messageOverview->size;
 
@@ -799,51 +800,3 @@ class Message
 
         return $returnValue;
     }
-
-    /*  nadeem additions to fix empty subject breaking seraph 1.11.16 */
-
-
-    /**
-     * Checks to see if email subject is not blank
-     * @author nadeem
-     * @date 10.11.16
-     *
-     * @params $message - the email message to be tested
-     * @return bool§
-     */
-    public function hasSubject($message)
-    {
-        if(property_exists($message,'subject'))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    /**
-     * sends email to sender to tell them that their email
-     * didn't have a subject and has not been booked into
-     * seraph
-     *
-     * @author nadeem
-     * @date 10.11.16
-     *
-     * @params $from -> email address of sender
-     */
-    protected function requestNewEmailWithSubject($from)
-    {
-        echo 'subject missing - sender: ' . $from;
-        $admin_email = "nadeem@computerassistance.co.uk" . ',' . $from;
-//        $email = $_REQUEST['email'];
-        $subject = 'email without a subject to helpdesk';
-//        $comment = $_REQUEST['comment'];
-        $body = "Your request to book a ticket has been declined \nreason: no subject. \nplease add a subject to your email and re-send it, thanks. \nHelpdesk @ CA";
-        //send email
-        mail($admin_email, $subject, $body);
-    }
-
-
-}
