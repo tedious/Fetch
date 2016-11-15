@@ -811,9 +811,8 @@ class Message
      * @params $message - the email message to be tested
      * @return bool§
      */
-    protected function hasSubject($message)
+    public function hasSubject($message)
     {
-        //echo 'in has subject func';
         if(property_exists($message,'subject'))
         {
             return true;
@@ -845,6 +844,4 @@ class Message
         //send email
         mail($admin_email, $subject, $body);
     }
-
-
 }
