@@ -233,7 +233,7 @@ class Message
 
             return false;
 
-        if (strlen($this->subject) > 0) {
+        if (property_exists($this->messageOverview, 'subject')) {
             $this->subject = MIME::decode($messageOverview->subject, self::$charset);
         } else {
             $this->subject = "No subject - PLEASE CHANGE!";
