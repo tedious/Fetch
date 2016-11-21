@@ -98,7 +98,13 @@ class Attachment
             $this->setFileName($parameters['name']);
         }
 
-        $this->size = $structure->bytes;
+        if (isset($structure->bytes)) {
+            $this->size = $structure->bytes;
+        } else {
+            $this->size = 0;
+        }
+
+        echo "this size is $this->size\n";
 
         $this->mimeType = Message::typeIdToString($structure->type);
 
@@ -192,6 +198,8 @@ class Attachment
      */
     public function saveAs($path)
     {
+        echo "ATTACHMENT.PHP saveAs() encoding is $this->encoding.\n";
+        $encoding = $this->encoding;
         $dirname = dirname($path);
         if (file_exists($path)) {
             if (!is_writable($path)) {
@@ -205,7 +213,7 @@ class Attachment
             return false;
         }
 
-        switch ($this->encoding) {
+        switch ($encoding) {
             case 3: //base64
                 $streamFilter = stream_filter_append($filePointer, 'convert.base64-decode', STREAM_FILTER_WRITE);
                 break;
