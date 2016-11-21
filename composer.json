@@ -2,7 +2,7 @@
   "name": "nadeem/fetch",
   "description": "A PHP IMAP Library",
   "keywords": ["email","imap","pop3"],
-  "homepage": "https://git.computerassistance.co.uk/Nadeem/Fetch",
+  "homepage": "https://github.com/deemyboy/Fetch.git",
   "type": "library",
   "license": "BSD-3-Clause",
   "authors": [
@@ -24,8 +24,5 @@
     },
   "autoload": {
     "psr-0": {"Fetch": "src/"}
-  },
-  "replace": {
-    "tedivm/fetch":"dev-master"
   }
 }
