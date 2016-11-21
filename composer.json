@@ -1,8 +1,8 @@
 {
-  "name": "tedivm/fetch",
+  "name": "nadeem/fetch",
   "description": "A PHP IMAP Library",
   "keywords": ["email","imap","pop3"],
-  "homepage": "http://github.com/tedious/Fetch",
+  "homepage": "https://github.com/deemyboy/Fetch.git",
   "type": "library",
   "license": "BSD-3-Clause",
   "authors": [

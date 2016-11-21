@@ -8,6 +8,7 @@
 Fetch is a library for reading email and attachments, primarily using the POP 
 and IMAP protocols.
 
+# Moved from my personal repo to computerassistance gitlab - Nadeem
 
 ## Installing
  > N.b. A note on Ubuntu 14.04 (probably other Debian-based / Apt managed systems), the install of php5-imap does not enable the extension for CLI (possibly others as well), which can cause composer to report fetch requires ext-imap
@@ -26,23 +27,23 @@ backwards compatible.
 
 ```
 "require": {
-  "tedivm/fetch": "0.6.*"
+   "Nadeem Sarwar/fetch": "1.0.*",
 }
+
+add this the repo reference to the repositories
+
+   "repositories": [
+        {
+        ... (existing 
+        ... repo)
+        },
+        {
+            "type": "git",
+            "url": "https://git.computerassistance.co.uk/Nadeem/Fetch.git"
+        }
+    ]
+ 
 ```
-
-### Pear
-
-Fetch is also available through Pear.
-
-```
-$ pear channel-discover pear.tedivm.com
-$ pear install tedivm/Fetch
-```
-
-### Github
-
-Releases of Fetch are available on [Github](https://github.com/tedious/Fetch/releases).
-
 
 ## Sample Usage
 
@@ -64,4 +65,4 @@ by composer.
 
 ## License
 
-Fetch is licensed under the BSD License. See the LICENSE file for details.
+Fetch is licensed under the BSD License. See the LICENSE file for details..
