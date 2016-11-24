@@ -60,9 +60,9 @@ use Fetch\Server;
 use Fetch\Message;
 
 $server = new Server('imap.example.com', 993);
-$server->setAuthentication('dummy', 'dummy');
+$server->setAuthentication('username', 'password');
 
-/** @var $message Message[] */
+/** @var Message[] $message */
 $messages = $server->getMessages();
 
 foreach ($messages as $message) {
