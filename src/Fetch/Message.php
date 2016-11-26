@@ -508,7 +508,7 @@ class Message
     {
         $parameters = self::getParametersFromStructure($structure);
 
-        if ((isset($parameters['name']) || isset($parameters['filename']))
+        if ((!empty($parameters['name']) || !empty($parameters['filename']))
             || (isset($structure->subtype) && strtolower($structure->subtype) == 'rfc822')
         ) {
             $attachment          = new Attachment($this, $structure, $partIdentifier);
