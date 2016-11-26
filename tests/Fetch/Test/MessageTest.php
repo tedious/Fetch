@@ -240,6 +240,41 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($sentFolderNumStart + 1, $server->numMessages(), 'Message moved into Sent Folder.');
     }
 
+    public function testCopyToMailbox()
+    {
+        $server = ServerTest::getServer();
+
+        // Testing by copying message from "Test Folder" to "Sent"
+
+        // Count Test Folder
+        $testFolderNumStart = $server->numMessages('Test Folder');
+        $server->setMailbox('Test Folder');
+        $this->assertEquals($testFolderNumStart, $server->numMessages(), 'Server presents consistent information between numMessages when mailbox set and directly queried for number of messages');
+
+        // Get message from Test Folder
+        $message = current($server->getMessages(1));
+        $this->assertInstanceOf('\Fetch\Message', $message, 'Server returned Message.');
+
+        // Switch to Sent folder, count messages
+        $sentFolderNumStart = $server->numMessages('Sent');
+        $server->setMailbox('Sent');
+        $this->assertEquals($sentFolderNumStart, $server->numMessages(), 'Server presents consistent information between numMessages when mailbox set and directly queried for number of messages');
+
+        // Switch to "Flagged" folder in order to test that function properly returns to it
+        $this->assertTrue($server->setMailBox('Flagged Email'));
+        // Move the message!
+        $this->assertTrue($message->copyToMailBox('Sent'));
+        // Make sure we're still in the same folder
+        $this->assertEquals('Flagged Email', $server->getMailBox(), 'Returned Server back to right mailbox.');
+        $this->assertAttributeEquals('Test Folder', 'mailbox', $message, 'Message mailbox remained unchanged.');
+        // Make sure Test Folder didn't lose a message
+        $this->assertTrue($server->setMailBox('Test Folder'));
+        $this->assertEquals($testFolderNumStart, $server->numMessages(), 'Message copied from Test Folder.');
+        // Make sure Sent folder gains one
+        $this->assertTrue($server->setMailBox('Sent'));
+        $this->assertEquals($sentFolderNumStart + 1, $server->numMessages(), 'Message copied into Sent folder.');
+    }
+
     public function testDecode()
     {
         $quotedPrintableDecoded = "Now's the time for all folk to come to the aid of their country.";
