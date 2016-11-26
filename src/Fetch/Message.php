@@ -86,7 +86,7 @@ class Message
     protected static $flagTypes = array(self::FLAG_RECENT, self::FLAG_FLAGGED, self::FLAG_ANSWERED, self::FLAG_DELETED, self::FLAG_SEEN, self::FLAG_DRAFT);
 
     /**
-     * This holds the plantext email message.
+     * This holds the plaintext email message.
      *
      * @var string
      */
@@ -346,7 +346,7 @@ class Message
     }
 
     /**
-     * This function returns an object containing the structure of the message body. This is the same object thats
+     * This function returns an object containing the structure of the message body. This is the same object that
      * returned by imap_fetchstructure. The results are only retrieved from the server once unless passed true as a
      * parameter.
      *
