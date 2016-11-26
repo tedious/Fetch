@@ -670,8 +670,8 @@ class Message
         $outputAddresses = array();
         if (is_array($addresses))
             foreach ($addresses as $address) {
-                if (property_exists($address, 'mailbox') && $address->mailbox != 'undisclosed-recipients') {
-                    $currentAddress = array();
+                $currentAddress = array();
+                if (property_exists($address, 'mailbox') && property_exists($address, 'host') && $address->mailbox != 'undisclosed-recipients') {
                     $currentAddress['address'] = $address->mailbox . '@' . $address->host;
                     if (isset($address->personal)) {
                         $currentAddress['name'] = MIME::decode($address->personal, self::$charset);
