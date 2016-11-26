@@ -431,7 +431,7 @@ class Server
     public function getMessageByUid($uid)
     {
         try {
-            $message = new \Fetch\Message($uid, $this);
+            $message = new Message($uid, $this);
 
             return $message;
         } catch (\Exception $e) {
