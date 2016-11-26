@@ -520,27 +520,8 @@ class Message
 
             $messageBody = self::decode($messageBody, $structure->encoding);
 
-            if (!empty($parameters['charset']) && $parameters['charset'] !== self::$charset) {
-                $mb_converted = false;
-                if (function_exists('mb_convert_encoding')) {
-                    if (!in_array($parameters['charset'], mb_list_encodings())) {
-                        if ($structure->encoding === 0) {
-                            $parameters['charset'] = 'US-ASCII';
-                        } else {
-                            $parameters['charset'] = 'UTF-8';
-                        }
-                    }
-
-                    $messageBody = @mb_convert_encoding($messageBody, self::$charset, $parameters['charset']);
-                    $mb_converted = true;
-                }
-                if (!$mb_converted) {
-                    $messageBodyConv = @iconv($parameters['charset'], self::$charset . self::$charsetFlag, $messageBody);
-
-                    if ($messageBodyConv !== false) {
-                        $messageBody = $messageBodyConv;
-                    }
-                }
+            if (!empty($parameters['charset'])) {
+                $messageBody = self::charsetConvert($messageBody, $parameters['charset'], self::$charset) ?: $messageBody;
             }
 
             if (strtolower($structure->subtype) === 'plain' || ($structure->type == 1 && strtolower($structure->subtype) !== 'alternative')) {
@@ -573,6 +554,46 @@ class Message
                 $this->processStructure($part, $partId);
             }
         }
+    }
+
+    /**
+     * @param string $text
+     * @param string $from
+     * @param string $to
+     *
+     * @return string|null
+     */
+    public static function charsetConvert($text, $from, $to = null)
+    {
+        if (!$text) {
+            return '';
+        }
+
+        if (null === $to) {
+            $to = self::$charset;
+        }
+
+        $from = strtolower($from);
+        $to   = strtolower($to);
+
+        if ($from === $to) {
+            return $text;
+        }
+
+        $converted = null;
+        if (!$converted && function_exists('mb_convert_encoding') && @mb_check_encoding($text, $from)) {
+            $converted = @mb_convert_encoding($text, $to, $from);
+        }
+
+        if (!$converted && function_exists('iconv')) {
+            $converted = @iconv($from, $to . self::$charsetFlag, $text);
+        }
+
+        if ($converted) {
+            return $converted;
+        }
+
+        return null;
     }
 
     /**
