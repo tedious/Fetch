@@ -204,10 +204,10 @@ class Message
     /**
      * This constructor takes in the uid for the message and the Imap class representing the mailbox the
      * message should be opened from. This constructor should generally not be called directly, but rather retrieved
-     * through the apprioriate Imap functions.
+     * through the appropriate Imap functions.
      *
      * @param int    $messageUniqueId
-     * @param Server $mailbox
+     * @param Server $connection
      */
     public function __construct($messageUniqueId, Server $connection)
     {
@@ -215,7 +215,7 @@ class Message
         $this->mailbox        = $connection->getMailBox();
         $this->uid            = $messageUniqueId;
         $this->imapStream     = $this->imapConnection->getImapStream();
-        if($this->loadMessage() !== true)
+        if ($this->loadMessage() !== true)
             throw new \RuntimeException('Message with ID ' . $messageUniqueId . ' not found.');
     }
 
@@ -226,12 +226,10 @@ class Message
      */
     protected function loadMessage()
     {
-
         /* First load the message overview information */
-
-        if(!is_object($messageOverview = $this->getOverview()))
-
+        if (!is_object($messageOverview = $this->getOverview())) {
             return false;
+        }
 
         $this->subject = MIME::decode($messageOverview->subject, self::$charset);
         $this->date    = strtotime($messageOverview->date);
