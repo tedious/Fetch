@@ -143,6 +143,33 @@ class Server
     }
 
     /**
+     * This destructor function closes the imap resource via closeImapStream()
+     *
+     * @return void
+     */
+    public function __destruct()
+    {
+        $this->closeImapStream();
+    }
+
+    /**
+     * This function closes the current imap resource and returns an array with any errors on the stack
+     *
+     * @return false|array
+     */
+    public function closeImapStream()
+    {
+        $imapErrors = imap_errors();
+
+        if (isset($this->imapStream)) {
+            imap_close($this->imapStream);
+            $this->imapStream = null;
+        }
+
+        return $imapErrors;
+    }
+
+    /**
      * This function sets the username and password used to connect to the server.
      *
      * @param string $username
