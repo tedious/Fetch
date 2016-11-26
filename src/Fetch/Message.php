@@ -233,7 +233,12 @@ class Message
 
             return false;
 
-        $this->subject = MIME::decode($messageOverview->subject, self::$charset);
+        if (empty($messageOverview->subject) === false) {
+            $this->subject = MIME::decode($messageOverview->subject, self::$charset);
+        } else {
+            $this->subject = '';
+        }
+        
         $this->date    = strtotime($messageOverview->date);
         $this->size    = $messageOverview->size;
 
@@ -385,8 +390,58 @@ class Message
                 return $this->htmlMessage;
             }
         } else {
+            // See if there are any inline images
+            preg_match_all('/src="cid:(.*)"/Uims', $this->htmlMessage, $listInlineImages);
+
+            /**
+             * If we have inline images, we want to build the text message from the HTML source,
+             * because it doesn't contain the encoded image.
+             */
+            if (empty($listInlineImages[1]) === false) {
+                unset($this->plaintextMessage);
+            }
+
             if (!isset($this->plaintextMessage) && isset($this->htmlMessage)) {
-                $output = preg_replace('/\s*\<br\s*\/?\>/i', PHP_EOL, trim($this->htmlMessage) );
+                $output = $this->htmlMessage;
+
+                $imageTags = array();
+
+                // Set up this HTML message as a DOM doc, because regex matching for images would be nuts
+                $dom = new \DOMDocument();
+
+                // Silence the errors on dom loading, because it'll notice on every single weird tag
+                @$dom->loadHTML($output);
+
+                // List the images in the document
+                $images = $dom->getElementsByTagName('img');
+
+                $i = $images->length - 1;
+                while ($i > -1) {
+                    // Get the current image node
+                    $thisImgNode = $images->item($i);
+
+                    // Remove the CID bit from the src, if it exists, because our regex matches don't contain that
+                    $srcMatch = str_ireplace('cid:', '', $thisImgNode->attributes->getNamedItem('src')->value);
+
+                    // See if we can find this src in our inline matches list
+                    if (in_array($srcMatch, $listInlineImages[1]) === true) {
+                        // Set up the text node for the replacement text
+                        $text = $dom->createTextNode('[Inline image "' . $srcMatch . '" converted to attachment]');
+
+                        // Replace the image tag with the text node
+                        $thisImgNode->parentNode->replaceChild($text, $thisImgNode);
+                    }
+
+                    $i--;
+                }
+
+                // Write the updated HTML back to the output
+                $output = $dom->saveHTML();
+
+                // Replace all br with newlines
+                $output = preg_replace('/\<br(\s*)?\/?\>/i', PHP_EOL, trim($output));
+
+                // Strip the rest of the tags from the HTML output
                 $output = strip_tags($output);
 
                 return $output;
@@ -508,8 +563,13 @@ class Message
     {
         $parameters = self::getParametersFromStructure($structure);
 
-        if ((isset($parameters['name']) || isset($parameters['filename']))
-            || (isset($structure->subtype) && strtolower($structure->subtype) == 'rfc822')
+        if ((isset($parameters['name'])
+                || isset($parameters['filename'])
+                || isset($structure->id)
+            )
+            || (isset($structure->subtype)
+                && strtolower($structure->subtype) == 'rfc822'
+            )
         ) {
             $attachment          = new Attachment($this, $structure, $partIdentifier);
             $this->attachments[] = $attachment;
