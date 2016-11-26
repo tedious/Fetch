@@ -81,7 +81,7 @@ class Message
     /**
      * This is an array of the various imap flags that can be set.
      *
-     * @var string
+     * @var array
      */
     protected static $flagTypes = array(self::FLAG_RECENT, self::FLAG_FLAGGED, self::FLAG_ANSWERED, self::FLAG_DELETED, self::FLAG_SEEN, self::FLAG_DRAFT);
 
