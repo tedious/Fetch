@@ -81,12 +81,12 @@ class Message
     /**
      * This is an array of the various imap flags that can be set.
      *
-     * @var string
+     * @var array
      */
     protected static $flagTypes = array(self::FLAG_RECENT, self::FLAG_FLAGGED, self::FLAG_ANSWERED, self::FLAG_DELETED, self::FLAG_SEEN, self::FLAG_DRAFT);
 
     /**
-     * This holds the plantext email message.
+     * This holds the plaintext email message.
      *
      * @var string
      */
@@ -204,10 +204,10 @@ class Message
     /**
      * This constructor takes in the uid for the message and the Imap class representing the mailbox the
      * message should be opened from. This constructor should generally not be called directly, but rather retrieved
-     * through the apprioriate Imap functions.
+     * through the appropriate Imap functions.
      *
      * @param int    $messageUniqueId
-     * @param Server $mailbox
+     * @param Server $connection
      */
     public function __construct($messageUniqueId, Server $connection)
     {
@@ -215,7 +215,7 @@ class Message
         $this->mailbox        = $connection->getMailBox();
         $this->uid            = $messageUniqueId;
         $this->imapStream     = $this->imapConnection->getImapStream();
-        if($this->loadMessage() !== true)
+        if ($this->loadMessage() !== true)
             throw new \RuntimeException('Message with ID ' . $messageUniqueId . ' not found.');
     }
 
@@ -226,12 +226,10 @@ class Message
      */
     protected function loadMessage()
     {
-
         /* First load the message overview information */
-
-        if(!is_object($messageOverview = $this->getOverview()))
-
+        if (!is_object($messageOverview = $this->getOverview())) {
             return false;
+        }
 
         $this->subject = MIME::decode($messageOverview->subject, self::$charset);
         $this->date    = strtotime($messageOverview->date);
@@ -348,7 +346,7 @@ class Message
     }
 
     /**
-     * This function returns an object containing the structure of the message body. This is the same object thats
+     * This function returns an object containing the structure of the message body. This is the same object that
      * returned by imap_fetchstructure. The results are only retrieved from the server once unless passed true as a
      * parameter.
      *
