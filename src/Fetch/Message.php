@@ -523,11 +523,20 @@ class Message
             if (!empty($parameters['charset']) && $parameters['charset'] !== self::$charset) {
                 $mb_converted = false;
                 if (function_exists('mb_convert_encoding')) {
-                    if (!in_array($parameters['charset'], mb_list_encodings())) {
-                        if ($structure->encoding === 0) {
-                            $parameters['charset'] = 'US-ASCII';
+                    $encodings = mb_list_encodings();
+                    if (!in_array($parameters['charset'], $encodings)) {
+                        if ('cp1251' === $parameters['charset']) {
+                            $parameters['charset'] = 'windows-1251';
+                        }
+                        $encodingIndex = array_search($parameters['charset'], array_map('mb_strtolower', $encodings));
+                        if (false !== $encodingIndex) {
+                            $parameters['charset'] = $encodings[$encodingIndex];
                         } else {
-                            $parameters['charset'] = 'UTF-8';
+                            if ($structure->encoding === 0) {
+                                $parameters['charset'] = 'US-ASCII';
+                            } else {
+                                $parameters['charset'] = 'UTF-8';
+                            }
                         }
                     }
 
