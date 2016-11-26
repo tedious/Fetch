@@ -142,6 +142,11 @@ class Server
         $this->service = $service;
     }
 
+    public function __destruct()
+    {
+        imap_close($this->getImapStream());
+    }
+
     /**
      * This function sets the username and password used to connect to the server.
      *
