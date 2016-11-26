@@ -475,6 +475,22 @@ class Message
     {
         return isset($this->subject) ? $this->subject : null;
     }
+    
+    /**
+     * Decode a header
+     *
+     * @return string
+     */
+    public function decodeHeader($header)
+    {
+        $array = imap_mime_header_decode($header);
+        $str = '';
+        foreach ( $array as $part ) {
+            $str .= $part->text;
+        }
+
+        return $str;
+    }
 
     /**
      * This function marks a message for deletion. It is important to note that the message will not be deleted form the
