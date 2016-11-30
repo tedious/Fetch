@@ -101,10 +101,8 @@ class Attachment
         if (isset($structure->bytes)) {
             $this->size = $structure->bytes;
         } else {
-            $this->size = 0;
+            $this->size = 0; // could have implications or an impact
         }
-
-        echo "this size is $this->size\n";
 
         $this->mimeType = Message::typeIdToString($structure->type);
 
@@ -198,7 +196,6 @@ class Attachment
      */
     public function saveAs($path)
     {
-        echo "ATTACHMENT.PHP saveAs() encoding is $this->encoding.\n";
         $encoding = $this->encoding;
         $dirname = dirname($path);
         if (file_exists($path)) {
