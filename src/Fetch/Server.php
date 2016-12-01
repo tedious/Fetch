@@ -320,6 +320,17 @@ class Server
     }
 
     /**
+     * This close the imap connection
+     *
+     */
+    public function closeImapStream()
+    {
+      $stream = $this->getImapStream();
+      if($stream !== null)
+        imap_close($stream);
+    }
+
+    /**
      * This returns the number of messages that the current mailbox contains.
      *
      * @param  string $mailbox
