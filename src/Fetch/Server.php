@@ -184,6 +184,28 @@ class Server
     }
 
     /**
+     * This function get mail boxes
+     *
+     * @return array
+     */
+    public function getMailBoxes()
+    {
+        $_boxes = imap_list($this->getImapStream(), $this->getServerString(), "*");
+
+        $boxes = array();
+
+        if (is_array($_boxes)) {
+            foreach ($_boxes as $box) {
+               $boxes[] = str_replace($this->getServerString(), '', mb_convert_encoding($box, "UTF-8", "UTF7-IMAP"));
+            }
+        } else {
+            throw new \RuntimeException(imap_last_error());
+        }
+
+        return $boxes;
+    }
+
+    /**
      * This function sets or removes flag specifying connection behavior. In many cases the flag is just a one word
      * deal, so the value attribute is not required. However, if the value parameter is passed false it will clear that
      * flag.
