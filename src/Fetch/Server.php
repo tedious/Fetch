@@ -210,7 +210,7 @@ class Server
             if ($value == false && $index !== false) {
                 unset($this->flags[$index]);
             } elseif ($value != false) {
-                $match = preg_grep('/' . $flag . '/', $this->flags);
+                $match = preg_grep('/\A' . $flag . '(?==)/', $this->flags);
                 if (reset($match)) {
                     $this->flags[key($match)] = $flag . '=' . $value;
                 } else {
