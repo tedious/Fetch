@@ -383,20 +383,18 @@ class Message
         if ($html) {
             if (!isset($this->htmlMessage) && isset($this->plaintextMessage)) {
                 $output = nl2br($this->plaintextMessage);
-
                 return $output;
 
             } elseif (isset($this->htmlMessage)) {
                 return $this->htmlMessage;
             }
         } else {
-            if (!isset($this->plaintextMessage) && isset($this->htmlMessage)) {
-                $output = preg_replace('/\s*\<br\s*\/?\>/i', PHP_EOL, trim($this->htmlMessage));
-                $output = strip_tags($output);
+            if (isset($this->htmlMessage)) {
+                $output = new \Html2Text\Html2Text($this->htmlMessage);
 
-                return $output;
-            } elseif (isset($this->plaintextMessage)) {
-                return $this->plaintextMessage;
+                return $output->getText();
+            } elseif (isset($this->plaintextMessage) && !isset($this->htmlMessage)) {
+                return nl2br($this->plaintextMessage);
             }
         }
 
