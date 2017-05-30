@@ -219,13 +219,6 @@ class Message
             throw new \RuntimeException('Message with ID ' . $messageUniqueId . ' not found.');
     }
 
-    public function appendToConnection(Server $connection)
-    {
-        $rawMessage = imap_fetchbody($this->imapStream, $this->uid, "");
-        $returnValue = imap_append($connection->getImapStream(), $connection->getServerString(), $rawMessage);
-        return $returnValue;
-    }
-
     /**
      * This function is called when the message class is loaded. It loads general information about the message from the
      * imap server.
@@ -799,6 +792,32 @@ class Message
 
         $this->imapConnection->setMailBox($currentBox);
 
+        return $returnValue;
+    }
+
+    /**
+     * This function is used to append a mail to a different server connection
+     *
+     * @param Server $connection
+     *
+     * @return bool
+     */
+    public function appendToConnection(Server $connection)
+    {
+        $flags = [];
+        foreach($this->status as $status => $active){
+            if($active){
+                $flags[] = ucfirst($status);
+            }
+        }
+        $rawMessage = imap_fetchbody($this->imapStream, $this->uid, "", FT_UID | FT_PEEK);
+        $options = '';
+        if(count($flags) > 0){
+            foreach($flags as $flag){
+                $options .= '\\'.$flag.' ';
+            }
+        }
+        $returnValue = imap_append($connection->getImapStream(), $connection->getServerString(), $rawMessage, $options, date("d-M-Y H:i:s O", $this->date));
         return $returnValue;
     }
 }
