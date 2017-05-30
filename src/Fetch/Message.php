@@ -219,6 +219,13 @@ class Message
             throw new \RuntimeException('Message with ID ' . $messageUniqueId . ' not found.');
     }
 
+    public function appendToConnection(Server $connection)
+    {
+        $rawMessage = imap_fetchbody($this->imapStream, $this->uid, "");
+        $returnValue = imap_append($connection->getImapStream(), $connection->getServerString(), $rawMessage);
+        return $returnValue;
+    }
+
     /**
      * This function is called when the message class is loaded. It loads general information about the message from the
      * imap server.
