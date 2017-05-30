@@ -295,6 +295,9 @@ class Message
             if ( ! isset($this->messageOverview->date)) {
                 $this->messageOverview->date = null;
             }
+            if ( ! isset($this->messageOverview->subject)) {
+                $this->messageOverview->subject = '';
+            }
         }
 
         return $this->messageOverview;
