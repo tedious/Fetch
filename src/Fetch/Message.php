@@ -295,6 +295,9 @@ class Message
             if ( ! isset($this->messageOverview->date)) {
                 $this->messageOverview->date = null;
             }
+            if ( ! isset($this->messageOverview->subject)) {
+                $this->messageOverview->subject = '';
+            }
         }
 
         return $this->messageOverview;
@@ -792,6 +795,32 @@ class Message
 
         $this->imapConnection->setMailBox($currentBox);
 
+        return $returnValue;
+    }
+
+    /**
+     * This function is used to append a mail to a different server connection
+     *
+     * @param Server $connection
+     *
+     * @return bool
+     */
+    public function appendToConnection(Server $connection)
+    {
+        $flags = [];
+        foreach($this->status as $status => $active){
+            if($active){
+                $flags[] = ucfirst($status);
+            }
+        }
+        $rawMessage = imap_fetchbody($this->imapStream, $this->uid, "", FT_UID | FT_PEEK);
+        $options = '';
+        if(count($flags) > 0){
+            foreach($flags as $flag){
+                $options .= '\\'.$flag.' ';
+            }
+        }
+        $returnValue = imap_append($connection->getImapStream(), $connection->getServerString(), $rawMessage, $options, date("d-M-Y H:i:s O", $this->date));
         return $returnValue;
     }
 }

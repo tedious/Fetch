@@ -1,5 +1,5 @@
 {
-  "name": "tedivm/fetch",
+  "name": "moay/fetch",
   "description": "A PHP IMAP Library",
   "keywords": ["email","imap","pop3"],
   "homepage": "http://github.com/tedious/Fetch",
