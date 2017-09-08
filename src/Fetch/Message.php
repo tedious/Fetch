@@ -469,7 +469,7 @@ class Message
     /**
      * This returns the subject of the message.
      *
-     * @return string
+     * @return string|null
      */
     public function getSubject()
     {
