@@ -543,6 +543,48 @@ class Message
                 }
             }
 
+            /**
+             * Handle legacy uuencoded attachments
+             * Needs PECL mailparse >= 0.9.0
+             */
+            if (function_exists('mailparse_uudecode_all') && (preg_match("/begin ([0-7]{3})/", $messageBody) > 0)) {
+                $fp = fopen('php://memory', 'w+');
+                fwrite($fp, $messageBody);
+                $uuFiles = mailparse_uudecode_all($fp);
+                fclose($fp);
+                
+                if (is_array($uuFiles)) {
+                    if (!isset($structure->parts)) {
+                        $structure->parts = array();
+                    }
+                    
+                    foreach($uuFiles as $k => $v) {
+                        if ($v['filename']) {
+                            if ($k === 0) {
+                                $messageBody = file_get_contents($v['filename']);
+                            } else {
+                                $obj = new \stdClass();
+                                $obj->disposition = 'attachment';
+                                $obj->subtype = strtoupper(pathinfo($v['origfilename'], PATHINFO_EXTENSION));
+                                $obj->bytes = filesize($v['filename']);
+                                $obj->data = file_get_contents($v['filename']);
+                                $obj->parameters = array(
+                                    0 => new \stdClass()
+                                );
+                                $obj->parameters[0]->attribute = 'filename';
+                                $obj->parameters[0]->value = $v['origfilename'];
+
+                                $structure->parts[] = $obj;
+                            }
+                            
+                            unlink($v['filename']);
+                        }
+                    }
+                    
+                    $uuFiles = null;
+                }
+            }
+
             if (strtolower($structure->subtype) === 'plain' || ($structure->type == 1 && strtolower($structure->subtype) !== 'alternative')) {
                 if (isset($this->plaintextMessage)) {
                     $this->plaintextMessage .= PHP_EOL . PHP_EOL;

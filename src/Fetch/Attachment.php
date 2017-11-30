@@ -98,6 +98,10 @@ class Attachment
             $this->setFileName($parameters['name']);
         }
 
+        if (isset($structure->data)) {
+            $this->data = $structure->data;
+        }
+
         $this->size = $structure->bytes;
 
         $this->mimeType = Message::typeIdToString($structure->type);
@@ -218,10 +222,14 @@ class Attachment
                 $streamFilter = null;
         }
 
-        // Fix an issue causing server to throw an error
-        // See: https://github.com/tedious/Fetch/issues/74 for more details
-        $fetch  = imap_fetchbody($this->imapStream, $this->messageId, $this->partId ?: 1, FT_UID);
-        $result = imap_savebody($this->imapStream, $filePointer, $this->messageId, $this->partId ?: 1, FT_UID);
+        if (isset($this->data)) {
+            $result = fwrite($filePointer, $this->data);
+        } else {
+            // Fix an issue causing server to throw an error
+            // See: https://github.com/tedious/Fetch/issues/74 for more details
+            $fetch  = imap_fetchbody($this->imapStream, $this->messageId, $this->partId ?: 1, FT_UID);
+            $result = imap_savebody($this->imapStream, $filePointer, $this->messageId, $this->partId ?: 1, FT_UID);
+        }
 
         if ($streamFilter) {
             stream_filter_remove($streamFilter);
