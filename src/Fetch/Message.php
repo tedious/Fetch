@@ -523,7 +523,7 @@ class Message
             if (!empty($parameters['charset']) && $parameters['charset'] !== self::$charset) {
                 $mb_converted = false;
                 if (function_exists('mb_convert_encoding')) {
-                    if (!in_array($parameters['charset'], mb_list_encodings())) {
+                    if (!$this->isMbstringEncodingSupported($parameters['charset'])) {
                         if ($structure->encoding === 0) {
                             $parameters['charset'] = 'US-ASCII';
                         } else {
@@ -573,6 +573,26 @@ class Message
                 $this->processStructure($part, $partId);
             }
         }
+    }
+
+    /**
+     * Checks if $encoding is supported by mbstring extension
+     *
+     * @param string $encoding
+     *
+     * @return bool
+     */
+    private function isMbstringEncodingSupported($encoding)
+    {
+        static $list = null;
+
+        if ($list === null) {
+            $list = \array_map(function ($encoding) {
+                return \strtolower($encoding);
+            }, \mb_list_encodings());
+        }
+
+        return \in_array(\strtolower($encoding), $list, true);
     }
 
     /**
