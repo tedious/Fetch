@@ -11,6 +11,8 @@
 
 namespace Fetch;
 
+use function strtolower;
+
 /**
  * This library is a wrapper around the Imap library functions included in php. This class represents a single email
  * message as retrieved from the Imap.
@@ -233,7 +235,7 @@ class Message
 
             return false;
 
-        $this->subject = MIME::decode($messageOverview->subject, self::$charset);
+        $this->subject = isset($messageOverview->subject) ? imap_utf8($messageOverview->subject) : null;
         $this->date    = strtotime($messageOverview->date);
         $this->size    = $messageOverview->size;
 
@@ -523,7 +525,7 @@ class Message
             if (!empty($parameters['charset']) && $parameters['charset'] !== self::$charset) {
                 $mb_converted = false;
                 if (function_exists('mb_convert_encoding')) {
-                    if (!in_array($parameters['charset'], mb_list_encodings())) {
+                    if (!$this->isMbstringEncodingSupported($parameters['charset'])) {
                         if ($structure->encoding === 0) {
                             $parameters['charset'] = 'US-ASCII';
                         } else {
@@ -573,6 +575,24 @@ class Message
                 $this->processStructure($part, $partId);
             }
         }
+    }
+
+    /**
+     * @param string $encoding
+     *
+     * @return bool
+     */
+    private function isMbstringEncodingSupported($encoding)
+    {
+        static $list = null;
+
+        if ($list === null) {
+            $list = array_map(function ($encoding) {
+                return strtolower($encoding);
+            }, mb_list_encodings());
+        }
+
+        return in_array($encoding, $list, true);
     }
 
     /**
@@ -674,7 +694,7 @@ class Message
                     $currentAddress = array();
                     $currentAddress['address'] = $address->mailbox . '@' . $address->host;
                     if (isset($address->personal)) {
-                        $currentAddress['name'] = MIME::decode($address->personal, self::$charset);
+                        $currentAddress['name'] = $address->personal;
                     }
                     $outputAddresses[] = $currentAddress;
                 }
