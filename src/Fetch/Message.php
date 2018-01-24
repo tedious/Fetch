@@ -576,6 +576,8 @@ class Message
     }
 
     /**
+     * Checks if $encoding is supported by mbstring extension
+     *
      * @param string $encoding
      *
      * @return bool
