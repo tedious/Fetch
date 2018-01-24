@@ -592,7 +592,7 @@ class Message
             }, \mb_list_encodings());
         }
 
-        return \in_array($encoding, $list, true);
+        return \in_array(\strtolower($encoding), $list, true);
     }
 
     /**
