@@ -234,6 +234,6 @@ class Attachment
 
     protected function setFileName($text)
     {
-        $this->filename = MIME::decode($text, Message::$charset);
+        $this->filename = str_replace(DIRECTORY_SEPARATOR, '_', MIME::decode($text, Message::$charset));
     }
 }
