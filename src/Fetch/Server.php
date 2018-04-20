@@ -142,6 +142,13 @@ class Server
         $this->service = $service;
     }
 
+
+    public function __destruct()
+    {
+        imap_close($this->getImapStream());
+    }
+
+
     /**
      * This function sets the username and password used to connect to the server.
      *
@@ -167,7 +174,7 @@ class Server
     public function setMailBox($mailbox = '')
     {
         if (!$this->hasMailBox($mailbox)) {
-            return false;
+            throw new \RuntimeException('No mailbox found');
         }
 
         $this->mailbox = $mailbox;
@@ -210,7 +217,7 @@ class Server
             if ($value == false && $index !== false) {
                 unset($this->flags[$index]);
             } elseif ($value != false) {
-                $match = preg_grep('/' . $flag . '/', $this->flags);
+                $match = preg_grep('/\A' . $flag . '(?==)/', $this->flags);
                 if (reset($match)) {
                     $this->flags[key($match)] = $flag . '=' . $value;
                 } else {
@@ -439,6 +446,17 @@ class Server
         }
     }
 
+        /**
+     * This function returns all the imap errors to prevent the following
+     * warning from imap_close and imap_expunge
+     * 'Unknown: Warning: MIME header encountered in non-MIME message (errflg=3)'
+     */
+    public function getImapErrors()
+    {
+        return imap_errors();
+    }
+
+
     /**
      * This function removes all of the messages flagged for deletion from the mailbox.
      *
@@ -512,4 +530,50 @@ class Server
      {
          return imap_deletemailbox($this->getImapStream(), $this->getServerSpecification() . $mailbox);
      }
+
+         /**
+     * List available subscribed mailboxes
+     *
+     * @param string $pattern
+     *
+     * @return array
+     */
+    public function listSubscribedMailbox($pattern = '*') {
+        return imap_lsub($this->getImapStream(), $this->getServerSpecification(), $pattern);
+    }
+
+    /**
+     * Subscribe to the given mailbox
+     *
+     * @param string $mailbox
+     *
+     * @return bool
+     */
+    public function subscribeToMailBox($mailbox) {
+             return imap_subscribe($this->getImapStream(), $this->getServerSpecification() . $mailbox);
+    }
+
+    /**
+     * Unsubscribe from the given mailbox
+     *
+     * @param string $mailbox
+     *
+     * @return bool
+     */
+    public function unsubscribeFromMailBox($mailbox) {
+             return imap_unsubscribe($this->getImapStream(), $this->getServerSpecification() . $mailbox);
+    }
+
+    /**
+     * Rename a mailbox.
+     *
+     * @param $oldMailbox
+     * @param $newMailbox
+     *
+     * @return bool
+     */
+    public function renameMailbox($oldMailbox, $newMailbox)
+    {
+        return imap_renamemailbox($this->getImapStream(), $this->getServerSpecification() . $oldMailbox, $this->getServerSpecification() . $newMailbox);
+    }
 }

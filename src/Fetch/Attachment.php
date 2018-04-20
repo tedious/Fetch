@@ -98,7 +98,9 @@ class Attachment
             $this->setFileName($parameters['name']);
         }
 
-        $this->size = $structure->bytes;
+        if (isset($structure->bytes)) {
+            $this->size = $structure->bytes;
+        }
 
         $this->mimeType = Message::typeIdToString($structure->type);
 
@@ -118,8 +120,8 @@ class Attachment
     {
         if (!isset($this->data)) {
             $messageBody = isset($this->partId) ?
-                imap_fetchbody($this->imapStream, $this->messageId, $this->partId, FT_UID)
-                : imap_body($this->imapStream, $this->messageId, FT_UID);
+                imap_fetchbody($this->imapStream, $this->messageId, $this->partId, FT_UID | FT_PEEK)
+                : imap_body($this->imapStream, $this->messageId, FT_UID | FT_PEEK);
 
             $messageBody = Message::decode($messageBody, $this->encoding);
             $this->data  = $messageBody;
@@ -220,8 +222,8 @@ class Attachment
 
         // Fix an issue causing server to throw an error
         // See: https://github.com/tedious/Fetch/issues/74 for more details
-        $fetch  = imap_fetchbody($this->imapStream, $this->messageId, $this->partId ?: 1, FT_UID);
-        $result = imap_savebody($this->imapStream, $filePointer, $this->messageId, $this->partId ?: 1, FT_UID);
+        $fetch  = imap_fetchbody($this->imapStream, $this->messageId, $this->partId ?: 1, FT_UID | FT_PEEK);
+        $result = imap_savebody($this->imapStream, $filePointer, $this->messageId, $this->partId ?: 1, FT_UID | FT_PEEK);
 
         if ($streamFilter) {
             stream_filter_remove($streamFilter);

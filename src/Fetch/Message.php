@@ -469,7 +469,7 @@ class Message
     /**
      * This returns the subject of the message.
      *
-     * @return string
+     * @return string|null
      */
     public function getSubject()
     {
@@ -508,7 +508,7 @@ class Message
     {
         $parameters = self::getParametersFromStructure($structure);
 
-        if ((isset($parameters['name']) || isset($parameters['filename']))
+        if ((!empty($parameters['name']) || !empty($parameters['filename']))
             || (isset($structure->subtype) && strtolower($structure->subtype) == 'rfc822')
         ) {
             $attachment          = new Attachment($this, $structure, $partIdentifier);
@@ -520,27 +520,8 @@ class Message
 
             $messageBody = self::decode($messageBody, $structure->encoding);
 
-            if (!empty($parameters['charset']) && $parameters['charset'] !== self::$charset) {
-                $mb_converted = false;
-                if (function_exists('mb_convert_encoding')) {
-                    if (!in_array($parameters['charset'], mb_list_encodings())) {
-                        if ($structure->encoding === 0) {
-                            $parameters['charset'] = 'US-ASCII';
-                        } else {
-                            $parameters['charset'] = 'UTF-8';
-                        }
-                    }
-
-                    $messageBody = @mb_convert_encoding($messageBody, self::$charset, $parameters['charset']);
-                    $mb_converted = true;
-                }
-                if (!$mb_converted) {
-                    $messageBodyConv = @iconv($parameters['charset'], self::$charset . self::$charsetFlag, $messageBody);
-
-                    if ($messageBodyConv !== false) {
-                        $messageBody = $messageBodyConv;
-                    }
-                }
+            if (!empty($parameters['charset'])) {
+                $messageBody = self::charsetConvert($messageBody, $parameters['charset'], self::$charset) ?: $messageBody;
             }
 
             if (strtolower($structure->subtype) === 'plain' || ($structure->type == 1 && strtolower($structure->subtype) !== 'alternative')) {
@@ -562,17 +543,60 @@ class Message
             }
         }
 
-        if (isset($structure->parts)) { // multipart: iterate through each part
-
-            foreach ($structure->parts as $partIndex => $part) {
-                $partId = $partIndex + 1;
-
-                if (isset($partIdentifier))
-                    $partId = $partIdentifier . '.' . $partId;
-
-                $this->processStructure($part, $partId);
+            if (! empty($structure->parts)) {
+                if (isset($structure->subtype) && strtolower($structure->subtype) === 'rfc822') {
+                    // rfc822: The root part is processed with the current part identifier
+                    $this->processStructure($structure->parts[0], $partIdentifier);
+                } else {
+                    // multipart: iterate through each part
+                    foreach ($structure->parts as $partIndex => $part) {
+                        $partId = $partIndex + 1;
+                        if (isset($partIdentifier))
+                            $partId = $partIdentifier . '.' . $partId;
+                        $this->processStructure($part, $partId);
+                    }
+                }
             }
+    }
+
+    /**
+    * @param string $text
+    * @param string $from
+    * @param string $to
+    *
+    * @return string|null
+    */
+    public static function charsetConvert($text, $from, $to = null)
+    {
+        if (!$text) {
+            return '';
         }
+
+        if (null === $to) {
+            $to = self::$charset;
+        }
+
+        $from = strtolower($from);
+        $to   = strtolower($to);
+
+        if ($from === $to) {
+            return $text;
+        }
+
+        $converted = null;
+        if (!$converted && function_exists('mb_convert_encoding') && @mb_check_encoding($text, $from)) {
+            $converted = @mb_convert_encoding($text, $to, $from);
+        }
+
+        if (!$converted && function_exists('iconv')) {
+            $converted = @iconv($from, $to . self::$charsetFlag, $text);
+        }
+
+        if ($converted) {
+            return $converted;
+        }
+
+        return null;
     }
 
     /**
@@ -670,9 +694,9 @@ class Message
         $outputAddresses = array();
         if (is_array($addresses))
             foreach ($addresses as $address) {
-                if (property_exists($address, 'mailbox') && $address->mailbox != 'undisclosed-recipients') {
+                if (property_exists($address, 'mailbox') && !empty($address->host)) {
                     $currentAddress = array();
-                    $currentAddress['address'] = $address->mailbox . '@' . $address->host;
+                    $currentAddress['address'] = $address->mailbox . (property_exists($address, 'host') ? '@' . $address->host : '');
                     if (isset($address->personal)) {
                         $currentAddress['name'] = MIME::decode($address->personal, self::$charset);
                     }
@@ -792,6 +816,22 @@ class Message
 
         $this->imapConnection->setMailBox($currentBox);
 
+        return $returnValue;
+    }
+
+     /**
+     * Copy a message to the given mailbox.
+     *
+     * @param $mailbox
+     *
+     * @return bool
+     */
+    public function copyToMailBox($mailbox)
+    {
+        $currentBox = $this->imapConnection->getMailBox();
+        $this->imapConnection->setMailBox($this->mailbox);
+        $returnValue = imap_mail_copy($this->imapStream, $this->uid, $mailbox, CP_UID);
+        $this->imapConnection->setMailBox($currentBox);
         return $returnValue;
     }
 }
