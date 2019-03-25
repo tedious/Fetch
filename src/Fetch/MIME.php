@@ -34,11 +34,13 @@ final class MIME
 
         $result = '';
 
-        foreach (imap_mime_header_decode($text) as $word) {
-            $ch = 'default' === $word->charset ? 'ascii' : $word->charset;
+        $encoding = mb_detect_encoding($text, mb_detect_order(), false);
 
-            $result .= iconv($ch, $targetCharset, $word->text);
+        if($encoding == "UTF-8") {
+            $text = mb_convert_encoding($text, 'UTF-8', 'UTF-8');
         }
+
+        $result = iconv(mb_detect_encoding($text, mb_detect_order(), false), "UTF-8//IGNORE", $text);
 
         return $result;
     }
