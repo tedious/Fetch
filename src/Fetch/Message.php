@@ -192,6 +192,14 @@ class Message
     public static $charsetFlag = '//TRANSLIT';
 
     /**
+     * This value defines the flag set for encoding for iconv to ignore the
+     * iconv(): Detected an illegal character in input string.
+     *
+     * @var string
+     */
+    public static $charsetAltFlag = '//IGNORE';
+
+    /**
      * These constants can be used to easily access available flags
      */
     const FLAG_RECENT = 'recent';
@@ -230,12 +238,15 @@ class Message
         /* First load the message overview information */
 
         if(!is_object($messageOverview = $this->getOverview()))
-
             return false;
 
-        $this->subject = MIME::decode($messageOverview->subject, self::$charset);
-        $this->date    = strtotime($messageOverview->date);
-        $this->size    = $messageOverview->size;
+        $subject = property_exists($messageOverview, 'subject')? $messageOverview->subject : '';
+        $date = property_exists($messageOverview, 'date')? $messageOverview->date : '';
+        $size = property_exists($messageOverview, 'size')? $messageOverview->size : '';
+
+        $this->subject = MIME::decode($subject, self::$charset . self::$charsetAltFlag);
+        $this->date    = strtotime($date);
+        $this->size    = $size;
 
         foreach (self::$flagTypes as $flag)
             $this->status[$flag] = ($messageOverview->$flag == 1);
@@ -672,9 +683,10 @@ class Message
             foreach ($addresses as $address) {
                 if (property_exists($address, 'mailbox') && $address->mailbox != 'undisclosed-recipients') {
                     $currentAddress = array();
-                    $currentAddress['address'] = $address->mailbox . '@' . $address->host;
+                    $host = property_exists($address, 'host')?$address->host:'';
+                    $currentAddress['address'] = $address->mailbox . '@' . $host;
                     if (isset($address->personal)) {
-                        $currentAddress['name'] = MIME::decode($address->personal, self::$charset);
+                        $currentAddress['name'] = MIME::decode($address->personal, self::$charset . self::$charsetAltFlag);
                     }
                     $outputAddresses[] = $currentAddress;
                 }
