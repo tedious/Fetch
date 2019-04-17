@@ -40,7 +40,7 @@ final class MIME
             if (function_exists('mb_convert_encoding')) {
                 // This will strip any unrecognised characters and ensure we avoid
                 // "Detected an incomplete multibyte character in input string" errors
-                $text = mb_convert_encoding($text, $targetCharset, mb_detect_encoding($text, mb_detect_order()));
+                $text = mb_convert_encoding($text, $ch, $ch);
             }
 
             $result .= iconv($ch, $targetCharset, $text);
