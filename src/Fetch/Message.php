@@ -335,7 +335,7 @@ class Message
 
             // to keep this object as close as possible to the original header object we add the udate property
             if (isset($headerObject->date)) {
-                $headerObject->udate = strtotime($headerObject->date);
+                $headerObject->udate = self::parseDate($headerObject->date);
             } else {
                 $headerObject->date = null;
                 $headerObject->udate = null;
@@ -362,6 +362,20 @@ class Message
         }
 
         return $this->structure;
+    }
+
+    public static function parseDate($mailDate)
+    {
+        // Strip alphabetical timezone suffix like (W. Europe Daylight Time) or (GMT-07:00)
+        $sanitized = preg_replace('/ \(.+\)$/i', '', $mailDate);
+
+        $result = strtotime($sanitized);
+
+        if ($result === false) {
+            throw new \RuntimeException('Unable to parse date: ' . $mailDate);
+        }
+
+        return $result;
     }
 
     /**
