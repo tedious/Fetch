@@ -43,6 +43,13 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, $overview->seen, 'Seen available from overview');
     }
 
+    public function testDateParsing()
+    {
+        $this->assertEquals(1385966267, Message::parseDate('Sun, 1 Dec 2013 22:37:47 -0800'));
+        $this->assertEquals(1441333422, Message::parseDate('Thu, 3 Sep 2015 19:23:42 -0700 (GMT-07:00)'));
+        $this->assertEquals(1565789188, Message::parseDate('Wed, 14 Aug 2019 15:26:28 +0200 (W. Europe Daylight Time)'));
+    }
+
     public function testGetHeaders()
     {
         $message = static::getMessage(3);
