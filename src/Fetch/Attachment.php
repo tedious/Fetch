@@ -232,7 +232,7 @@ class Attachment
         return $result;
     }
 
-    protected function setFileName($text)
+    public function setFileName($text)
     {
         $this->filename = MIME::decode($text, Message::$charset);
     }
