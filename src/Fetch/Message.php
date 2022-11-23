@@ -573,15 +573,21 @@ class Message
             }
         }
 
-        if (isset($structure->parts)) { // multipart: iterate through each part
+        if (! empty($structure->parts)) {
 
-            foreach ($structure->parts as $partIndex => $part) {
-                $partId = $partIndex + 1;
+            if (isset($structure->subtype) && strtolower($structure->subtype) === 'rfc822') {
+                // rfc822: The root part is processed with the current part identifier
+                $this->processStructure($structure->parts[0], $partIdentifier);
+            } else {
+                // multipart: iterate through each part
+                foreach ($structure->parts as $partIndex => $part) {
+                    $partId = $partIndex + 1;
 
-                if (isset($partIdentifier))
-                    $partId = $partIdentifier . '.' . $partId;
+                    if (isset($partIdentifier))
+                        $partId = $partIdentifier . '.' . $partId;
 
-                $this->processStructure($part, $partId);
+                    $this->processStructure($part, $partId);
+                }
             }
         }
     }
