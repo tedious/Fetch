@@ -137,7 +137,7 @@ class Attachment
      */
     public function getFileName()
     {
-        return (isset($this->filename)) ? $this->filename : false;
+        return (isset($this->filename)) ?  preg_replace('/[^A-Za-z0-9\-_.]/', '_',  $this->filename) : false;
     }
 
     /**
