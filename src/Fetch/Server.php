@@ -440,6 +440,16 @@ class Server
     }
 
     /**
+     * This function returns all the imap errors to prevent the following
+     * warning from imap_close and imap_expunge
+     * 'Unknown: Warning: MIME header encountered in non-MIME message (errflg=3)'
+     */
+    public function getImapErrors()
+    {
+        return imap_errors();
+    }
+
+    /**
      * This function removes all of the messages flagged for deletion from the mailbox.
      *
      * @return bool

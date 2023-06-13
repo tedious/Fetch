@@ -97,8 +97,10 @@ class Attachment
         } elseif (isset($parameters['name'])) {
             $this->setFileName($parameters['name']);
         }
-
-        $this->size = $structure->bytes;
+        
+        if (isset($structure->bytes)) {
+            $this->size = $structure->bytes;
+        }
 
         $this->mimeType = Message::typeIdToString($structure->type);
 
@@ -135,7 +137,7 @@ class Attachment
      */
     public function getFileName()
     {
-        return (isset($this->filename)) ? $this->filename : false;
+        return (isset($this->filename)) ?  preg_replace('/[^A-Za-z0-9\-_.]/', '_',  $this->filename) : false;
     }
 
     /**
